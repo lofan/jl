@@ -418,14 +418,36 @@
 
         // --- GOOGLE TTS SOUND FUNCTION ---
         function playSound(text) {
-            if (!isAudioEnabled) return;
+            if (!isAudioEnabled || !text) return;
             
+            // Primary method: Web Speech API (Native, works without CORS or API blocking)
+            if ('speechSynthesis' in window) {
+                try {
+                    window.speechSynthesis.cancel(); // Stop active audio playback
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'ja-JP';
+                    utterance.rate = 0.85; // Clear learning pace
+                    
+                    // Match a Japanese voice if available
+                    const voices = window.speechSynthesis.getVoices();
+                    const japaneseVoice = voices.find(voice => voice.lang.startsWith('ja'));
+                    if (japaneseVoice) {
+                        utterance.voice = japaneseVoice;
+                    }
+
+                    window.speechSynthesis.speak(utterance);
+                    return;
+                } catch (e) {
+                    console.warn("Web Speech API error, falling back to network audio:", e);
+                }
+            }
+
+            // Secondary Fallback: Google Translate TTS API audio stream
             try {
-                // Encode Japanese query for Google Translate TTS API
                 const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(text)}`;
                 const audio = new Audio(url);
                 audio.play().catch(err => {
-                    console.log("Audio playback deferred or prevented:", err);
+                    console.log("Audio playback deferred or blocked:", err);
                 });
             } catch (e) {
                 console.error("Audio trigger failed:", e);
