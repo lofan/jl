@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Japanese Grammar Master - ても vs でも</title>
+  <style>
+    /* Dark Mode Palette */
+    :root {
+      --bg-primary: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #334155;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --correct: #22c55e;
+      --incorrect: #ef4444;
+      --border: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    header {
+      text-align: center;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h1 {
+      color: var(--accent);
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Voice Bar */
+    .controls-bar {
+      background: var(--bg-card);
+      padding: 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    select {
+      background: var(--bg-primary);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 0.5rem;
+      border-radius: 6px;
+      outline: none;
+      flex-grow: 1;
+    }
+
+    /* Tabs */
+    .tab-nav {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.75rem 1.25rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+    }
+
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Learning Cards */
+    .card {
+      background: var(--bg-card);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border);
+    }
+
+    .card h3 {
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .example-item {
+      background: var(--bg-primary);
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      margin-top: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Buttons */
+    .speak-btn {
+      background: var(--accent);
+      border: none;
+      color: #000;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .speak-btn:hover {
+      background: var(--accent-hover);
+      color: #fff;
+    }
+
+    /* Quiz Area */
+    .quiz-card {
+      background: var(--bg-card);
+      border-radius: 8px;
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .quiz-question {
+      font-size: 1.2rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .option-btn {
+      background: var(--bg-primary);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .option-btn.correct {
+      background: var(--correct);
+      color: #fff;
+      border-color: var(--correct);
+    }
+
+    .option-btn.incorrect {
+      background: var(--incorrect);
+      color: #fff;
+      border-color: var(--incorrect);
+    }
+
+    .quiz-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+    }
+
+    .next-btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .score-board {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .score-board h2 {
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>ても vs でも Grammar Master</h1>
+      <p style="color: var(--text-muted)">Master grammar connections with Web Speech audio support</p>
+    </header>
+
+    <!-- Google Voice Select -->
+    <div class="controls-bar">
+      <label for="voiceSelect" style="font-weight: 600;">Voice Engine:</label>
+      <select id="voiceSelect">
+        <option value="">Loading voices...</option>
+      </select>
+    </div>
+
+    <!-- Navigation -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('learn')">Learn & Examples</button>
+      <button class="tab-btn" onclick="switchTab('quiz')">Interactive Quiz</button>
+    </div>
+
+    <!-- TAB 1: LEARN -->
+    <div id="learn" class="tab-content active">
+      <div class="card">
+        <h3>1. ても (Even if / Even though)</h3>
+        <p>Used primarily with <strong>Verbs (て-form)</strong> and <strong>い-Adjectives (くて-form)</strong>.</p>
+        
+        <div class="example-item">
+          <div>
+            <strong>難しくてもやります。</strong><br>
+            <small style="color: var(--text-muted)">Even if it's difficult, I will do it.</small>
+          </div>
+          <button class="speak-btn" onclick="speak('難しくてもやります。')">🔊 Listen</button>
+        </div>
+
+        <div class="example-item">
+          <div>
+            <strong>雨が降っても行きます。</strong><br>
+            <small style="color: var(--text-muted)">Even if it rains, I will go.</small>
+          </div>
+          <button class="speak-btn" onclick="speak('雨が降っても行きます。')">🔊 Listen</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>2. でも (Concession for Nouns & な-Adjectives)</h3>
+        <p>Used with <strong>Nouns</strong> and <strong>な-Adjectives</strong> to express "even if..."</p>
+        
+        <div class="example-item">
+          <div>
+            <strong>嫌いでも食べなさい。</strong><br>
+            <small style="color: var(--text-muted)">Even if you dislike it, eat it.</small>
+          </div>
+          <button class="speak-btn" onclick="speak('嫌いでも食べなさい。')">🔊 Listen</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>3. でも (Suggestions / Examples)</h3>
+        <p>Used after Nouns to suggest an option ("...or something / or the like").</p>
+        
+        <div class="example-item">
+          <div>
+            <strong>パンでも食べる。</strong><br>
+            <small style="color: var(--text-muted)">I'll eat a sandwich or something.</small>
+          </div>
+          <button class="speak-btn" onclick="speak('パンでも食べる。')">🔊 Listen</button>
+        </div>
+
+        <div class="example-item">
+          <div>
+            <strong>ケーキでも構いません。</strong><br>
+            <small style="color: var(--text-muted)">Cake is fine as well.</small>
+          </div>
+          <button class="speak-btn" onclick="speak('ケーキでも構いません。')">🔊 Listen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: QUIZ -->
+    <div id="quiz" class="tab-content">
+      <div id="quizContainer" class="quiz-card">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+          <span id="questionNum" style="color: var(--text-muted);">Question 1 of 4</span>
+          <button class="speak-btn" id="quizAudioBtn">🔊 Listen Sentence</button>
+        </div>
+        
+        <div id="questionText" class="quiz-question">Loading question...</div>
+        
+        <div id="optionsGrid" class="options-grid"></div>
+
+        <div class="quiz-controls">
+          <span id="feedbackText" style="font-weight: bold;"></span>
+          <button id="nextBtn" class="next-btn" onclick="nextQuestion()" style="display: none;">Next Question</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ======================================================
+       1. WEB SPEECH API / GOOGLE VOICE SYNTHESIS SETUP
+       ====================================================== */
+    const synth = window.speechSynthesis;
+    const voiceSelect = document.getElementById('voiceSelect');
+    let voices = [];
+
+    function populateVoiceList() {
+      // Filter for Japanese voices, prioritizing Google Cloud / Chrome voices if available
+      voices = synth.getVoices().filter(voice => voice.lang.includes('ja') || voice.lang.includes('JP'));
+      
+      voiceSelect.innerHTML = '';
+      if (voices.length === 0) {
+        // Fallback option if local system doesn't expose Japanese voices explicitly
+        const option = document.createElement('option');
+        option.textContent = 'Default Japanese Voice (Browser Engine)';
+        voiceSelect.appendChild(option);
+        return;
+      }
+
+      voices.forEach((voice) => {
+        const option = document.createElement('option');
+        option.textContent = `${voice.name} (${voice.lang})`;
+        if (voice.name.includes('Google')) {
+          option.textContent += ' — Recommended';
+        }
+        option.setAttribute('data-name', voice.name);
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    populateVoiceList();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
+
+    function speak(text) {
+      if (synth.speaking) {
+        synth.cancel();
+      }
+      if (text !== '') {
+        const utterThis = new SpeechSynthesisUtterance(text);
+        utterThis.lang = 'ja-JP';
+        
+        const selectedOption = voiceSelect.selectedOptions[0]?.getAttribute('data-name');
+        if (selectedOption) {
+          const selectedVoice = voices.find(voice => voice.name === selectedOption);
+          if (selectedVoice) utterThis.voice = selectedVoice;
+        }
+        
+        synth.speak(utterThis);
+      }
+    }
+
+    /* ======================================================
+       2. TAB NAVIGATION
+       ====================================================== */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    /* ======================================================
+       3. QUIZ ENGINE
+       ====================================================== */
+    const quizData = [
+      {
+        question: "嫌い ___ 食べなさい。 (Even if you dislike it, eat it.)",
+        speakText: "嫌いでも食べなさい。",
+        options: ["ても", "でも"],
+        correct: 1,
+        reason: "'嫌い' is a Na-adjective, so it takes でも."
+      },
+      {
+        question: "ケーキ ___ 構いません。 (Cake is fine as well.)",
+        speakText: "ケーキでも構いません。",
+        options: ["ても", "でも"],
+        correct: 1,
+        reason: "'ケーキ' is a Noun, so it takes でも."
+      },
+      {
+        question: "雨が降っ ___ 行きます。 (Even if it rains, I will go.)",
+        speakText: "雨が降っても行きます。",
+        options: ["ても", "でも"],
+        correct: 0,
+        reason: "'降っ' comes from the verb 降る (Te-form: 降って), so it takes も."
+      },
+      {
+        question: "難しく ___ やります。 (Even if it is difficult, I will do it.)",
+        speakText: "難しくてもやります。",
+        options: ["ても", "でも"],
+        correct: 0,
+        reason: "'難しく' is the stem of an I-adjective (難しい -> 難しく), so it takes ても."
+      }
+    ];
+
+    let currentQuestionIdx = 0;
+    let score = 0;
+    let answered = false;
+
+    function loadQuestion() {
+      answered = false;
+      const q = quizData[currentQuestionIdx];
+      
+      document.getElementById('questionNum').innerText = `Question ${currentQuestionIdx + 1} of ${quizData.length}`;
+      document.getElementById('questionText').innerText = q.question;
+      document.getElementById('feedbackText').innerText = '';
+      document.getElementById('nextBtn').style.display = 'none';
+      
+      const audioBtn = document.getElementById('quizAudioBtn');
+      audioBtn.onclick = () => speak(q.speakText);
+
+      const optionsGrid = document.getElementById('optionsGrid');
+      optionsGrid.innerHTML = '';
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(idx);
+        optionsGrid.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selectedIdx) {
+      if (answered) return;
+      answered = true;
+
+      const q = quizData[currentQuestionIdx];
+      const buttons = document.querySelectorAll('.option-btn');
+      const feedback = document.getElementById('feedbackText');
+
+      if (selectedIdx === q.correct) {
+        buttons[selectedIdx].classList.add('correct');
+        feedback.innerText = "Correct! " + q.reason;
+        feedback.style.color = "var(--correct)";
+        score++;
+      } else {
+        buttons[selectedIdx].classList.add('incorrect');
+        buttons[q.correct].classList.add('correct');
+        feedback.innerText = "Incorrect. " + q.reason;
+        feedback.style.color = "var(--incorrect)";
+      }
+
+      // Automatically speak the correct full sentence upon selecting an answer
+      speak(q.speakText);
+
+      document.getElementById('nextBtn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+      currentQuestionIdx++;
+      if (currentQuestionIdx < quizData.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      const quizContainer = document.getElementById('quizContainer');
+      quizContainer.innerHTML = `
+        <div class="score-board">
+          <h2>Quiz Completed! 🎉</h2>
+          <p style="font-size: 1.2rem; margin-bottom: 1rem;">
+            Your Score: <strong>${score} / ${quizData.length}</strong>
+          </p>
+          <button class="next-btn" onclick="resetQuiz()">Try Again</button>
+        </div>
+      `;
+    }
+
+    function resetQuiz() {
+      location.reload();
+    }
+
+    // Initialize the quiz on load
+    loadQuestion();
+  </script>
+</body>
+</html>
