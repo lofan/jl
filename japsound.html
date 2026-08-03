@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日語五十音與進階音節全方位學習系統</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM UMD -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-[#121212] text-[#E0E0E0] min-h-screen">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+
+        // --- 圖標組件 ---
+        const Volume2 = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+        );
+        const RefreshCw = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
+        );
+        const Trophy = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+        );
+        const AlertCircle = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        );
+        const Home = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        );
+        const BookOpen = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+        );
+
+        // --- 數據源 ---
+        const HIRAGANA_DATA = [
+            { kana: 'あ', romaji: 'a' }, { kana: 'い', romaji: 'i' }, { kana: 'う', romaji: 'u' }, { kana: 'え', romaji: 'e' }, { kana: 'お', romaji: 'o' },
+            { kana: 'か', romaji: 'ka' }, { kana: 'き', romaji: 'ki' }, { kana: 'く', romaji: 'ku' }, { kana: 'け', romaji: 'ke' }, { kana: 'こ', romaji: 'ko' },
+            { kana: 'さ', romaji: 'sa' }, { kana: 'し', romaji: 'shi' }, { kana: 'す', romaji: 'su' }, { kana: 'せ', romaji: 'se' }, { kana: 'そ', romaji: 'so' },
+            { kana: 'た', romaji: 'ta' }, { kana: 'ち', romaji: 'chi' }, { kana: 'つ', romaji: 'tsu' }, { kana: 'て', romaji: 'te' }, { kana: 'と', romaji: 'to' },
+            { kana: 'な', romaji: 'na' }, { kana: 'に', romaji: 'ni' }, { kana: 'ぬ', romaji: 'nu' }, { kana: 'ね', romaji: 'ne' }, { kana: 'の', romaji: 'no' },
+            { kana: 'は', romaji: 'ha' }, { kana: 'ひ', romaji: 'hi' }, { kana: 'ふ', romaji: 'fu' }, { kana: 'へ', romaji: 'he' }, { kana: 'ほ', romaji: 'ho' },
+            { kana: 'ま', romaji: 'ma' }, { kana: 'み', romaji: 'mi' }, { kana: 'む', romaji: 'mu' }, { kana: 'め', romaji: 'me' }, { kana: 'も', romaji: 'mo' },
+            { kana: 'や', romaji: 'ya' }, { kana: null, romaji: null }, { kana: 'ゆ', romaji: 'yu' }, { kana: null, romaji: null }, { kana: 'よ', romaji: 'yo' },
+            { kana: 'ら', romaji: 'ra' }, { kana: 'り', romaji: 'ri' }, { kana: 'る', romaji: 'ru' }, { kana: 'れ', romaji: 're' }, { kana: 'ろ', romaji: 'ro' },
+            { kana: 'わ', romaji: 'wa' }, { kana: null, romaji: null }, { kana: null, romaji: null }, { kana: null, romaji: null }, { kana: 'を', romaji: 'wo' },
+            { kana: 'ん', romaji: 'n' }, { kana: null, romaji: null }, { kana: null, romaji: null }, { kana: null, romaji: null }, { kana: null, romaji: null }
+        ];
+
+        const HIRAGANA_GRID = [
+            [ { kana: 'あ', romaji: 'a' }, { kana: 'い', romaji: 'i' }, { kana: 'う', romaji: 'u' }, { kana: 'え', romaji: 'e' }, { kana: 'お', romaji: 'o' } ],
+            [ { kana: 'か', romaji: 'ka' }, { kana: 'き', romaji: 'ki' }, { kana: 'く', romaji: 'ku' }, { kana: 'け', romaji: 'ke' }, { kana: 'こ', romaji: 'ko' } ],
+            [ { kana: 'さ', romaji: 'sa' }, { kana: 'し', romaji: 'shi' }, { kana: 'す', romaji: 'su' }, { kana: 'せ', romaji: 'se' }, { kana: 'そ', romaji: 'so' } ],
+            [ { kana: 'た', romaji: 'ta' }, { kana: 'ち', romaji: 'chi' }, { kana: 'つ', romaji: 'tsu' }, { kana: 'て', romaji: 'te' }, { kana: 'と', romaji: 'to' } ],
+            [ { kana: 'な', romaji: 'na' }, { kana: 'に', romaji: 'ni' }, { kana: 'ぬ', romaji: 'nu' }, { kana: 'ね', romaji: 'ne' }, { kana: 'の', romaji: 'no' } ],
+            [ { kana: 'は', romaji: 'ha' }, { kana: 'ひ', romaji: 'hi' }, { kana: 'ふ', romaji: 'fu' }, { kana: 'へ', romaji: 'he' }, { kana: 'ほ', romaji: 'ho' } ],
+            [ { kana: 'ま', romaji: 'ma' }, { kana: 'み', romaji: 'mi' }, { kana: 'む', romaji: 'mu' }, { kana: 'め', romaji: 'me' }, { kana: 'も', romaji: 'mo' } ],
+            [ { kana: 'や', romaji: 'ya' }, null, { kana: 'ゆ', romaji: 'yu' }, null, { kana: 'よ', romaji: 'yo' } ],
+            [ { kana: 'ら', romaji: 'ra' }, { kana: 'り', romaji: 'ri' }, { kana: 'る', romaji: 'ru' }, { kana: 'れ', romaji: 're' }, { kana: 'ろ', romaji: 'ro' } ],
+            [ { kana: 'わ', romaji: 'wa' }, null, null, null, { kana: 'を', romaji: 'wo' } ],
+            [ { kana: 'ん', romaji: 'n' }, null, null, null, null ]
+        ];
+
+        const KATAKANA_DATA = [
+            { kana: 'ア', romaji: 'a' }, { kana: 'イ', romaji: 'i' }, { kana: 'ウ', romaji: 'u' }, { kana: 'エ', romaji: 'e' }, { kana: 'オ', romaji: 'o' },
+            { kana: 'カ', romaji: 'ka' }, { kana: 'キ', romaji: 'ki' }, { kana: 'ク', romaji: 'ku' }, { kana: 'ケ', romaji: 'ke' }, { kana: 'コ', romaji: 'ko' },
+            { kana: 'サ', romaji: 'sa' }, { kana: 'シ', romaji: 'shi' }, { kana: 'ス', romaji: 'su' }, { kana: 'セ', romaji: 'se' }, { kana: 'ソ', romaji: 'so' },
+            { kana: 'タ', romaji: 'ta' }, { kana: 'チ', romaji: 'chi' }, { kana: 'ツ', romaji: 'tsu' }, { kana: 'テ', romaji: 'te' }, { kana: 'ト', romaji: 'to' },
+            { kana: 'ナ', romaji: 'na' }, { kana: 'ニ', romaji: 'ni' }, { kana: 'ヌ', romaji: 'nu' }, { kana: 'ネ', romaji: 'ne' }, { kana: 'ノ', romaji: 'no' },
+            { kana: 'ハ', romaji: 'ha' }, { kana: 'ヒ', romaji: 'hi' }, { kana: 'フ', romaji: 'fu' }, { kana: 'ヘ', romaji: 'he' }, { kana: 'ホ', romaji: 'ho' },
+            { kana: 'マ', romaji: 'ma' }, { kana: 'ミ', romaji: 'mi' }, { kana: 'ム', romaji: 'mu' }, { kana: 'メ', romaji: 'me' }, { kana: 'モ', romaji: 'mo' },
+            { kana: 'ヤ', romaji: 'ya' }, { kana: null, romaji: null }, { kana: 'ユ', romaji: 'yu' }, { kana: null, romaji: null }, { kana: 'ヨ', romaji: 'yo' },
+            { kana: 'ラ', romaji: 'ra' }, { kana: 'リ', romaji: 'ri' }, { kana: 'ル', romaji: 'ru' }, { kana: 'レ', romaji: 're' }, { kana: 'ロ', romaji: 'ro' },
+            { kana: 'ワ', romaji: 'wa' }, { kana: null, romaji: null }, { kana: null, romaji: null }, { kana: null, romaji: null }, { kana: 'ヲ', romaji: 'wo' },
+            { kana: 'ン', romaji: 'n' }, { kana: null, romaji: null }, { kana: null, romaji: null }, { kana: null, romaji: null }, { kana: null, romaji: null }
+        ];
+
+        const KATAKANA_GRID = [
+            [ { kana: 'ア', romaji: 'a' }, { kana: 'イ', romaji: 'i' }, { kana: 'ウ', romaji: 'u' }, { kana: 'エ', romaji: 'e' }, { kana: 'オ', romaji: 'o' } ],
+            [ { kana: 'カ', romaji: 'ka' }, { kana: 'キ', romaji: 'ki' }, { kana: 'ク', romaji: 'ku' }, { kana: 'ケ', romaji: 'ke' }, { kana: 'コ', romaji: 'ko' } ],
+            [ { kana: 'サ', romaji: 'sa' }, { kana: 'シ', romaji: 'shi' }, { kana: 'ス', romaji: 'su' }, { kana: 'セ', romaji: 'se' }, { kana: 'ソ', romaji: 'so' } ],
+            [ { kana: 'タ', romaji: 'ta' }, { kana: 'チ', romaji: 'chi' }, { kana: 'ツ', romaji: 'tsu' }, { kana: 'テ', romaji: 'te' }, { kana: 'ト', romaji: 'to' } ],
+            [ { kana: 'ナ', romaji: 'na' }, { kana: 'ニ', romaji: 'ni' }, { kana: 'ヌ', romaji: 'nu' }, { kana: 'ネ', romaji: 'ne' }, { kana: 'ノ', romaji: 'no' } ],
+            [ { kana: 'ハ', romaji: 'ha' }, { kana: 'ヒ', romaji: 'hi' }, { kana: 'フ', romaji: 'fu' }, { kana: 'ヘ', romaji: 'he' }, { kana: 'ホ', romaji: 'ho' } ],
+            [ { kana: 'マ', romaji: 'ma' }, { kana: 'ミ', romaji: 'mi' }, { kana: 'ム', romaji: 'mu' }, { kana: 'メ', romaji: 'me' }, { kana: 'モ', romaji: 'mo' } ],
+            [ { kana: 'ヤ', romaji: 'ya' }, null, { kana: 'ユ', romaji: 'yu' }, null, { kana: 'ヨ', romaji: 'yo' } ],
+            [ { kana: 'ラ', romaji: 'ra' }, { kana: 'リ', romaji: 'ri' }, { kana: 'ル', romaji: 'ru' }, { kana: 'レ', romaji: 're' }, { kana: 'ロ', romaji: 'ro' } ],
+            [ { kana: 'ワ', romaji: 'wa' }, null, null, null, { kana: 'ヲ', romaji: 'wo' } ],
+            [ { kana: 'ン', romaji: 'n' }, null, null, null, null ]
+        ];
+
+        const ADVANCED_HIRAGANA = [
+            { kana: 'が', romaji: 'ga', category: '濁音' }, { kana: 'ぎ', romaji: 'gi', category: '濁音' }, { kana: 'ぐ', romaji: 'gu', category: '濁音' }, { kana: 'げ', romaji: 'ge', category: '濁音' }, { kana: 'ご', romaji: 'go', category: '濁音' },
+            { kana: 'ざ', romaji: 'za', category: '濁音' }, { kana: 'じ', romaji: 'ji', category: '濁音' }, { kana: 'ず', romaji: 'zu', category: '濁音' }, { kana: 'ぜ', romaji: 'ze', category: '濁音' }, { kana: 'ぞ', romaji: 'zo', category: '濁音' },
+            { kana: 'だ', romaji: 'da', category: '濁音' }, { kana: 'ぢ', romaji: 'ji', category: '濁音' }, { kana: 'づ', romaji: 'zu', category: '濁音' }, { kana: 'で', romaji: 'de', category: '濁音' }, { kana: 'ど', romaji: 'do', category: '濁音' },
+            { kana: 'ば', romaji: 'ba', category: '濁音' }, { kana: 'び', romaji: 'bi', category: '濁音' }, { kana: 'ぶ', romaji: 'bu', category: '濁音' }, { kana: 'べ', romaji: 'be', category: '濁音' }, { kana: 'ぼ', romaji: 'bo', category: '濁音' },
+            { kana: 'ぱ', romaji: 'pa', category: '半濁音' }, { kana: 'ぴ', romaji: 'pi', category: '半濁音' }, { kana: 'ぷ', romaji: 'pu', category: '半濁音' }, { kana: 'ぺ', romaji: 'pe', category: '半濁音' }, { kana: 'ぽ', romaji: 'po', category: '半濁音' },
+            { kana: 'きゃ', romaji: 'kya', category: '拗音' }, { kana: 'きゅ', romaji: 'kyu', category: '拗音' }, { kana: 'きょ', romaji: 'kyo', category: '拗音' },
+            { kana: 'しゃ', romaji: 'sha', category: '拗音' }, { kana: 'しゅ', romaji: 'shu', category: '拗音' }, { kana: 'しょ', romaji: 'sho', category: '拗音' },
+            { kana: 'ちゃ', romaji: 'cha', category: '拗音' }, { kana: 'ちゅ', romaji: 'chu', category: '拗音' }, { kana: 'ちょ', romaji: 'cho', category: '拗音' },
+            { kana: 'にゃ', romaji: 'nya', category: '拗音' }, { kana: 'にゅ', romaji: 'nyu', category: '拗音' }, { kana: 'にょ', romaji: 'nyo', category: '拗音' },
+            { kana: 'ひゃ', romaji: 'hya', category: '拗音' }, { kana: 'ひゅ', romaji: 'hyu', category: '拗音' }, { kana: 'ひょ', romaji: 'hyo', category: '拗音' },
+            { kana: 'みゃ', romaji: 'mya', category: '拗音' }, { kana: 'みゅ', romaji: 'myu', category: '拗音' }, { kana: 'みょ', romaji: 'myo', category: '拗音' },
+            { kana: 'りゃ', romaji: 'rya', category: '拗音' }, { kana: 'りゅ', romaji: 'ryu', category: '拗音' }, { kana: 'りょ', romaji: 'ryo', category: '拗音' },
+            { kana: 'ぎゃ', romaji: 'gya', category: '拗音' }, { kana: 'ぎゅ', romaji: 'gyu', category: '拗音' }, { kana: 'ぎょ', romaji: 'gyo', category: '拗音' },
+            { kana: 'じゃ', romaji: 'ja', category: '拗音' }, { kana: 'じゅ', romaji: 'ju', category: '拗音' }, { kana: 'じょ', romaji: 'jo', category: '拗音' },
+            { kana: 'びゃ', romaji: 'bya', category: '拗音' }, { kana: 'びゅ', romaji: 'byu', category: '拗音' }, { kana: 'びょ', romaji: 'byo', category: '拗音' },
+            { kana: 'ぴゃ', romaji: 'pya', category: '拗音' }, { kana: 'ぴゅ', romaji: 'pyu', category: '拗音' }, { kana: 'ぴょ', romaji: 'pyo', category: '拗音' },
+            { kana: 'おおかみ', romaji: 'ookami (長音)', category: '長音' }, { kana: 'おじいさん', romaji: 'ojiisan (長音)', category: '長音' },
+            { kana: 'おかあさん', romaji: 'okaasan (長音)', category: '長音' }, { kana: 'くうき', romaji: 'kuuki (長音)', category: '長音' },
+            { kana: 'せんせい', romaji: 'sensei (長音)', category: '長音' }, { kana: 'こうこうせい', romaji: 'koukousei (長音)', category: '長音' },
+            { kana: 'いって', romaji: 'itte (促音)', category: '促音' }, { kana: 'きって', romaji: 'kitte (促音)', category: '促音' },
+            { kana: 'ざっし', romaji: 'zasshi (促音)', category: '促音' }, { kana: 'きっぷ', romaji: 'kippu (促音)', category: '促音' },
+            { kana: 'がっこう', romaji: 'gakkou (促+長)', category: '促音' }
+        ];
+
+        const ADVANCED_KATAKANA = [
+            { kana: 'ガ', romaji: 'ga', category: '濁音' }, { kana: 'ギ', romaji: 'gi', category: '濁音' }, { kana: 'グ', romaji: 'gu', category: '濁音' }, { kana: 'ゲ', romaji: 'ge', category: '濁音' }, { kana: 'ゴ', romaji: 'go', category: '濁音' },
+            { kana: 'ザ', romaji: 'za', category: '濁音' }, { kana: 'ジ', romaji: 'ji', category: '濁音' }, { kana: 'ズ', romaji: 'zu', category: '濁音' }, { kana: 'ゼ', romaji: 'ze', category: '濁音' }, { kana: 'ゾ', romaji: 'zo', category: '濁音' },
+            { kana: 'ダ', romaji: 'da', category: '濁音' }, { kana: 'ヂ', romaji: 'ji', category: '濁音' }, { kana: 'ヅ', romaji: 'zu', category: '濁音' }, { kana: 'デ', romaji: 'de', category: '濁音' }, { kana: 'ド', romaji: 'do', category: '濁音' },
+            { kana: 'バ', romaji: 'ba', category: '濁音' }, { kana: 'ビ', romaji: 'bi', category: '濁音' }, { kana: 'ブ', romaji: 'bu', category: '濁音' }, { kana: 'ベ', romaji: 'be', category: '濁音' }, { kana: 'ボ', romaji: 'bo', category: '濁音' },
+            { kana: 'パ', romaji: 'pa', category: '半濁音' }, { kana: 'ピ', romaji: 'pi', category: '半濁音' }, { kana: 'プ', romaji: 'pu', category: '半濁音' }, { kana: 'ペ', romaji: 'pe', category: '半濁音' }, { kana: 'ポ', romaji: 'po', category: '半濁音' },
+            { kana: 'キャ', romaji: 'kya', category: '拗音' }, { kana: 'キュ', romaji: 'kyu', category: '拗音' }, { kana: 'キョ', romaji: 'kyo', category: '拗音' },
+            { kana: 'シャ', romaji: 'sha', category: '拗音' }, { kana: 'シュ', romaji: 'shu', category: '拗音' }, { kana: 'ショ', romaji: 'sho', category: '拗音' },
+            { kana: 'チャ', romaji: 'cha', category: '拗音' }, { kana: 'チュ', romaji: 'chu', category: '拗音' }, { kana: 'チョ', romaji: 'cho', category: '拗音' },
+            { kana: 'ニャ', romaji: 'nya', category: '拗音' }, { kana: 'ニュ', romaji: 'nyu', category: '拗音' }, { kana: 'ニョ', romaji: 'nyo', category: '拗音' },
+            { kana: 'ヒャ', romaji: 'hya', category: '拗音' }, { kana: 'ヒュ', romaji: 'hyu', category: '拗音' }, { kana: 'ヒョ', romaji: 'hyo', category: '拗音' },
+            { kana: 'ミャ', romaji: 'mya', category: '拗音' }, { kana: 'ミュ', romaji: 'myu', category: '拗音' }, { kana: 'ミョ', romaji: 'myo', category: '拗音' },
+            { kana: 'リャ', romaji: 'rya', category: '拗音' }, { kana: 'リュ', romaji: 'ryu', category: '拗音' }, { kana: 'リョ', romaji: 'ryo', category: '拗音' },
+            { kana: 'ギャ', romaji: 'gya', category: '拗音' }, { kana: 'ギュ', romaji: 'gyu', category: '拗音' }, { kana: 'ギョ', romaji: 'gyo', category: '拗音' },
+            { kana: 'ジャ', romaji: 'ja', category: '拗音' }, { kana: 'ジュ', romaji: 'ju', category: '拗音' }, { kana: 'ジョ', romaji: 'jo', category: '拗音' },
+            { kana: 'ビャ', romaji: 'bya', category: '拗音' }, { kana: 'ビュ', romaji: 'byu', category: '拗音' }, { kana: 'ビョ', romaji: 'byo', category: '拗音' },
+            { kana: 'ピャ', romaji: 'pya', category: '拗音' }, { kana: 'ピュ', romaji: 'pyu', category: '拗音' }, { kana: 'ピョ', romaji: 'pyo', category: '拗音' },
+            { kana: 'ケーキ', romaji: 'keeki (長音)', category: '長音' }, { kana: 'スーパー', romaji: 'suupaa (長音)', category: '長音' },
+            { kana: 'コンピューター', romaji: 'konpyuutaa (長音)', category: '長音' }, { kana: 'タクシー', romaji: 'takushii (長音)', category: '長音' },
+            { kana: 'ノート', romaji: 'nooto (長音)', category: '長音' },
+            { kana: 'ベッド', romaji: 'beddo (促音)', category: '促音' }, { kana: 'カップ', romaji: 'kappu (促音)', category: '促音' },
+            { kana: 'バッグ', romaji: 'baggu (促音)', category: '促音' }, { kana: 'マッチ', romaji: 'macchi (促音)', category: '促音' },
+            { kana: 'サッカー', romaji: 'sakkaa (促+長)', category: '促音' }
+        ];
+
+        const ROW_NAMES = ['', 'か行', 'さ行', 'た行', 'な行', 'は行', 'ま行', 'や行', 'ら行', 'わ行', '撥音'];
+
+        function App() {
+            const [appMode, setAppMode] = useState('MENU');
+            const [gameState, setGameState] = useState('START'); 
+            
+            const [selectedCategory, setSelectedCategory] = useState('ALL');
+            const [questions, setQuestions] = useState([]);
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [score, setScore] = useState(0);
+            const [selectedOption, setSelectedOption] = useState(null);
+            const [isCorrect, setIsCorrect] = useState(null);
+            const [incorrectAnswers, setIncorrectAnswers] = useState([]);
+
+            const speak = useCallback((text) => {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'ja-JP';
+                    utterance.rate = 0.85;
+                    window.speechSynthesis.speak(utterance);
+                }
+            }, []);
+
+            const startQuiz = (count, category = 'ALL') => {
+                let pool = [];
+                if (appMode === 'HIRAGANA_BASIC') pool = HIRAGANA_DATA.filter(i => i.kana !== null);
+                else if (appMode === 'KATAKANA_BASIC') pool = KATAKANA_DATA.filter(i => i.kana !== null);
+                else if (appMode === 'HIRAGANA_ADVANCED') {
+                    pool = category === 'ALL' ? ADVANCED_HIRAGANA : ADVANCED_HIRAGANA.filter(i => i.category === category);
+                }
+                else if (appMode === 'KATAKANA_ADVANCED') {
+                    pool = category === 'ALL' ? ADVANCED_KATAKANA : ADVANCED_KATAKANA.filter(i => i.category === category);
+                }
+
+                const shuffled = [...pool].sort(() => 0.5 - Math.random());
+                const selected = shuffled.slice(0, Math.min(count, pool.length));
+
+                const quizItems = selected.map(item => {
+                    const distractors = pool
+                        .filter(d => d.romaji !== item.romaji)
+                        .sort(() => 0.5 - Math.random())
+                        .slice(0, 3);
+                    const options = [...distractors, item].sort(() => 0.5 - Math.random());
+                    return { ...item, options };
+                });
+
+                setQuestions(quizItems);
+                setCurrentIndex(0);
+                setScore(0);
+                setSelectedOption(null);
+                setIsCorrect(null);
+                setIncorrectAnswers([]);
+                setGameState('QUIZ');
+            };
+
+            const handleAnswer = (option) => {
+                if (selectedOption !== null) return;
+
+                const currentQuestion = questions[currentIndex];
+                const correct = option.romaji === currentQuestion.romaji;
+
+                setSelectedOption(option.romaji);
+                setIsCorrect(correct);
+                speak(currentQuestion.kana);
+
+                if (correct) {
+                    setScore(prev => prev + 1);
+                } else {
+                    setIncorrectAnswers(prev => [...prev, currentQuestion]);
+                }
+
+                setTimeout(() => {
+                    if (currentIndex < questions.length - 1) {
+                        setCurrentIndex(prev => prev + 1);
+                        setSelectedOption(null);
+                        setIsCorrect(null);
+                    } else {
+                        setGameState('RESULT');
+                    }
+                }, 900);
+            };
+
+            useEffect(() => {
+                if (gameState === 'QUIZ' && questions[currentIndex]) {
+                    speak(questions[currentIndex].kana);
+                }
+            }, [currentIndex, gameState, questions, speak]);
+
+            const getThemeConfig = () => {
+                if (appMode === 'HIRAGANA_BASIC') return { primary: '#34D399', darkBg: '#064E3B', title: '平假名基礎練習' };
+                if (appMode === 'KATAKANA_BASIC') return { primary: '#F43F5E', darkBg: '#881337', title: '片假名基礎練習' };
+                if (appMode === 'HIRAGANA_ADVANCED') return { primary: '#38BDF8', darkBg: '#0369A1', title: '平假名進階練習' };
+                if (appMode === 'KATAKANA_ADVANCED') return { primary: '#F43F5E', darkBg: '#881337', title: '片假名進階練習' };
+                return { primary: '#34D399', darkBg: '#064E3B', title: '' };
+            };
+
+            const theme = getThemeConfig();
+
+            if (appMode === 'MENU') {
+                return (
+                    <div className="min-h-screen bg-[#121212] flex items-center justify-center p-6 text-[#E0E0E0]">
+                        <div className="max-w-md w-full bg-[#1E1E1E] rounded-3xl shadow-2xl p-8 border border-gray-800">
+                            <h1 className="text-2xl font-bold text-center mb-1 text-[#FFFFFF]">日語五十音學習中心</h1>
+                            <p className="text-center text-gray-400 mb-6 text-sm">請選擇想要練習的單元</p>
+                            
+                            <div className="space-y-4">
+                                <button 
+                                    onClick={() => { setAppMode('HIRAGANA_BASIC'); setGameState('START'); }}
+                                    className="w-full py-4 px-6 rounded-2xl bg-[#2A2A2A] hover:bg-[#064E3B] border border-gray-700 hover:border-[#34D399] text-left transition-all group flex items-center justify-between"
+                                >
+                                    <div>
+                                        <div className="font-bold text-[#34D399] text-lg">平假名 (基礎五十音)</div>
+                                        <div className="text-xs text-gray-400 mt-1">あいうえお 基礎認讀與五十音總表</div>
+                                    </div>
+                                    <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>
+                                </button>
+
+                                <button 
+                                    onClick={() => { setAppMode('KATAKANA_BASIC'); setGameState('START'); }}
+                                    className="w-full py-4 px-6 rounded-2xl bg-[#2A2A2A] hover:bg-[#881337] border border-gray-700 hover:border-[#F43F5E] text-left transition-all group flex items-center justify-between"
+                                >
+                                    <div>
+                                        <div className="font-bold text-[#F43F5E] text-lg">片假名 (基礎五十音)</div>
+                                        <div className="text-xs text-gray-400 mt-1">アイウエオ 基礎認讀與五十音總表</div>
+                                    </div>
+                                    <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>
+                                </button>
+
+                                <button 
+                                    onClick={() => { setAppMode('HIRAGANA_ADVANCED'); setGameState('START'); }}
+                                    className="w-full py-4 px-6 rounded-2xl bg-[#2A2A2A] hover:bg-[#0369A1] border border-gray-700 hover:border-[#38BDF8] text-left transition-all group flex items-center justify-between"
+                                >
+                                    <div>
+                                        <div className="font-bold text-[#38BDF8] text-lg">平假名 (進階音節)</div>
+                                        <div className="text-xs text-gray-400 mt-1">濁音、半濁音、拗音、長音、促音</div>
+                                    </div>
+                                    <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>
+                                </button>
+
+                                <button 
+                                    onClick={() => { setAppMode('KATAKANA_ADVANCED'); setGameState('START'); }}
+                                    className="w-full py-4 px-6 rounded-2xl bg-[#2A2A2A] hover:bg-[#881337] border border-gray-700 hover:border-[#F43F5E] text-left transition-all group flex items-center justify-between"
+                                >
+                                    <div>
+                                        <div className="font-bold text-[#F43F5E] text-lg">片假名 (進階音節)</div>
+                                        <div className="text-xs text-gray-400 mt-1">外來語濁音、拗音、長音、促音組合</div>
+                                    </div>
+                                    <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (gameState === 'START') {
+                const isAdvanced = appMode.includes('ADVANCED');
+                return (
+                    <div className="min-h-screen bg-[#121212] flex items-center justify-center p-6 text-[#E0E0E0]">
+                        <div className="max-w-md w-full bg-[#1E1E1E] rounded-3xl shadow-2xl p-8 border-t-8" style={{ borderColor: theme.primary }}>
+                            <div className="flex justify-between items-center mb-4">
+                                <button onClick={() => setAppMode('MENU')} className="text-xs px-3 py-1.5 rounded-lg bg-[#2A2A2A] hover:bg-gray-700 text-gray-300 flex items-center gap-1">
+                                    <Home size={14} /> 返回主菜單
+                                </button>
+                            </div>
+                            <h1 className="text-2xl font-bold text-center mb-1 text-[#FFFFFF]">{theme.title}</h1>
+                            <p className="text-center text-gray-400 mb-6 text-sm">{isAdvanced ? '濁音・半濁音・拗音・長音・促音' : 'Hiragana / Katakana Mastery'}</p>
+                            
+                            {isAdvanced && (
+                                <div className="space-y-2 mb-4">
+                                    <label className="block text-xs font-medium text-gray-300">選擇練習分類：</label>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {['ALL', '濁音', '半濁音', '拗音', '長音', '促音'].map(cat => (
+                                            <button 
+                                                key={cat}
+                                                onClick={() => setSelectedCategory(cat)}
+                                                className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all ${
+                                                    selectedCategory === cat 
+                                                        ? 'text-[#121212] border-transparent' 
+                                                        : 'bg-[#2A2A2A] text-gray-300 border-gray-700'
+                                                }`}
+                                                style={{ backgroundColor: selectedCategory === cat ? theme.primary : undefined }}
+                                            >
+                                                {cat === 'ALL' ? '全混合' : cat}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="space-y-4 mb-6">
+                                <p className="font-medium text-sm text-gray-300">選擇測驗題數：</p>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {(isAdvanced ? [10, 20, 30] : [20, 50, 46]).map(num => (
+                                        <button 
+                                            key={num}
+                                            onClick={() => startQuiz(num === 46 ? 46 : num, selectedCategory)}
+                                            className="py-3 rounded-xl border-2 font-bold text-sm transition-all hover:text-[#121212]"
+                                            style={{ borderColor: theme.primary, color: theme.primary }}
+                                            onMouseEnter={(e) => e.target.style.backgroundColor = theme.primary}
+                                            onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = theme.primary; }}
+                                        >
+                                            {num === 46 ? '全部 (46)' : `${num} 題`}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <button 
+                                onClick={() => setGameState('TABLE')}
+                                className="w-full py-3 mb-4 rounded-xl bg-[#2A2A2A] hover:bg-[#333333] border border-gray-700 font-bold text-sm flex items-center justify-center gap-2 transition-all"
+                                style={{ color: theme.primary }}
+                            >
+                                <BookOpen size={18} /> 查看完整對照表 / 音節總表
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (gameState === 'TABLE') {
+                const isAdvanced = appMode.includes('ADVANCED');
+                const isHira = appMode.includes('HIRAGANA');
+                const gridData = isHira ? HIRAGANA_GRID : KATAKANA_GRID;
+                const advancedDataList = isHira ? ADVANCED_HIRAGANA : ADVANCED_KATAKANA;
+
+                return (
+                    <div className="min-h-screen bg-[#121212] flex flex-col items-center p-4 text-[#E0E0E0] pb-12">
+                        <div className="w-full max-w-2xl flex justify-between items-center mb-6 mt-4">
+                            <h1 className="text-xl font-bold text-[#FFFFFF] flex items-center gap-2">
+                                <BookOpen style={{ color: theme.primary }} /> {theme.title}總表 (點擊發音)
+                            </h1>
+                            <button onClick={() => setGameState('START')} className="p-2 bg-[#1E1E1E] hover:bg-gray-800 rounded-full transition-colors border border-gray-800">
+                                <Home size={20} />
+                            </button>
+                        </div>
+
+                        <div className="w-full max-w-2xl bg-[#1E1E1E] rounded-3xl shadow-2xl p-6 border border-gray-800 overflow-x-auto max-h-[75vh]">
+                            {!isAdvanced ? (
+                                <div className="min-w-[400px]">
+                                    <div className="grid grid-cols-6 gap-2 text-center font-bold text-gray-400 mb-3 text-sm">
+                                        <div>行 / 段</div>
+                                        <div>{isHira ? 'あ段' : 'ア段'}</div>
+                                        <div>{isHira ? 'い段' : 'イ段'}</div>
+                                        <div>{isHira ? 'う段' : 'ウ段'}</div>
+                                        <div>{isHira ? 'え段' : 'エ段'}</div>
+                                        <div>{isHira ? 'お段' : 'オ段'}</div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        {gridData.map((row, rIdx) => (
+                                            <div key={rIdx} className="grid grid-cols-6 gap-2 items-center text-center">
+                                                <div className="text-xs text-gray-500 font-medium py-2">
+                                                    {rIdx === 0 ? (isHira ? 'あ行' : 'ア行') : ROW_NAMES[rIdx]}
+                                                </div>
+                                                {row.map((cell, cIdx) => (
+                                                    cell ? (
+                                                        <button
+                                                            key={cIdx}
+                                                            onClick={() => speak(cell.kana)}
+                                                            className="bg-[#2A2A2A] border border-gray-700 rounded-xl p-2 flex flex-col items-center justify-center transition-all group active:scale-95 hover:border-current"
+                                                        >
+                                                            <span className="text-xl font-bold text-white">{cell.kana}</span>
+                                                            <span className="text-[10px] text-gray-400">{cell.romaji}</span>
+                                                        </button>
+                                                    ) : (
+                                                        <div key={cIdx} className="bg-transparent rounded-xl p-2"></div>
+                                                    )
+                                                ))}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-6">
+                                    {['濁音', '半濁音', '拗音', '長音', '促音'].map(cat => {
+                                        const items = advancedDataList.filter(i => i.category === cat);
+                                        return (
+                                            <div key={cat}>
+                                                <h3 className="text-sm font-bold mb-3 border-b border-gray-800 pb-1" style={{ color: theme.primary }}>{cat}</h3>
+                                                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                                                    {items.map((item, idx) => (
+                                                        <button
+                                                            key={idx}
+                                                            onClick={() => speak(item.kana)}
+                                                            className="bg-[#2A2A2A] border border-gray-700 rounded-xl p-3 flex flex-col items-center justify-center transition-all group active:scale-95"
+                                                        >
+                                                            <span className="text-lg font-bold text-white">{item.kana}</span>
+                                                            <span className="text-[10px] text-gray-400 mt-1">{item.romaji}</span>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+
+                        <button 
+                            onClick={() => setGameState('START')}
+                            className="mt-6 px-8 py-3 text-[#121212] rounded-xl font-bold transition-colors"
+                            style={{ backgroundColor: theme.primary }}
+                        >
+                            返回設定選單
+                        </button>
+                    </div>
+                );
+            }
+
+            if (gameState === 'QUIZ') {
+                const current = questions[currentIndex];
+                return (
+                    <div className="min-h-screen bg-[#121212] flex flex-col items-center p-4 text-[#E0E0E0]">
+                        <div className="w-full max-w-lg flex justify-between items-center mb-8 mt-4">
+                            <div className="bg-[#1E1E1E] px-4 py-2 rounded-full shadow-sm border border-gray-800 text-sm font-medium text-gray-300">
+                                {current.category ? `[${current.category}] ` : ''}題目：{currentIndex + 1} / {questions.length}
+                            </div>
+                            <button onClick={() => setGameState('START')} className="p-2 bg-[#1E1E1E] hover:bg-gray-800 rounded-full transition-colors border border-gray-800">
+                                <Home size={20} />
+                            </button>
+                        </div>
+
+                        <div className="w-full max-w-lg bg-[#1E1E1E] rounded-3xl shadow-2xl p-10 flex flex-col items-center mb-8 transition-all border border-gray-800">
+                            <div className="text-6xl sm:text-7xl font-bold mb-8 text-[#FFFFFF] text-center tracking-wider">
+                                {current.kana}
+                            </div>
+                            
+                            <button 
+                                onClick={() => speak(current.kana)}
+                                className="flex items-center gap-2 transition-transform hover:scale-105"
+                                style={{ color: theme.primary }}
+                            >
+                                <Volume2 size={24} /> <span className="text-sm font-medium">點擊重新聆聽</span>
+                            </button>
+                        </div>
+
+                        <div className="w-full max-w-lg grid grid-cols-2 gap-4">
+                            {current.options.map((option, idx) => {
+                                const isThisSelected = selectedOption === option.romaji;
+                                const isThisCorrect = option.romaji === current.romaji;
+                                
+                                let buttonClass = "py-5 text-xl font-bold rounded-2xl bg-[#1E1E1E] shadow-sm border-2 border-gray-800 transition-all active:scale-95 text-[#FFFFFF] truncate px-2 ";
+                                let styleOverride = {};
+
+                                if (selectedOption) {
+                                    if (isThisCorrect) {
+                                        buttonClass += "opacity-100";
+                                        styleOverride = { borderColor: theme.primary, backgroundColor: theme.darkBg, color: theme.primary };
+                                    } else if (isThisSelected) {
+                                        buttonClass += "border-[#F87171] bg-[#7F1D1D] text-[#F87171]";
+                                    } else {
+                                        buttonClass += "opacity-40";
+                                    }
+                                } else {
+                                    buttonClass += "hover:shadow-md";
+                                }
+
+                                return (
+                                    <button 
+                                        key={idx}
+                                        disabled={selectedOption !== null}
+                                        onClick={() => handleAnswer(option)}
+                                        className={buttonClass}
+                                        style={styleOverride}
+                                    >
+                                        {option.romaji}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                );
+            }
+
+            if (gameState === 'RESULT') {
+                const percentage = Math.round((score / questions.length) * 100);
+                return (
+                    <div className="min-h-screen bg-[#121212] flex flex-col items-center p-6 text-[#E0E0E0]">
+                        <div className="max-w-2xl w-full bg-[#1E1E1E] rounded-3xl shadow-2xl overflow-hidden border border-gray-800">
+                            <div className="p-8 text-white text-center border-b border-gray-800" style={{ backgroundColor: theme.darkBg }}>
+                                <Trophy className="mx-auto mb-4" style={{ color: theme.primary }} size={48} />
+                                <h2 className="text-2xl font-bold">測驗完成！</h2>
+                                <div className="text-5xl font-black my-4" style={{ color: theme.primary }}>{percentage}%</div>
+                                <p className="opacity-90">得分：{score} / {questions.length}</p>
+                            </div>
+
+                            <div className="p-8">
+                                <h3 className="flex items-center gap-2 font-bold text-lg mb-4" style={{ color: theme.primary }}>
+                                    <AlertCircle size={20} /> 弱點複習清單 ({incorrectAnswers.length})
+                                </h3>
+                                
+                                {incorrectAnswers.length > 0 ? (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8 max-h-64 overflow-y-auto pr-2">
+                                        {incorrectAnswers.map((item, idx) => (
+                                            <div key={idx} className="flex items-center justify-between p-4 bg-[#2A2A2A] rounded-xl border border-gray-800">
+                                                <div className="flex items-center gap-3 overflow-hidden">
+                                                    <span className="text-xl font-bold text-white shrink-0">{item.kana}</span>
+                                                    <span className="text-gray-500 text-sm">→</span>
+                                                    <span className="text-sm font-medium truncate" style={{ color: theme.primary }}>{item.romaji}</span>
+                                                </div>
+                                                <button 
+                                                    onClick={() => speak(item.kana)}
+                                                    className="p-2 rounded-full transition-colors shrink-0"
+                                                    style={{ color: theme.primary }}
+                                                >
+                                                    <Volume2 size={18} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-8 bg-[#2A2A2A] rounded-xl mb-8 border border-gray-800">
+                                        <p className="font-medium" style={{ color: theme.primary }}>太棒了！這次測驗完全掌握。</p>
+                                    </div>
+                                )}
+
+                                <div className="flex gap-4">
+                                    <button 
+                                        onClick={() => startQuiz(questions.length, selectedCategory)}
+                                        className="flex-1 py-4 text-[#121212] rounded-2xl font-bold flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
+                                        style={{ backgroundColor: theme.primary }}
+                                    >
+                                        <RefreshCw size={20} /> 再次挑戰
+                                    </button>
+                                    <button 
+                                        onClick={() => setGameState('START')}
+                                        className="py-4 px-6 bg-[#2A2A2A] hover:bg-gray-700 text-gray-300 rounded-2xl font-bold transition-colors"
+                                    >
+                                        返回設定
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
