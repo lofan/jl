@@ -1,0 +1,23 @@
+You are an expert web developer and Japanese language teacher.
+Create a single-file, responsive web application using React (loaded via CDN with Tailwind CSS for styling) that functions as an interactive learning and quiz tool for [INSERT TOPIC/SUBJECT HERE, e.g., Japanese pitch accent, grammar rules, vocabulary].
+
+### Core Requirements:
+1. **Single-File Architecture:** 
+   - Must be a standalone .html file containing Tailwind CSS CDN, React 18 UMD, ReactDOM, and Babel for JSX transformation so it runs directly in any browser without a build step.
+2. **Design & Theme:**
+   - Modern dark mode aesthetic (e.g., background #121212, cards #1E1E1E, text #E0E0E0).
+   - Use a distinct accent color theme appropriate for the topic.
+   - Clean, mobile-friendly layout with readable typography.
+3. **Data Structure:**
+   - Include a robust, built-in dataset containing detailed examples, definitions, categories, and attributes relevant to the topic.
+4. **Interactive Features & App Flow:**
+   - **Main Menu / Dashboard:** Clear options to start quizzes (with variable question counts like 5, 10, 15) or view comprehensive reference tables.
+   - **Reference / Study Table:** A dedicated view where users can browse all items systematically.
+   - **Quiz Engine:** Multiple-choice questions presenting the problem clearly with randomized distractor options. Include instant visual feedback (success/error states) and timed auto-progression.
+   - **Audio Integration (if applicable):** Utilize the browser's native Web Speech API (`speechSynthesis`) to pronounce words/phrases dynamically.
+   - **Result & Review Loop:** A final score breakdown screen with percentage calculations and a specialized "Weakness Review / Incorrect Answers List" allowing users to review and re-listen to missed items.
+5. **Technical Stability:**
+   - Prevent state locking bugs between retries. Ensure clean state resets when restarting quizzes or switching views.
+   - Use modular functional components with React hooks (`useState`, `useEffect`, `useCallback`).
+
+Please generate the complete, production-ready HTML code block.
