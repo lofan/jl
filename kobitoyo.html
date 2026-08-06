@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>恋人よ (Koibito yo) - Japanese Vocabulary & Quiz Master</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#151f32',
+                            900: '#0f172a',
+                            950: '#090d16',
+                        },
+                        rose: {
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-rose-500 selection:text-white">
+
+    <!-- HEADER -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-rose-500 to-sky-500 p-2 rounded-xl text-white shadow-lg shadow-rose-500/20">
+                    <i data-lucide="music" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">恋人よ (Koibito yo)</h1>
+                    <p class="text-xs text-slate-400">Japanese Vocabulary & Quiz Web App</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <!-- Sound Toggle -->
+                <button id="soundToggle" onclick="toggleGlobalSound()" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm transition border border-slate-700">
+                    <i data-lucide="volume-2" id="soundIcon" class="w-4 h-4 text-rose-500"></i>
+                    <span id="soundText" class="hidden sm:inline">Audio: On</span>
+                </button>
+
+                <!-- YouTube Link -->
+                <a href="https://www.youtube.com/watch?v=mx93cqZt4Kc" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-sm font-medium transition shadow-lg shadow-rose-600/20">
+                    <i data-lucide="youtube" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Watch on YouTube</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- YOUTUBE EMBED & SONG INFO CARD -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 shadow-xl backdrop-blur">
+            <div class="lg:col-span-1 space-y-4">
+                <div class="inline-flex items-center space-x-2 px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-semibold">
+                    <i data-lucide="disc" class="w-3.5 h-3.5 animate-spin"></i>
+                    <span>Featured Masterpiece</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">恋人よ (Koibito yo)</h2>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    Explore key vocabulary and test your comprehension from this classic Japanese lyric video featuring Mayumi Itowa & Naoko Kawai. Master expressions of autumn dusk, parting, and emotional winter cold.
+                </p>
+                <div class="flex flex-wrap gap-2 pt-2">
+                    <span class="px-2.5 py-1 bg-slate-800 text-slate-300 rounded-lg text-xs border border-slate-700">JLPT N3-N2 Vocab</span>
+                    <span class="px-2.5 py-1 bg-slate-800 text-slate-300 rounded-lg text-xs border border-slate-700">Poetic Japanese</span>
+                    <span class="px-2.5 py-1 bg-slate-800 text-slate-300 rounded-lg text-xs border border-slate-700">Listening Practice</span>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2">
+                <div class="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-slate-800 bg-black">
+                    <iframe 
+                        class="absolute inset-0 w-full h-full"
+                        src="https://www.youtube-nocookie.com/embed/mx93cqZt4Kc" 
+                        title="Koibito yo Lyric Video" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- NAVIGATION TABS -->
+        <div class="flex border-b border-slate-800 space-x-8">
+            <button onclick="switchTab('vocab')" id="tab-vocab-btn" class="pb-4 font-semibold text-sm sm:text-base flex items-center space-x-2 border-b-2 border-rose-500 text-rose-500 transition">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+                <span>Song Vocabulary Guide (詞の語彙)</span>
+            </button>
+            <button onclick="switchTab('quiz')" id="tab-quiz-btn" class="pb-4 font-semibold text-sm sm:text-base flex items-center space-x-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition">
+                <i data-lucide="help-circle" class="w-5 h-5"></i>
+                <span>Interactive Quiz (クイズ)</span>
+            </button>
+        </div>
+
+        <!-- TAB 1: VOCABULARY GUIDE -->
+        <div id="tab-vocab-content" class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-xl font-bold text-white">Essential Song Vocabulary</h3>
+                    <p class="text-sm text-slate-400">Click the speaker icon next to any word or sentence to hear native Japanese pronunciation.</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs text-slate-400">Filter POS:</span>
+                    <select id="posFilter" onchange="filterVocabulary()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-rose-500">
+                        <option value="all">All Parts of Speech</option>
+                        <option value="Noun">Noun (名詞)</option>
+                        <option value="Verb">Verb (動詞)</option>
+                        <option value="Adjective">Adjective (形容詞)</option>
+                        <option value="Adverb">Adverb (副詞)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Vocabulary Cards Grid -->
+            <div id="vocabGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+
+        <!-- TAB 2: INTERACTIVE QUIZ -->
+        <div id="tab-quiz-content" class="hidden space-y-6">
+            <!-- Quiz Start Screen -->
+            <div id="quizStartScreen" class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center max-w-xl mx-auto space-y-6 shadow-xl">
+                <div class="w-16 h-16 bg-rose-500/10 text-rose-500 rounded-2xl flex items-center justify-center mx-auto border border-rose-500/20">
+                    <i data-lucide="award" class="w-8 h-8"></i>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-2xl font-bold text-white">Test Your Song Comprehension</h3>
+                    <p class="text-sm text-slate-400">Challenge yourself with a 12-question quiz covering vocabulary, definitions, and context lines from "Koibito yo".</p>
+                </div>
+                <button onclick="startQuiz()" class="w-full py-3.5 px-6 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-semibold rounded-xl shadow-lg shadow-rose-600/30 transition transform active:scale-95 flex items-center justify-center space-x-2">
+                    <span>Start Quiz Now</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Quiz Active Screen -->
+            <div id="quizActiveScreen" class="hidden max-w-2xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl">
+                <!-- Progress & Score Header -->
+                <div class="flex items-center justify-between text-sm">
+                    <span id="quizProgressText" class="text-slate-400 font-medium">Question 1 of 12</span>
+                    <span id="quizScoreText" class="text-rose-400 font-semibold">Score: 0</span>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="quizProgressBar" class="bg-gradient-to-r from-rose-500 to-sky-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="space-y-4 pt-2">
+                    <div class="flex items-center justify-between">
+                        <span id="quizPOSBadge" class="px-2.5 py-1 rounded-md bg-slate-800 text-sky-400 text-xs font-semibold border border-slate-700">Noun</span>
+                        <button onclick="playQuizContextAudio()" class="flex items-center space-x-1.5 text-xs text-slate-400 hover:text-rose-400 bg-slate-800/80 hover:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 transition">
+                            <i data-lucide="volume-2" class="w-3.5 h-3.5 text-rose-500"></i>
+                            <span>Listen Lyric Context</span>
+                        </button>
+                    </div>
+
+                    <!-- Lyric Context Quote -->
+                    <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
+                        <p class="text-xs text-slate-400 uppercase tracking-wider font-medium">Lyric Context Line:</p>
+                        <p id="quizLyricContext" class="text-lg font-medium text-white">枯葉散る夕暮れは</p>
+                    </div>
+
+                    <!-- Question Prompt -->
+                    <h4 id="quizQuestionPrompt" class="text-base sm:text-lg font-bold text-slate-200">
+                        What does the word <span id="quizTargetWord" class="text-rose-400 underline decoration-rose-500/50">枯葉 (kareha)</span> mean in this context?
+                    </h4>
+
+                    <!-- Options Grid -->
+                    <div id="quizOptionsGrid" class="grid grid-cols-1 gap-3 pt-2">
+                        <!-- Injected via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Feedback & Next Button -->
+                <div id="quizFeedbackContainer" class="hidden pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div id="quizFeedbackText" class="text-sm font-medium"></div>
+                    <button onclick="nextQuizQuestion()" class="w-full sm:w-auto px-6 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-semibold rounded-xl transition shadow-md shadow-rose-600/20 flex items-center justify-center space-x-2">
+                        <span id="nextBtnText">Next Question</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Results Screen -->
+            <div id="quizResultsScreen" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center max-w-xl mx-auto space-y-6 shadow-xl">
+                <div class="w-20 h-20 bg-emerald-500/10 text-emerald-400 rounded-3xl flex items-center justify-center mx-auto border border-emerald-500/20 shadow-lg shadow-emerald-500/10">
+                    <i data-lucide="trophy" class="w-10 h-10"></i>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-2xl font-bold text-white">Quiz Completed!</h3>
+                    <p id="finalScoreDisplay" class="text-lg font-semibold text-rose-400">You scored 12 out of 12 (100%)</p>
+                    <p id="performanceCommentary" class="text-sm text-slate-300 leading-relaxed pt-2"></p>
+                </div>
+                <button onclick="restartQuiz()" class="w-full py-3.5 px-6 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-semibold rounded-xl shadow-lg shadow-rose-600/30 transition transform active:scale-95 flex items-center justify-center space-x-2">
+                    <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                    <span>Try Again</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-slate-900/40 mt-16 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <p>© 2026 Japanese Vocabulary & Quiz Web Application • Based on "恋人よ"</p>
+            <div class="flex items-center space-x-6">
+                <a href="https://www.youtube.com/watch?v=mx93cqZt4Kc" target="_blank" rel="noopener noreferrer" class="hover:text-slate-300 transition flex items-center space-x-1">
+                    <i data-lucide="youtube" class="w-3.5 h-3.5 text-rose-500"></i>
+                    <span>YouTube Source</span>
+                </a>
+                <span class="text-slate-700">|</span>
+                <span>Web Speech API Powered</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- VOCABULARY DATA (10 Key Words from "恋人よ") ---
+        const vocabData = [
+            {
+                id: 1,
+                kanji: "枯葉",
+                kana: "かれは",
+                romaji: "kareha",
+                meaning: "Withered leaves / Fallen leaves",
+                pos: "Noun",
+                explanation: "Refers to dead or dried leaves falling during late autumn, setting a melancholy tone.",
+                lyricContext: "枯葉散る夕暮れは (Kareha chiru yūgure wa)"
+            },
+            {
+                id: 2,
+                kanji: "夕暮れ",
+                kana: "ゆうぐれ",
+                romaji: "yūgure",
+                meaning: "Evening dusk / Nightfall",
+                pos: "Noun",
+                explanation: "The twilight period when day transitions into evening, symbolizing loneliness in the song.",
+                lyricContext: "枯葉散る夕暮れは (Kareha chiru yūgure wa)"
+            },
+            {
+                id: 3,
+                kanji: "語る",
+                kana: "かたる",
+                romaji: "kataru",
+                meaning: "To talk / To tell / To recite",
+                pos: "Verb",
+                explanation: "Used here in the form 'monogatari' or describing how the cold weather tells of coming winter.",
+                lyricContext: "来る日の寒さをものがたり (Kuru hi no samusa o monogatari)"
+            },
+            {
+                id: 4,
+                kanji: "恋人",
+                kana: "こいびと",
+                romaji: "koibito",
+                meaning: "Lover / Sweetheart",
+                pos: "Noun",
+                explanation: "The central vocative address of the song ('Koibito yo'), calling out to a departed lover.",
+                lyricContext: "恋人よ そばにいて (Koibito yo soba ni ite)"
+            },
+            {
+                id: 5,
+                kanji: "凍える",
+                kana: "こごえる",
+                romaji: "kogoeru",
+                meaning: "To freeze / To be chilled",
+                pos: "Verb",
+                explanation: "Describes physical and emotional numbness from severe cold and heartbreak.",
+                lyricContext: "こごえる私のそばにいてよ (Kogoeru watashi no soba ni iteyo)"
+            },
+            {
+                id: 6,
+                kanji: "冗談",
+                kana: "じょうだん",
+                romaji: "jōdan",
+                meaning: "Joke / Jest",
+                pos: "Noun",
+                explanation: "The singer wishes the painful farewell was merely a joke they could laugh off.",
+                lyricContext: "冗談だと言ってほしい (Jōdandayo to waratte hoshī)"
+            },
+            {
+                id: 7,
+                kanji: "砂利道",
+                kana: "じゃりみち",
+                romaji: "jarimichi",
+                meaning: "Gravel road / Pebble path",
+                pos: "Noun",
+                explanation: "A path paved with small stones where footsteps crunch as runners or walkers pass by.",
+                lyricContext: "砂利道を駆け足で (Zarimichi o kakeashi de)"
+            },
+            {
+                id: 8,
+                kanji: "忘却",
+                kana: "ぼうきゃく",
+                romaji: "bōkyaku",
+                meaning: "Oblivion / Complete forgetting",
+                pos: "Noun",
+                explanation: "The state of being forgotten or wishing to erase memories of the past.",
+                lyricContext: "まるで忘却のぞむように (Marude bōkyaku nozomu yō ni)"
+            },
+            {
+                id: 9,
+                kanji: "季節",
+                kana: "きせつ",
+                romaji: "kisetsu",
+                meaning: "Season",
+                pos: "Noun",
+                explanation: "The relentless changing of seasons that continues despite personal heartbreak.",
+                lyricContext: "季節はめぐってくるけど (Kisetsu wa megutte kurukedo)"
+            },
+            {
+                id: 10,
+                kanji: "無情",
+                kana: "むじょう",
+                romaji: "mujō",
+                meaning: "Heartless / Merciless / Unfeeling",
+                pos: "Adjective",
+                explanation: "Describes dreams that shine briefly and vanish without mercy.",
+                lyricContext: "光っては消える 無情の夢よ (Hikatte wa kieru mujō no yume yo)"
+            }
+        ];
+
+        // --- QUIZ DATA (12 Multiple Choice Questions) ---
+        const quizQuestions = [
+            {
+                word: "枯葉 (kareha)",
+                pos: "Noun",
+                lyricContext: "枯葉散る夕暮れは",
+                prompt: "What is the English meaning of '枯葉' (kareha)?",
+                options: [
+                    "Green leaves",
+                    "Withered leaves / Fallen leaves",
+                    "Spring blossoms",
+                    "Pine needles"
+                ],
+                correctIndex: 1,
+                explanation: "'Kareha' combines 枯れる (to wither) and 葉 (leaf), denoting withered autumn leaves."
+            },
+            {
+                word: "夕暮れ (yūgure)",
+                pos: "Noun",
+                lyricContext: "枯葉散る夕暮れは",
+                prompt: "What time of day does '夕暮れ' (yūgure) refer to?",
+                options: [
+                    "Early sunrise",
+                    "Midday noon",
+                    "Evening dusk / Twilight",
+                    "Midnight"
+                ],
+                correctIndex: 2,
+                explanation: "'Yūgure' specifically means evening dusk or twilight when the sun sets."
+            },
+            {
+                word: "語る (kataru)",
+                pos: "Verb",
+                lyricContext: "来る日の寒さをものがたり",
+                prompt: "What does '語る / ものがたり' (kataru / monogatari) mean in this context?",
+                options: [
+                    "To tell a story / to speak of",
+                    "To run quickly",
+                    "To forget completely",
+                    "To laugh out loud"
+                ],
+                correctIndex: 0,
+                explanation: "'Monogatari' comes from monogataru (to tell a story or narrate), suggesting the cold weather tells of winter."
+            },
+            {
+                word: "恋人 (koibito)",
+                pos: "Noun",
+                lyricContext: "恋人よ そばにいて",
+                prompt: "Who is being addressed as '恋人' (koibito)?",
+                options: [
+                    "A close friend",
+                    "A teacher",
+                    "A lover / Sweetheart",
+                    "A family member"
+                ],
+                correctIndex: 2,
+                explanation: "'Koibito' translates directly to lover or sweetheart."
+            },
+            {
+                word: "凍える (kogoeru)",
+                pos: "Verb",
+                lyricContext: "こごえる私のそばにいてよ",
+                prompt: "What physical sensation does '凍える' (kogoeru) describe?",
+                options: [
+                    "Burning with fever",
+                    "Freezing / Chilled to the bone",
+                    "Sweating from heat",
+                    "Dizziness"
+                ],
+                correctIndex: 1,
+                explanation: "'Kogoeru' means to freeze or become numb from cold."
+            },
+            {
+                word: "冗談 (jōdan)",
+                pos: "Noun",
+                lyricContext: "冗談だと言ってほしい",
+                prompt: "What does '冗談' (jōdan) mean?",
+                options: [
+                    "A serious promise",
+                    "A tragic mistake",
+                    "A joke / Jest",
+                    "A lie"
+                ],
+                correctIndex: 2,
+                explanation: "'Jōdan' means a joke or jest; the singer wishes the breakup was just a joke."
+            },
+            {
+                word: "砂利道 (jarimichi)",
+                pos: "Noun",
+                lyricContext: "砂利道を駆け足で",
+                prompt: "What kind of path is a '砂利道' (jarimichi)?",
+                options: [
+                    "A paved highway",
+                    "A gravel road / Pebble path",
+                    "A sandy beach",
+                    "A muddy forest trail"
+                ],
+                correctIndex: 1,
+                explanation: "'Jari' means gravel/pebbles and 'michi' means road."
+            },
+            {
+                word: "忘却 (bōkyaku)",
+                pos: "Noun",
+                lyricContext: "まるで忘却のぞむように",
+                prompt: "What is the meaning of '忘却' (bōkyaku)?",
+                options: [
+                    "Eternal remembrance",
+                    "Oblivion / Forgetting",
+                    "Deep sadness",
+                    "Forgiveness"
+                ],
+                correctIndex: 1,
+                explanation: "'Bōkyaku' refers to oblivion, obliteration from memory, or forgetting."
+            },
+            {
+                word: "季節 (kisetsu)",
+                pos: "Noun",
+                lyricContext: "季節はめぐってくるけど",
+                prompt: "What does '季節' (kisetsu) mean?",
+                options: [
+                    "Weather",
+                    "Season",
+                    "Year",
+                    "Time of day"
+                ],
+                correctIndex: 1,
+                explanation: "'Kisetsu' means season (spring, summer, autumn, winter)."
+            },
+            {
+                word: "無情 (mujō)",
+                pos: "Adjective",
+                lyricContext: "光っては消える 無情の夢よ",
+                prompt: "What does '無情' (mujō) describe about the dream?",
+                options: [
+                    "Heartless / Merciless / Unfeeling",
+                    "Warm and comforting",
+                    "Eternal and lasting",
+                    "Bright and cheerful"
+                ],
+                correctIndex: 0,
+                explanation: "'Mujō' means unfeeling, heartless, or merciless."
+            },
+            {
+                word: "そば (soba)",
+                pos: "Noun",
+                lyricContext: "恋人よ そばにいて",
+                prompt: "In the phrase 'そばにいて', what does 'そば' (soba) mean?",
+                options: [
+                    "Far away",
+                    "Behind",
+                    "Side / Beside / Close by",
+                    "In front"
+                ],
+                correctIndex: 2,
+                explanation: "'Soba' means side or proximity. 'Soba ni ite' means 'stay by my side'."
+            },
+            {
+                word: "笑って (waratte)",
+                pos: "Verb",
+                lyricContext: "冗談だと言って 笑ってほしい",
+                prompt: "What is the dictionary form (verb group) of '笑って' (waratte)?",
+                options: [
+                    "泣く (naku - to cry)",
+                    "笑う (warau - to laugh / smile)",
+                    "怒る (okoru - to get angry)",
+                    "歌う (utau - to sing)"
+                ],
+                correctIndex: 1,
+                explanation: "'Waratte' is the te-form of 笑う (warau), meaning to laugh or smile."
+            }
+        ];
+
+        // --- GLOBAL STATE ---
+        let globalSoundEnabled = true;
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let selectedAnswerIndex = null;
+        let isAnswerSubmitted = false;
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderVocabulary(vocabData);
+        });
+
+        // --- GLOBAL SOUND TOGGLE ---
+        function toggleGlobalSound() {
+            globalSoundEnabled = !globalSoundEnabled;
+            const icon = document.getElementById('soundIcon');
+            const text = document.getElementById('soundText');
+            if (globalSoundEnabled) {
+                icon.setAttribute('data-lucide', 'volume-2');
+                text.textContent = 'Audio: On';
+            } else {
+                icon.setAttribute('data-lucide', 'volume-x');
+                text.textContent = 'Audio: Off';
+            }
+            lucide.createIcons();
+        }
+
+        // --- TTS PRONUNCIATION (Web Speech API) ---
+        function speakJapanese(text) {
+            if (!globalSoundEnabled) return;
+            if (!('speechSynthesis' in window)) {
+                console.warn('Speech synthesis not supported in this browser.');
+                return;
+            }
+            window.speechSynthesis.cancel(); // Stop any ongoing speech
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.9; // Slightly slower for language learners
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // --- TAB SWITCHING ---
+        function switchTab(tabName) {
+            const vocabBtn = document.getElementById('tab-vocab-btn');
+            const quizBtn = document.getElementById('tab-quiz-btn');
+            const vocabContent = document.getElementById('tab-vocab-content');
+            const quizContent = document.getElementById('tab-quiz-content');
+
+            if (tabName === 'vocab') {
+                vocabBtn.className = 'pb-4 font-semibold text-sm sm:text-base flex items-center space-x-2 border-b-2 border-rose-500 text-rose-500 transition';
+                quizBtn.className = 'pb-4 font-semibold text-sm sm:text-base flex items-center space-x-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition';
+                vocabContent.classList.remove('hidden');
+                quizContent.classList.add('hidden');
+            } else {
+                quizBtn.className = 'pb-4 font-semibold text-sm sm:text-base flex items-center space-x-2 border-b-2 border-rose-500 text-rose-500 transition';
+                vocabBtn.className = 'pb-4 font-semibold text-sm sm:text-base flex items-center space-x-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition';
+                quizContent.classList.remove('hidden');
+                vocabContent.classList.add('hidden');
+            }
+        }
+
+        // --- TAB 1: RENDER VOCABULARY ---
+        function renderVocabulary(data) {
+            const grid = document.getElementById('vocabGrid');
+            grid.innerHTML = '';
+
+            if (data.length === 0) {
+                grid.innerHTML = `<div class="col-span-2 text-center py-12 text-slate-500">No vocabulary found matching the filter.</div>`;
+                return;
+            }
+
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 hover:border-slate-700 transition shadow-lg flex flex-col justify-between';
+                
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-baseline space-x-3">
+                                <span class="text-2xl font-bold text-white tracking-wide">${item.kanji}</span>
+                                <span class="text-sm font-medium text-rose-400">【${item.kana}】</span>
+                                <span class="text-xs text-slate-400 italic">(${item.romaji})</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2 py-0.5 rounded text-xs font-semibold bg-slate-800 text-sky-400 border border-slate-700">${item.pos}</span>
+                                <button onclick="speakJapanese('${item.kanji}')" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-rose-400 transition border border-slate-700" title="Pronounce word">
+                                    <i data-lucide="volume-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="text-base font-semibold text-slate-200">${item.meaning}</p>
+                            <p class="text-xs text-slate-400 pt-1 leading-relaxed">${item.explanation}</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+                        <div class="space-y-0.5">
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500">Lyric Context:</span>
+                            <p class="text-xs font-medium text-slate-300 italic">"${item.lyricContext}"</p>
+                        </div>
+                        <button onclick="speakJapanese('${item.lyricContext.split(' ')[0]}')" class="p-1.5 rounded-lg bg-slate-800/50 hover:bg-slate-800 text-slate-400 hover:text-rose-400 transition" title="Pronounce context word">
+                            <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function filterVocabulary() {
+            const filterValue = document.getElementById('posFilter').value;
+            if (filterValue === 'all') {
+                renderVocabulary(vocabData);
+            } else {
+                const filtered = vocabData.filter(item => item.pos === filterValue);
+                renderVocabulary(filtered);
+            }
+        }
+
+        // --- TAB 2: QUIZ LOGIC ---
+        function startQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            document.getElementById('quizStartScreen').classList.add('hidden');
+            document.getElementById('quizResultsScreen').classList.add('hidden');
+            document.getElementById('quizActiveScreen').classList.remove('hidden');
+            loadQuizQuestion();
+        }
+
+        function loadQuizQuestion() {
+            selectedAnswerIndex = null;
+            isAnswerSubmitted = false;
+            const q = quizQuestions[currentQuizIndex];
+
+            document.getElementById('quizProgressText').textContent = `Question ${currentQuizIndex + 1} of ${quizQuestions.length}`;
+            document.getElementById('quizScoreText').textContent = `Score: ${quizScore}`;
+            
+            const progressPercent = ((currentQuizIndex) / quizQuestions.length) * 100;
+            document.getElementById('quizProgressBar').style.width = `${progressPercent}%`;
+
+            document.getElementById('quizPOSBadge').textContent = q.pos;
+            document.getElementById('quizLyricContext').textContent = q.lyricContext;
+            document.getElementById('quizTargetWord').textContent = q.word;
+
+            const optionsGrid = document.getElementById('quizOptionsGrid');
+            optionsGrid.innerHTML = '';
+
+            q.options.forEach((option, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left p-4 rounded-xl bg-slate-950/60 hover:bg-slate-800 border border-slate-800 text-slate-200 font-medium transition flex items-center justify-between group';
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-6 h-6 rounded-lg bg-slate-800 group-hover:bg-rose-500/20 group-hover:text-rose-400 flex items-center justify-center text-xs font-bold text-slate-400 transition">${String.fromCharCode(65 + idx)}</span>
+                        <span>${option}</span>
+                    </div>
+                `;
+                btn.onclick = () => selectQuizOption(idx, btn);
+                optionsGrid.appendChild(btn);
+            });
+
+            document.getElementById('quizFeedbackContainer').classList.add('hidden');
+            lucide.createIcons();
+        }
+
+        function playQuizContextAudio() {
+            const q = quizQuestions[currentQuizIndex];
+            const targetWord = q.word.split(' ')[0];
+            speakJapanese(targetWord);
+        }
+
+        function selectQuizOption(idx, btnElement) {
+            if (isAnswerSubmitted) return;
+            isAnswerSubmitted = true;
+
+            selectedAnswerIndex = idx;
+            const q = quizQuestions[currentQuizIndex];
+            const optionsGrid = document.getElementById('quizOptionsGrid');
+            const buttons = optionsGrid.children;
+
+            // Pronounce target word upon answering
+            speakJapanese(q.word.split(' ')[0]);
+
+            if (idx === q.correctIndex) {
+                quizScore++;
+                btnElement.className = 'w-full text-left p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-medium flex items-center justify-between transition shadow-lg shadow-emerald-500/5';
+                btnElement.innerHTML += `<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>`;
+            } else {
+                btnElement.className = 'w-full text-left p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 font-medium flex items-center justify-between transition shadow-lg shadow-rose-500/5';
+                btnElement.innerHTML += `<i data-lucide="x-circle" class="w-5 h-5 text-rose-400"></i>`;
+
+                // Highlight correct answer
+                const correctBtn = buttons[q.correctIndex];
+                correctBtn.className = 'w-full text-left p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-medium flex items-center justify-between transition';
+            }
+
+            document.getElementById('quizScoreText').textContent = `Score: ${quizScore}`;
+
+            // Show feedback container
+            const feedbackContainer = document.getElementById('quizFeedbackContainer');
+            const feedbackText = document.getElementById('quizFeedbackText');
+            feedbackContainer.classList.remove('hidden');
+
+            if (idx === q.correctIndex) {
+                feedbackText.innerHTML = `<span class="text-emerald-400 font-bold">Correct!</span> <span class="text-slate-300">${q.explanation}</span>`;
+            } else {
+                feedbackText.innerHTML = `<span class="text-rose-400 font-bold">Incorrect.</span> <span class="text-slate-300">${q.explanation}</span>`;
+            }
+
+            // Update next button text if last question
+            const nextBtnText = document.getElementById('nextBtnText');
+            if (currentQuizIndex === quizQuestions.length - 1) {
+                nextBtnText.textContent = "View Results";
+            } else {
+                nextBtnText.textContent = "Next Question";
+            }
+
+            lucide.createIcons();
+        }
+
+        function nextQuizQuestion() {
+            currentQuizIndex++;
+            if (currentQuizIndex < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                showQuizResults();
+            }
+        }
+
+        function showQuizResults() {
+            document.getElementById('quizActiveScreen').classList.add('hidden');
+            document.getElementById('quizResultsScreen').classList.remove('hidden');
+
+            const percentage = Math.round((quizScore / quizQuestions.length) * 100);
+            document.getElementById('finalScoreDisplay').textContent = `You scored ${quizScore} out of ${quizQuestions.length} (${percentage}%)`;
+
+            const commentary = document.getElementById('performanceCommentary');
+            if (percentage === 100) {
+                commentary.textContent = "Sugoi! (すごい！) Perfect score! You have completely mastered the poignant vocabulary and lyrical nuances of 'Koibito yo'. Excellent work!";
+            } else if (percentage >= 80) {
+                commentary.textContent = "Great job! You have a strong grasp of the song's vocabulary. Review a few missed words to achieve perfection!";
+            } else if (percentage >= 50) {
+                commentary.textContent = "Good effort! Keep practicing with the Vocabulary Guide and listen to the pronunciation audio to reinforce your Japanese studies.";
+            } else {
+                commentary.textContent = "Keep practicing! Take some time to explore the Song Vocabulary Guide tab and listen to the native audio pronunciations before trying again.";
+            }
+            lucide.createIcons();
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+    </script>
+</body>
+</html>
