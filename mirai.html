@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>未来へ (Mirai e) - Japanese Vocabulary & Quiz Studio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#131e32',
+                            900: '#0f172a',
+                            950: '#080d1a',
+                        },
+                        rose: {
+                            450: '#f43f5e',
+                        },
+                        sky: {
+                            450: '#38bdf8',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        japanese: ['"Hiragino Sans"', '"Hiragino Kaku Gothic ProN"', '"Noto Sans JP"', 'Meiryo', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+        
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        
+        .tab-active {
+            border-bottom: 3px solid #38bdf8;
+            color: #38bdf8;
+            font-weight: 600;
+        }
+        .ruby-text ruby {
+            ruby-position: over;
+        }
+        .ruby-text rt {
+            font-size: 0.625rem;
+            color: #f43f5e;
+            font-weight: 500;
+            padding-bottom: 2px;
+        }
+        
+        /* Subtle glow effect for main banner */
+        @keyframes subtle-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.15); }
+            50% { box-shadow: 0 0 25px rgba(244, 63, 94, 0.25); }
+        }
+        .glow-card {
+            animation: subtle-glow 6s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col selection:bg-rose-500 selection:text-white">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- App Title Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 to-sky-400 flex items-center justify-center text-white shadow-lg shadow-rose-500/20">
+                        <i data-lucide="music" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-white via-slate-200 to-sky-400 bg-clip-text text-transparent">
+                            未来へ <span class="text-xs sm:text-sm font-medium text-rose-400 font-mono">(Mirai e)</span>
+                        </h1>
+                        <p class="text-xs text-slate-400 hidden sm:block">Kiroro Lyric Vocabulary & Interactive Quiz Studio</p>
+                    </div>
+                </div>
+
+                <!-- Global Audio Toggle & YouTube Link -->
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <!-- Audio Pronunciation Toggle -->
+                    <button id="audio-toggle-btn" onclick="toggleAudioMute()" 
+                        class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm font-medium text-slate-300 hover:text-white transition-all border border-slate-700">
+                        <i id="audio-icon" data-lucide="volume-2" class="w-4 h-4 text-sky-400"></i>
+                        <span id="audio-status-text" class="hidden sm:inline">Audio On</span>
+                    </button>
+
+                    <!-- Direct YouTube Link -->
+                    <a href="https://www.youtube.com/watch?v=NcHZofQzkf8" target="_blank" rel="noopener noreferrer" 
+                       class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 hover:text-rose-300 text-xs sm:text-sm font-medium border border-rose-500/30 transition-all">
+                        <i data-lucide="youtube" class="w-4 h-4 text-rose-500"></i>
+                        <span class="hidden md:inline">Watch on YouTube</span>
+                        <i data-lucide="external-link" class="w-3 h-3 ml-0.5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Tab Bar -->
+            <div class="flex space-x-8 border-t border-slate-800/60 mt-1">
+                <button id="tab-btn-vocab" onclick="switchTab('vocab')" 
+                    class="py-3 px-1 text-sm font-medium flex items-center space-x-2 transition-colors tab-active">
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                    <span>詞の語彙 (Song Vocabulary Guide)</span>
+                    <span class="ml-1.5 px-2 py-0.5 text-xs rounded-full bg-slate-800 text-sky-400 border border-slate-700 font-mono">13</span>
+                </button>
+                <button id="tab-btn-quiz" onclick="switchTab('quiz')" 
+                    class="py-3 px-1 text-sm font-medium flex items-center space-x-2 text-slate-400 hover:text-slate-200 transition-colors">
+                    <i data-lucide="brain-circuit" class="w-4 h-4"></i>
+                    <span>クイズ (Interactive Quiz)</span>
+                    <span class="ml-1.5 px-2 py-0.5 text-xs rounded-full bg-slate-800 text-rose-400 border border-slate-700 font-mono">10 Qs</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+        
+        <!-- Video & Overview Banner -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 glow-card">
+            <!-- Left 2 Columns: YouTube Embed Player -->
+            <div class="lg:col-span-2 flex flex-col justify-between">
+                <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl">
+                    <!-- Standard clean YouTube Embed without cross-origin domain conflict -->
+                    <iframe 
+                        id="youtube-player"
+                        class="absolute top-0 left-0 w-full h-full"
+                        src="https://www.youtube-nocookie.com/embed/NcHZofQzkf8?rel=0" 
+                        title="Kiroro - 未来へ (Mirai e) Song Video" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <div class="mt-3 flex flex-wrap items-center justify-between text-xs text-slate-400 px-1 gap-2">
+                    <span class="flex items-center gap-1"><i data-lucide="music" class="w-3.5 h-3.5 text-rose-400"></i> Artist: <strong>Kiroro (キロロ)</strong></span>
+                    <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5 text-sky-400"></i> Released: <strong>1998</strong></span>
+                    <a href="https://www.youtube.com/watch?v=NcHZofQzkf8" target="_blank" rel="noopener noreferrer" class="text-sky-400 hover:underline flex items-center gap-1">
+                        Open Video in YouTube <i data-lucide="external-link" class="w-3 h-3"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Column: Song Context & Japanese Culture Notes -->
+            <div class="flex flex-col justify-between bg-slate-850 p-5 rounded-xl border border-slate-800/80">
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                            J-Pop Classic Study Guide
+                        </span>
+                        <span class="text-xs text-slate-400 flex items-center gap-1 font-mono">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i> JLPT N5 - N2
+                        </span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white mb-2">未来へ (Mirai e) — Towards the Future</h2>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                        Written by Chiharu Tamashiro, this iconic Japanese song is a touching message of gratitude from a daughter to her mother. It explores themes of stepping into the unknown future, guided by maternal love and warmth.
+                    </p>
+                    <div class="space-y-2 border-t border-slate-700/50 pt-3 text-xs text-slate-400">
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="check-circle2" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+                            <span><strong>Grammar Highlight:</strong> Uses gentle volitional forms like <code class="text-sky-300 bg-slate-800 px-1 py-0.5 rounded">〜てごらん</code> ("try looking").</span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="check-circle2" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+                            <span><strong>Study Tip:</strong> Click any speaker icon <i data-lucide="volume-2" class="w-3 h-3 inline text-sky-400"></i> to hear native TTS speech!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Quick-links -->
+                <div class="mt-4 pt-3 border-t border-slate-700/50 flex gap-2">
+                    <button onclick="switchTab('vocab')" class="flex-1 py-2 px-3 text-xs font-medium rounded-lg bg-sky-600/20 hover:bg-sky-600/30 text-sky-300 border border-sky-500/30 text-center transition-all">
+                        Study 13 Words
+                    </button>
+                    <button onclick="switchTab('quiz')" class="flex-1 py-2 px-3 text-xs font-medium rounded-lg bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 text-center transition-all">
+                        Start Quiz Now
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 1: SONG VOCABULARY GUIDE -->
+        <section id="tab-vocab-content" class="space-y-6">
+            <!-- Search & Filter Control Bar -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-slate-900 p-4 rounded-xl border border-slate-800">
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="vocab-search" oninput="filterVocab()" placeholder="Search Kanji, Kana, Romaji, or English meaning..." 
+                        class="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 transition-all">
+                </div>
+                <div class="flex items-center space-x-3">
+                    <select id="pos-filter" onchange="filterVocab()" class="bg-slate-950 border border-slate-700 rounded-lg text-xs sm:text-sm text-slate-200 py-2 px-3 focus:outline-none focus:border-sky-500">
+                        <option value="ALL">All Parts of Speech</option>
+                        <option value="Noun">Nouns (名詞)</option>
+                        <option value="Verb">Verbs (動詞)</option>
+                        <option value="Adjective">Adjectives (形容詞)</option>
+                        <option value="Adverb">Adverbs (副詞)</option>
+                    </select>
+                    <button onclick="resetVocabFilter()" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 text-xs flex items-center gap-1 border border-slate-700" title="Reset Filters">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Reset</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Vocabulary Cards Grid -->
+            <div id="vocab-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Cards injected dynamically via JS -->
+            </div>
+        </section>
+
+        <!-- TAB 2: INTERACTIVE QUIZ -->
+        <section id="tab-quiz-content" class="hidden space-y-6">
+            <div class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+                
+                <!-- Active Quiz Question View -->
+                <div id="quiz-active-view" class="space-y-6">
+                    <!-- Score & Question Progress Bar Header -->
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                        <div>
+                            <span id="quiz-progress-text" class="text-xs font-semibold tracking-wider text-rose-400 uppercase">Question 1 of 10</span>
+                            <h3 class="text-lg font-bold text-slate-100">Song Comprehension Test</h3>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="text-right">
+                                <span class="text-xs text-slate-400">Score</span>
+                                <div id="quiz-score-num" class="text-xl font-bold text-sky-400 font-mono">0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Progress Bar -->
+                    <div class="w-full bg-slate-950 rounded-full h-2.5 border border-slate-800">
+                        <div id="quiz-progress-bar" class="bg-gradient-to-r from-rose-500 to-sky-400 h-2 rounded-full transition-all duration-300" style="width: 10%;"></div>
+                    </div>
+
+                    <!-- Lyric Context Quote Box -->
+                    <div class="bg-slate-950 border border-slate-800/80 rounded-xl p-4 sm:p-5 relative">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-medium text-slate-400 flex items-center gap-1">
+                                <i data-lucide="quote" class="w-3.5 h-3.5 text-rose-400"></i> Lyric Context Line:
+                            </span>
+                            <button id="quiz-audio-trigger" onclick="playQuizAudio()" class="px-2.5 py-1 rounded-md bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 text-xs font-medium flex items-center gap-1.5 border border-sky-500/20 transition-all">
+                                <i data-lucide="volume-2" class="w-4 h-4"></i> Listen Line
+                            </button>
+                        </div>
+                        <p id="quiz-lyric-line" class="text-lg sm:text-xl font-japanese font-medium text-sky-200 tracking-wide">
+                            <!-- Injected by JS -->
+                        </p>
+                    </div>
+
+                    <!-- Question Prompt -->
+                    <div class="space-y-2">
+                        <h4 id="quiz-question-text" class="text-base sm:text-lg font-semibold text-slate-100">
+                            <!-- Injected by JS -->
+                        </h4>
+                    </div>
+
+                    <!-- 4 Answer Option Buttons (A, B, C, D) -->
+                    <div id="quiz-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <!-- 4 Options rendered by JS -->
+                    </div>
+
+                    <!-- Feedback Box (Rendered after answering) -->
+                    <div id="quiz-feedback-box" class="hidden p-4 rounded-xl border transition-all space-y-2">
+                        <div class="flex items-center gap-2">
+                            <div id="quiz-feedback-icon"></div>
+                            <h5 id="quiz-feedback-title" class="font-bold text-sm"></h5>
+                        </div>
+                        <p id="quiz-feedback-desc" class="text-xs sm:text-sm text-slate-300 leading-relaxed"></p>
+                    </div>
+
+                    <!-- Action Footer -->
+                    <div class="flex justify-end pt-2">
+                        <button id="quiz-next-btn" onclick="nextQuestion()" disabled 
+                            class="px-6 py-2.5 rounded-xl bg-slate-800 text-slate-500 font-semibold text-sm flex items-center gap-2 cursor-not-allowed transition-all">
+                            <span>Next Question</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz Results / Completion View -->
+                <div id="quiz-complete-view" class="hidden text-center py-6 space-y-6">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-rose-500 to-sky-400 p-0.5 shadow-xl shadow-rose-500/20">
+                        <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-amber-400">
+                            <i data-lucide="trophy" class="w-10 h-10"></i>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h3 class="text-2xl font-extrabold text-white">Quiz Completed! お疲れ様でした！</h3>
+                        <p class="text-sm text-slate-400">Here is how you performed on Kiroro's "Mirai e" lyric test:</p>
+                    </div>
+
+                    <!-- Score Card Summary -->
+                    <div class="max-w-md mx-auto bg-slate-950 p-6 rounded-xl border border-slate-800 space-y-3">
+                        <div class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-sky-400 font-mono">
+                            <span id="final-score-val">0</span> / 10
+                        </div>
+                        <div id="final-score-percent" class="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+                            0% Accuracy
+                        </div>
+                        <p id="final-feedback-text" class="text-sm text-slate-200 italic pt-2 border-t border-slate-800">
+                            <!-- Feedback statement -->
+                        </p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex items-center justify-center gap-4 pt-4">
+                        <button onclick="restartQuiz()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-rose-500 to-sky-500 text-white font-bold text-sm shadow-lg shadow-rose-500/20 hover:opacity-95 transition-all flex items-center gap-2">
+                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                            <span>Try Again</span>
+                        </button>
+                        <button onclick="switchTab('vocab')" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-700 transition-all flex items-center gap-2">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            <span>Review Vocabulary</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 border-t border-slate-800 bg-slate-900/60 py-8 text-slate-400 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="music" class="w-4 h-4 text-rose-400"></i>
+                <span class="font-medium text-slate-300">「未来へ」 (Mirai e) by Kiroro</span>
+                <span>— Educational Japanese Song Studio</span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="https://www.youtube.com/watch?v=NcHZofQzkf8" target="_blank" rel="noopener noreferrer" class="hover:text-sky-400 flex items-center gap-1 transition-colors">
+                    <i data-lucide="youtube" class="w-3.5 h-3.5 text-rose-500"></i> Watch on YouTube
+                </a>
+                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="hover:text-slate-200 flex items-center gap-1 transition-colors">
+                    <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i> Back to Top
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Vocabulary dataset extracted from "Mirai e" lyrics
+        const vocabData = [
+            {
+                id: 1,
+                kanji: "足元",
+                kana: "あしもと",
+                romaji: "ashimoto",
+                english: "at one's feet / where you stand",
+                pos: "Noun",
+                explanation: "Combines '足' (foot) and '元' (base/origin). Metaphorically refers to one's present circumstance or position in life.",
+                lyricContext: "ほら 足元を見てごらん",
+                lyricFurigana: "ほら <ruby>足元<rt>あしもと</rt></ruby>を<ruby>見<rt>み</rt></ruby>てごらん",
+                jlpt: "N3"
+            },
+            {
+                id: 2,
+                kanji: "歩む",
+                kana: "あゆむ",
+                romaji: "ayumu",
+                english: "to walk / step forward",
+                pos: "Verb",
+                explanation: "A poetic, literary verb for walking or stepping through life's journey (more formal/symbolic than 歩く).",
+                lyricContext: "これが あなたの歩む道",
+                lyricFurigana: "これが あなたの<ruby>歩<rt>あゆ</rt></ruby>む<ruby>道<rt>みち</rt></ruby>",
+                jlpt: "N2"
+            },
+            {
+                id: 3,
+                kanji: "道",
+                kana: "みち",
+                romaji: "michi",
+                english: "path / road / way of life",
+                pos: "Noun",
+                explanation: "Physical road or moral/metaphorical path in life.",
+                lyricContext: "これが あなたの歩む道",
+                lyricFurigana: "これが あなたの<ruby>歩<rt>あゆ</rt></ruby>む<ruby>道<rt>みち</rt></ruby>",
+                jlpt: "N5"
+            },
+            {
+                id: 4,
+                kanji: "未来",
+                kana: "みらい",
+                romaji: "mirai",
+                english: "future (distant/unseen)",
+                pos: "Noun",
+                explanation: "Literally 'not yet come' (未 = not yet, 来 = come). Refers to the future that lies ahead.",
+                lyricContext: "あれが あなたの未来",
+                lyricFurigana: "あれが あなたの<ruby>未来<rt>みらい</rt></ruby>",
+                jlpt: "N3"
+            },
+            {
+                id: 5,
+                kanji: "優しさ",
+                kana: "やさしさ",
+                romaji: "yasashisa",
+                english: "kindness / gentleness",
+                pos: "Noun",
+                explanation: "Noun form of the i-adjective 優しい (kind). Created by changing the suffix 〜い to 〜さ.",
+                lyricContext: "母がくれたたくさんの優しさ",
+                lyricFurigana: "<ruby>母<rt>はは</rt></ruby>がくれたたくさんの<ruby>優<rt>やさ</rt></ruby>しさ",
+                jlpt: "N3"
+            },
+            {
+                id: 6,
+                kanji: "抱く",
+                kana: "いだく",
+                romaji: "idaku",
+                english: "to embrace / hold in heart",
+                pos: "Verb",
+                explanation: "To hold abstract feelings, ideals, or love in one's heart (as opposed to 抱く/daku for physical holding).",
+                lyricContext: "愛を抱いて歩めと繰り返した",
+                lyricFurigana: "<ruby>愛<rt>あい</rt></ruby>を<ruby>抱<rt>いだ</rt></ruby>いて<ruby>歩<rt>あゆ</rt></ruby>めと<ruby>繰<rt>く</rt></ruby>り<ruby>返<rt>かえ</rt></ruby>した",
+                jlpt: "N2"
+            },
+            {
+                id: 7,
+                kanji: "幼い",
+                kana: "おさない",
+                romaji: "osanai",
+                english: "young / childish / immature",
+                pos: "Adjective",
+                explanation: "Refers to childhood years or being young and innocent.",
+                lyricContext: "あの時はまだ幼くて意味など知らない",
+                lyricFurigana: "あの<ruby>時<rt>とき</rt></ruby>はまだ<ruby>幼<rt>おさ</rt></ruby>なくて<ruby>意味<rt>いみ</rt></ruby>など<ruby>知<rt>し</rt></ruby>らない",
+                jlpt: "N2"
+            },
+            {
+                id: 8,
+                kanji: "握る",
+                kana: "にぎる",
+                romaji: "nigiru",
+                english: "to grasp / hold hands",
+                pos: "Verb",
+                explanation: "To squeeze, grasp, or hold firmly with one's hand.",
+                lyricContext: "そんな私の手を握り",
+                lyricFurigana: "そんな<ruby>私<rt>わたし</rt></ruby>の<ruby>手<rt>て</rt></ruby>を<ruby>握<rt>にぎ</rt></ruby>り",
+                jlpt: "N3"
+            },
+            {
+                id: 9,
+                kanji: "夢",
+                kana: "ゆめ",
+                romaji: "yume",
+                english: "dream / aspiration",
+                pos: "Noun",
+                explanation: "Can refer to sleeping dreams or life ambitions.",
+                lyricContext: "夢はいつも空高くあるから",
+                lyricFurigana: "<ruby>夢<rt>ゆめ</rt></ruby>はいつも<ruby>空<rt>そら</rt></ruby><ruby>高<rt>たか</rt></ruby>くあるから",
+                jlpt: "N4"
+            },
+            {
+                id: 10,
+                kanji: "追い続ける",
+                kana: "おいつづける",
+                romaji: "oitsuzukeru",
+                english: "to keep chasing / pursuing",
+                pos: "Verb",
+                explanation: "Compound verb combining 追う (to chase) + 続ける (to continue).",
+                lyricContext: "だけど追い続けるの",
+                lyricFurigana: "だけど<ruby>追<rt>お</rt></ruby>い<ruby>続<rt>つづ</rt></ruby>けるの",
+                jlpt: "N3"
+            },
+            {
+                id: 11,
+                kanji: "不安",
+                kana: "ふあん",
+                romaji: "fuan",
+                english: "anxiety / insecurity / unease",
+                pos: "Noun",
+                explanation: "Prefix 不 (non/un) + 安 (peace/safety). State of feeling unsafe or insecure.",
+                lyricContext: "不安になると手を握り",
+                lyricFurigana: "<ruby>不<rt>ふ</rt></ruby><ruby>安<rt>あん</rt></ruby>になると<ruby>手<rt>て</rt></ruby>を<ruby>握<rt>にぎ</rt></ruby>り",
+                jlpt: "N3"
+            },
+            {
+                id: 12,
+                kanji: "素直",
+                kana: "すなお",
+                romaji: "sunao",
+                english: "honest / gentle / open-hearted",
+                pos: "Adjective",
+                explanation: "Being obedient, genuine, or expressive without emotional barriers.",
+                lyricContext: "母へ素直になれず",
+                lyricFurigana: "<ruby>母<rt>はは</rt></ruby>へ<ruby>素直<rt>すなお</rt></ruby>になれず",
+                jlpt: "N3"
+            },
+            {
+                id: 13,
+                kanji: "ゆっくり",
+                kana: "ゆっくり",
+                romaji: "yukkuri",
+                english: "slowly / unhurriedly",
+                pos: "Adverb",
+                explanation: "Common adverb meaning at an easy, relaxed pace.",
+                lyricContext: "ゆっくりと歩いて行こう",
+                lyricFurigana: "ゆっくりと<ruby>歩<rt>ある</rt></ruby>いて<ruby>行<rt>い</rt></ruby>こう",
+                jlpt: "N5"
+            }
+        ];
+
+        // 10 Multiple-choice quiz questions
+        const quizQuestions = [
+            {
+                id: 1,
+                lyricLine: "ほら 足元を見てごらん",
+                audioText: "ほら足元を見てごらん",
+                question: "What does the word 「足元」(あしもと) mean in this lyric line?",
+                options: [
+                    { key: "A", text: "The sky above you", correct: false },
+                    { key: "B", text: "At your feet / Where you stand", correct: true },
+                    { key: "C", text: "The distant horizon", correct: false },
+                    { key: "D", text: "Your childhood memories", correct: false }
+                ],
+                explanation: "「足元」(ashimoto) is formed from 足 (foot) and 元 (base). It means 'at one's feet' or 'where you stand right now'."
+            },
+            {
+                id: 2,
+                lyricLine: "これが あなたの歩む道",
+                audioText: "これがあなたの歩む道",
+                question: "What is the meaning of the verb 「歩む」(あゆむ)?",
+                options: [
+                    { key: "A", text: "To run fast", correct: false },
+                    { key: "B", text: "To stop and wait", correct: false },
+                    { key: "C", text: "To walk / step forward in life", correct: true },
+                    { key: "D", text: "To sing aloud", correct: false }
+                ],
+                explanation: "「歩む」(ayumu) means to walk or step forward, frequently used metaphorically for life's journey."
+            },
+            {
+                id: 3,
+                lyricLine: "母がくれたたくさんの優しさ",
+                audioText: "母がくれたたくさんの優しさ",
+                question: "How is the noun 「優しさ」(やさしさ) formed in Japanese?",
+                options: [
+                    { key: "A", text: "By adding 〜さ to the adjective 優しい (kind)", correct: true },
+                    { key: "B", text: "By combining 優 (actor) and 優 (kind)", correct: false },
+                    { key: "C", text: "It is an irregular verb stem", correct: false },
+                    { key: "D", text: "By borrowing from English 'easy'", correct: false }
+                ],
+                explanation: "In Japanese, changing the 〜い ending of an i-adjective (優しい) to 〜さ creates the abstract noun form 'kindness/gentleness'."
+            },
+            {
+                id: 4,
+                lyricLine: "愛を抱いて歩めと繰り返した",
+                audioText: "愛を抱いて歩めと繰り返した",
+                question: "What nuance does 「抱く」(いだく) carry in this poetic context?",
+                options: [
+                    { key: "A", text: "To throw away emotions", correct: false },
+                    { key: "B", text: "To hold/embrace love or ideals in one's heart", correct: true },
+                    { key: "C", text: "To shout loudly", correct: false },
+                    { key: "D", text: "To build a house", correct: false }
+                ],
+                explanation: "While 抱く (daku) means physical hugging, 抱く (idaku) specifically means embracing feelings, ideals, or love in one's heart."
+            },
+            {
+                id: 5,
+                lyricLine: "あの時はまだ幼くて意味など知らない",
+                audioText: "あの時はまだ幼くて意味など知らない",
+                question: "What does 「幼い」(おさない) describe in this sentence?",
+                options: [
+                    { key: "A", text: "Being young, childish, or immature", correct: true },
+                    { key: "B", text: "Being old and wise", correct: false },
+                    { key: "C", text: "Being stubborn and noisy", correct: false },
+                    { key: "D", text: "Being wealthy", correct: false }
+                ],
+                explanation: "「幼い」(osanai) means young or childish. The speaker reflects on how young they were when their mother gave advice."
+            },
+            {
+                id: 6,
+                lyricLine: "夢はいつも空高くあるから",
+                audioText: "夢はいつも空高くあるから",
+                question: "What does 「夢」(ゆめ) mean in Japanese?",
+                options: [
+                    { key: "A", text: "Cloud", correct: false },
+                    { key: "B", text: "Dream or aspiration", correct: true },
+                    { key: "C", text: "Bird", correct: false },
+                    { key: "D", text: "Star", correct: false }
+                ],
+                explanation: "「夢」(yume) translates to 'dream' or 'ambition'. Here the lyric says dreams are high up in the sky."
+            },
+            {
+                id: 7,
+                lyricLine: "だけど追い続けるの",
+                audioText: "だけど追い続けるの",
+                question: "What two verbs make up the compound verb 「追い続ける」(おいつづける)?",
+                options: [
+                    { key: "A", text: "追う (chase) + 続ける (continue)", correct: true },
+                    { key: "B", text: "追う (chase) + 止める (stop)", correct: false },
+                    { key: "C", text: "起きる (wake) + 続ける (continue)", correct: false },
+                    { key: "D", text: "教える (teach) + 伝える (convey)", correct: false }
+                ],
+                explanation: "「追い続ける」 combines 追う (to chase) + 続ける (to continue), meaning 'to keep chasing/pursuing'."
+            },
+            {
+                id: 8,
+                lyricLine: "不安になると手を握り",
+                audioText: "不安になると手を握り",
+                question: "What does 「不安」(ふあん) mean?",
+                options: [
+                    { key: "A", text: "Confidence and excitement", correct: false },
+                    { key: "B", text: "Anxiety, insecurity, or unease", correct: true },
+                    { key: "C", text: "Sleepiness", correct: false },
+                    { key: "D", text: "Hunger", correct: false }
+                ],
+                explanation: "「不安」(fuan) is formed with 不 (un-) and 安 (peaceful/easy), meaning anxiety or insecurity."
+            },
+            {
+                id: 9,
+                lyricLine: "母へ素直になれず",
+                audioText: "母へ素直になれず",
+                question: "What does 「素直」(すなお) mean in relation to the speaker's relationship with her mother?",
+                options: [
+                    { key: "A", text: "Honest, open-hearted, or obedient", correct: true },
+                    { key: "B", text: "Angry and aggressive", correct: false },
+                    { key: "C", text: "Forgetful", correct: false },
+                    { key: "D", text: "Strict and demanding", correct: false }
+                ],
+                explanation: "「素直」(sunao) means honest and open-hearted. 「素直になれず」 means being unable to be honest/open with her mother at that time."
+            },
+            {
+                id: 10,
+                lyricLine: "ゆっくりと歩いて行こう",
+                audioText: "ゆっくりと歩いて行こう",
+                question: "What grammar pattern is used in 「行こう」(いこう)?",
+                options: [
+                    { key: "A", text: "Past tense ('I went')", correct: false },
+                    { key: "B", text: "Volitional form ('Let's go / I will go')", correct: true },
+                    { key: "C", text: "Negative form ('Will not go')", correct: false },
+                    { key: "D", text: "Polite request ('Please go')", correct: false }
+                ],
+                explanation: "「行こう」(ikou) is the casual volitional form of 行く (iku). Coupled with 歩いて, 「歩いて行こう」 means 'Let's walk forward together'."
+            }
+        ];
+
+        // App state tracking
+        let state = {
+            audioMuted: false,
+            currentTab: 'vocab',
+            quizIndex: 0,
+            quizScore: 0,
+            quizAnswered: false,
+            selectedOption: null
+        };
+
+        window.onload = function() {
+            // Render Lucide Icons
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+            // Render initial vocabulary grid
+            renderVocabGrid(vocabData);
+            // Load initial quiz question
+            loadQuizQuestion();
+        };
+
+        // Japanese Text-to-Speech using standard Web Speech API
+        function speakJapanese(text) {
+            if (state.audioMuted) return;
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop ongoing speech
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP';
+                utterance.rate = 0.85; // Natural learning speed
+                utterance.pitch = 1.0;
+
+                const voices = window.speechSynthesis.getVoices();
+                const jaVoice = voices.find(v => v.lang.includes('ja') || v.lang.includes('JP'));
+                if (jaVoice) {
+                    utterance.voice = jaVoice;
+                }
+
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.warn('Web Speech API is not supported in this browser.');
+            }
+        }
+
+        // Synthesized audio sound effects for quiz responses
+        function playAudioSFX(type) {
+            if (state.audioMuted) return;
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                
+                if (type === 'correct') {
+                    const osc1 = ctx.createOscillator();
+                    const osc2 = ctx.createOscillator();
+                    const gain = ctx.createGain();
+
+                    osc1.type = 'sine';
+                    osc2.type = 'sine';
+                    osc1.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc2.frequency.setValueAtTime(659.25, ctx.currentTime); // E5
+                    
+                    osc1.frequency.setValueAtTime(783.99, ctx.currentTime + 0.1); // G5
+                    osc2.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.1); // C6
+
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+
+                    osc1.connect(gain);
+                    osc2.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    osc1.start();
+                    osc2.start();
+                    osc1.stop(ctx.currentTime + 0.35);
+                    osc2.stop(ctx.currentTime + 0.35);
+                } else if (type === 'wrong') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, ctx.currentTime);
+                    osc.frequency.setValueAtTime(130, ctx.currentTime + 0.15);
+
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                }
+            } catch (e) {
+                console.warn('AudioContext error:', e);
+            }
+        }
+
+        // Toggle Audio state
+        function toggleAudioMute() {
+            state.audioMuted = !state.audioMuted;
+            const icon = document.getElementById('audio-icon');
+            const statusText = document.getElementById('audio-status-text');
+
+            if (state.audioMuted) {
+                icon.setAttribute('data-lucide', 'volume-x');
+                icon.className = "w-4 h-4 text-rose-400";
+                statusText.innerText = "Audio Muted";
+                window.speechSynthesis && window.speechSynthesis.cancel();
+            } else {
+                icon.setAttribute('data-lucide', 'volume-2');
+                icon.className = "w-4 h-4 text-sky-400";
+                statusText.innerText = "Audio On";
+                speakJapanese("未来へ");
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // Switch active tab view
+        function switchTab(tabName) {
+            state.currentTab = tabName;
+            const vocabContent = document.getElementById('tab-vocab-content');
+            const quizContent = document.getElementById('tab-quiz-content');
+            const vocabBtn = document.getElementById('tab-btn-vocab');
+            const quizBtn = document.getElementById('tab-btn-quiz');
+
+            if (tabName === 'vocab') {
+                vocabContent.classList.remove('hidden');
+                quizContent.classList.add('hidden');
+                vocabBtn.classList.add('tab-active');
+                vocabBtn.classList.remove('text-slate-400');
+                quizBtn.classList.remove('tab-active');
+                quizBtn.classList.add('text-slate-400');
+            } else {
+                vocabContent.classList.add('hidden');
+                quizContent.classList.remove('hidden');
+                quizBtn.classList.add('tab-active');
+                quizBtn.classList.remove('text-slate-400');
+                vocabBtn.classList.remove('tab-active');
+                vocabBtn.classList.add('text-slate-400');
+            }
+        }
+
+        // Render Vocabulary Grid cards
+        function renderVocabGrid(items) {
+            const container = document.getElementById('vocab-grid');
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-slate-900 rounded-xl border border-slate-800">
+                        <i data-lucide="search-x" class="w-10 h-10 text-slate-500 mx-auto mb-2"></i>
+                        <p class="text-slate-300 font-medium text-sm">No vocabulary items matched your search criteria.</p>
+                        <button onclick="resetVocabFilter()" class="mt-3 text-xs text-sky-400 hover:underline">Clear filters</button>
+                    </div>
+                `;
+                if (window.lucide) lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = items.map(item => `
+                <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl p-5 flex flex-col justify-between transition-all duration-200 group">
+                    <div>
+                        <!-- Header: Kanji + Speaker + JLPT tag -->
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <div class="flex items-center gap-3">
+                                <span class="text-2xl sm:text-3xl font-bold font-japanese text-white group-hover:text-sky-300 transition-colors">
+                                    ${item.kanji}
+                                </span>
+                                <button onclick="speakJapanese('${item.kanji}')" 
+                                    class="p-2 rounded-lg bg-slate-800 hover:bg-sky-500/20 text-slate-400 hover:text-sky-400 border border-slate-700/80 transition-all"
+                                    title="Listen Pronunciation">
+                                    <i data-lucide="volume-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[11px] font-semibold font-mono bg-slate-800 text-slate-300 border border-slate-700">
+                                ${item.jlpt}
+                            </span>
+                        </div>
+
+                        <!-- Reading & Part of Speech -->
+                        <div class="flex items-center gap-2 text-xs mb-3">
+                            <span class="font-japanese text-rose-400 font-medium">${item.kana}</span>
+                            <span class="text-slate-500">•</span>
+                            <span class="text-slate-400 italic">${item.romaji}</span>
+                            <span class="text-slate-500">•</span>
+                            <span class="px-1.5 py-0.5 rounded bg-slate-950 text-slate-400 text-[10px] font-medium border border-slate-800">${item.pos}</span>
+                        </div>
+
+                        <!-- English Meaning -->
+                        <div class="text-sm font-semibold text-sky-200 mb-2">
+                            ${item.english}
+                        </div>
+
+                        <!-- Brief Explanation -->
+                        <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                            ${item.explanation}
+                        </p>
+                    </div>
+
+                    <!-- Lyric Context Footer -->
+                    <div class="pt-3 border-t border-slate-800/80 bg-slate-950/40 -mx-5 -mb-5 p-4 rounded-b-xl flex flex-col gap-1">
+                        <span class="text-[10px] uppercase font-semibold text-slate-500 tracking-wider">Lyric Context Line:</span>
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="text-xs font-japanese ruby-text text-slate-200">
+                                ${item.lyricFurigana}
+                            </div>
+                            <button onclick="speakJapanese('${item.lyricContext}')" class="text-slate-400 hover:text-rose-400 p-1" title="Listen full lyric line">
+                                <i data-lucide="play-circle" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // Search & POS Filter
+        function filterVocab() {
+            const query = document.getElementById('vocab-search').value.toLowerCase().trim();
+            const pos = document.getElementById('pos-filter').value;
+
+            const filtered = vocabData.filter(item => {
+                const matchesQuery = item.kanji.toLowerCase().includes(query) ||
+                                     item.kana.toLowerCase().includes(query) ||
+                                     item.romaji.toLowerCase().includes(query) ||
+                                     item.english.toLowerCase().includes(query);
+                
+                const matchesPos = (pos === 'ALL') || 
+                                   (pos === 'Noun' && item.pos === 'Noun') ||
+                                   (pos === 'Verb' && item.pos === 'Verb') ||
+                                   (pos === 'Adjective' && item.pos.includes('Adjective')) ||
+                                   (pos === 'Adverb' && item.pos === 'Adverb');
+
+                return matchesQuery && matchesPos;
+            });
+
+            renderVocabGrid(filtered);
+        }
+
+        function resetVocabFilter() {
+            document.getElementById('vocab-search').value = '';
+            document.getElementById('pos-filter').value = 'ALL';
+            renderVocabGrid(vocabData);
+        }
+
+        // Load Quiz Question
+        function loadQuizQuestion() {
+            const q = quizQuestions[state.quizIndex];
+            state.quizAnswered = false;
+            state.selectedOption = null;
+
+            // Update Header & Progress Bar
+            document.getElementById('quiz-progress-text').innerText = `Question ${state.quizIndex + 1} of ${quizQuestions.length}`;
+            document.getElementById('quiz-score-num').innerText = state.quizScore;
+            
+            const progressPct = ((state.quizIndex + 1) / quizQuestions.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${progressPct}%`;
+
+            // Update Lyric Quote & Question Prompt
+            document.getElementById('quiz-lyric-line').innerText = `「 ${q.lyricLine} 」`;
+            document.getElementById('quiz-question-text').innerText = q.question;
+
+            // Hide Feedback Box
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            feedbackBox.classList.add('hidden');
+
+            // Disable Next Button
+            const nextBtn = document.getElementById('quiz-next-btn');
+            nextBtn.disabled = true;
+            nextBtn.className = "px-6 py-2.5 rounded-xl bg-slate-800 text-slate-500 font-semibold text-sm flex items-center gap-2 cursor-not-allowed transition-all";
+
+            // Render Options A, B, C, D
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = q.options.map((opt, idx) => `
+                <button onclick="handleOptionSelect(${idx})" 
+                    id="quiz-opt-${idx}"
+                    class="p-4 rounded-xl border border-slate-800 bg-slate-950 hover:bg-slate-850 hover:border-slate-700 text-left transition-all flex items-start space-x-3 group">
+                    <span class="w-6 h-6 rounded-lg bg-slate-800 text-slate-300 font-mono font-bold text-xs flex items-center justify-center shrink-0 border border-slate-700 group-hover:border-sky-400 group-hover:text-sky-300">
+                        ${opt.key}
+                    </span>
+                    <span class="text-sm font-medium text-slate-200 group-hover:text-white pt-0.5">
+                        ${opt.text}
+                    </span>
+                </button>
+            `).join('');
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function playQuizAudio() {
+            const q = quizQuestions[state.quizIndex];
+            speakJapanese(q.audioText);
+        }
+
+        // Handle Option Click
+        function handleOptionSelect(optIdx) {
+            if (state.quizAnswered) return;
+
+            state.quizAnswered = true;
+            state.selectedOption = optIdx;
+            const q = quizQuestions[state.quizIndex];
+            const selectedOpt = q.options[optIdx];
+
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            const feedbackTitle = document.getElementById('quiz-feedback-title');
+            const feedbackDesc = document.getElementById('quiz-feedback-desc');
+            const feedbackIcon = document.getElementById('quiz-feedback-icon');
+
+            // Highlight Option Buttons
+            q.options.forEach((opt, idx) => {
+                const optBtn = document.getElementById(`quiz-opt-${idx}`);
+                if (opt.correct) {
+                    optBtn.className = "p-4 rounded-xl border-2 border-emerald-500/80 bg-emerald-950/30 text-left transition-all flex items-start space-x-3";
+                } else if (idx === optIdx && !opt.correct) {
+                    optBtn.className = "p-4 rounded-xl border-2 border-rose-500/80 bg-rose-950/30 text-left transition-all flex items-start space-x-3";
+                } else {
+                    optBtn.className = "p-4 rounded-xl border border-slate-800/40 bg-slate-950/40 text-left transition-all flex items-start space-x-3 opacity-50";
+                }
+            });
+
+            if (selectedOpt.correct) {
+                state.quizScore++;
+                document.getElementById('quiz-score-num').innerText = state.quizScore;
+                playAudioSFX('correct');
+
+                feedbackBox.className = "p-4 rounded-xl border border-emerald-500/40 bg-emerald-950/20 text-emerald-200 block transition-all space-y-1";
+                feedbackIcon.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>`;
+                feedbackTitle.innerText = "Correct! 正解です！";
+                feedbackTitle.className = "font-bold text-sm text-emerald-400";
+            } else {
+                playAudioSFX('wrong');
+
+                feedbackBox.className = "p-4 rounded-xl border border-rose-500/40 bg-rose-950/20 text-rose-200 block transition-all space-y-1";
+                feedbackIcon.innerHTML = `<i data-lucide="x-circle" class="w-5 h-5 text-rose-400"></i>`;
+                feedbackTitle.innerText = "Incorrect (残念)";
+                feedbackTitle.className = "font-bold text-sm text-rose-400";
+            }
+
+            feedbackDesc.innerText = q.explanation;
+            feedbackBox.classList.remove('hidden');
+
+            // Enable Next Button
+            const nextBtn = document.getElementById('quiz-next-btn');
+            nextBtn.disabled = false;
+            nextBtn.className = "px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-sky-500 hover:opacity-95 text-white font-semibold text-sm flex items-center gap-2 shadow-lg shadow-rose-500/20 cursor-pointer transition-all";
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function nextQuestion() {
+            if (!state.quizAnswered) return;
+
+            if (state.quizIndex < quizQuestions.length - 1) {
+                state.quizIndex++;
+                loadQuizQuestion();
+            } else {
+                showQuizCompleteScreen();
+            }
+        }
+
+        function showQuizCompleteScreen() {
+            document.getElementById('quiz-active-view').classList.add('hidden');
+            const completeView = document.getElementById('quiz-complete-view');
+            completeView.classList.remove('hidden');
+
+            const score = state.quizScore;
+            const total = quizQuestions.length;
+            const percentage = Math.round((score / total) * 100);
+
+            document.getElementById('final-score-val').innerText = score;
+            document.getElementById('final-score-percent').innerText = `${percentage}% Accuracy`;
+
+            let feedbackMsg = "";
+            if (percentage === 100) {
+                feedbackMsg = "🎉 Perfect score! 素晴らしい！ You have mastered the vocabulary and lyrics of 'Mirai e'.";
+            } else if (percentage >= 70) {
+                feedbackMsg = "✨ Great job! よくできました！ You have a solid grasp of this song's key vocabulary.";
+            } else {
+                feedbackMsg = "💪 Good effort! Keep reviewing the Song Vocabulary Guide and try again to improve your score!";
+            }
+            document.getElementById('final-feedback-text').innerText = feedbackMsg;
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function restartQuiz() {
+            state.quizIndex = 0;
+            state.quizScore = 0;
+            state.quizAnswered = false;
+            state.selectedOption = null;
+
+            document.getElementById('quiz-complete-view').classList.add('hidden');
+            document.getElementById('quiz-active-view').classList.remove('hidden');
+            loadQuizQuestion();
+        }
+    </script>
+</body>
+</html>
