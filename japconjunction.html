@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Japanese Conjunctions (接続詞) Master & Quiz</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+HK:wght@400;500;700&display=swap');
+    
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans JP', 'Noto Sans HK', sans-serif;
+    }
+
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(244, 63, 94, 0.3);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-rose-500 selection:text-white">
+
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 to-sky-400 flex items-center justify-center text-white shadow-lg shadow-rose-500/20">
+          <i data-lucide="languages" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+            日本語の接続詞
+          </h1>
+          <p class="text-xs text-slate-400">Japanese Conjunctions Guide & Quiz</p>
+        </div>
+      </div>
+
+      <!-- Controls & Tabs -->
+      <div class="flex items-center gap-2 sm:gap-4">
+        <!-- Audio Mute Toggle -->
+        <button id="audio-toggle-btn" onclick="toggleAudio()" class="p-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors flex items-center gap-2 text-sm font-medium border border-slate-700/50" title="Toggle Sound">
+          <i id="audio-icon" data-lucide="volume-2" class="w-4 h-4 text-sky-400"></i>
+          <span id="audio-text" class="hidden sm:inline">Audio On</span>
+        </button>
+
+        <!-- Navigation Tabs -->
+        <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
+          <button id="tab-btn-guide" onclick="switchTab('guide')" class="px-3 sm:px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 bg-rose-500 text-white shadow-md">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+            <span>Guide <span class="hidden md:inline">(接続詞)</span></span>
+          </button>
+          <button id="tab-btn-quiz" onclick="switchTab('quiz')" class="px-3 sm:px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 text-slate-400 hover:text-slate-200">
+            <i data-lucide="brain-circuit" class="w-4 h-4"></i>
+            <span>Quiz <span class="hidden md:inline">(クイズ)</span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- TAB 1: VOCABULARY GUIDE -->
+    <section id="tab-guide" class="space-y-6">
+      <!-- Search & Filter Bar -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+        <div class="relative w-full sm:w-80">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input type="text" id="search-input" oninput="filterVocab()" placeholder="Search Japanese, Romaji, Cantonese, English..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-rose-500 text-slate-100 placeholder-slate-500 transition-colors">
+        </div>
+        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Filter Formality:</span>
+          <select id="formality-filter" onchange="filterVocab()" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-rose-500">
+            <option value="all">All Types</option>
+            <option value="Casual">Casual Spoken</option>
+            <option value="Polite">Polite / Neutral</option>
+            <option value="Formal">Formal / Written</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Vocabulary Grid -->
+      <div id="vocab-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Cards injected dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB 2: INTERACTIVE QUIZ -->
+    <section id="tab-quiz" class="hidden max-w-3xl mx-auto space-y-6">
+      
+      <!-- Quiz Screen -->
+      <div id="quiz-card" class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        <!-- Top Status Bar -->
+        <div class="flex justify-between items-center mb-6">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-rose-400 bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">Question</span>
+            <span id="quiz-progress-num" class="font-bold text-slate-200">1/10</span>
+          </div>
+          <div class="flex items-center gap-2 text-sky-400 bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20 text-sm font-semibold">
+            <i data-lucide="trophy" class="w-4 h-4"></i>
+            <span>Score: <span id="quiz-score">0</span></span>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-slate-800 h-2 rounded-full mb-8 overflow-hidden">
+          <div id="quiz-progress-bar" class="bg-gradient-to-r from-rose-500 to-sky-400 h-full w-0 transition-all duration-300"></div>
+        </div>
+
+        <!-- Question Prompt Area -->
+        <div class="space-y-4 mb-8">
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Context / Example Sentence:</p>
+          <div class="bg-slate-950/80 rounded-xl p-5 border border-slate-800/80 flex items-start justify-between gap-4">
+            <div>
+              <p id="quiz-sentence-jp" class="text-xl sm:text-2xl font-bold text-slate-100 mb-1 leading-relaxed">--</p>
+              <p id="quiz-sentence-cantonese" class="text-sm text-amber-400 font-medium">--</p>
+              <p id="quiz-sentence-en" class="text-xs text-slate-400">--</p>
+            </div>
+            <button id="quiz-audio-btn" onclick="playQuizAudio()" class="p-3 bg-slate-800 hover:bg-slate-700 text-sky-400 rounded-xl transition-all shrink-0 border border-slate-700/50 hover:scale-105 active:scale-95 shadow-md" title="Listen to sentence">
+              <i data-lucide="volume-2" class="w-5 h-5"></i>
+            </button>
+          </div>
+          <p id="quiz-question-prompt" class="text-base font-medium text-slate-200 pt-2">Which conjunction correctly fills the blank or matches the meaning?</p>
+        </div>
+
+        <!-- Options Grid -->
+        <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6">
+          <!-- Option Buttons injected dynamically -->
+        </div>
+
+        <!-- Next / Feedback Bar -->
+        <div id="quiz-feedback-bar" class="hidden flex items-center justify-between p-4 rounded-xl border transition-all">
+          <div id="quiz-feedback-text" class="text-sm font-semibold flex items-center gap-2"></div>
+          <button onclick="nextQuestion()" class="px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-semibold rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-rose-500/20">
+            <span>Next</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- End Screen -->
+      <div id="quiz-end-card" class="hidden glass-card rounded-2xl p-8 text-center space-y-6">
+        <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-rose-500 to-sky-400 flex items-center justify-center mx-auto text-white shadow-xl shadow-rose-500/20">
+          <i data-lucide="award" class="w-10 h-10"></i>
+        </div>
+        
+        <div>
+          <h2 class="text-2xl font-bold text-white mb-2">Quiz Completed!</h2>
+          <p id="final-score-text" class="text-slate-300 text-lg">You scored <span id="final-score" class="font-bold text-rose-400">0</span> out of <span id="final-total">10</span></p>
+        </div>
+
+        <div id="performance-commentary" class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 text-sm text-slate-300 italic">
+          --
+        </div>
+
+        <button onclick="restartQuiz()" class="px-6 py-3 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-rose-500/25 flex items-center gap-2 mx-auto">
+          <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+          <span>Try Again</span>
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // --- VOCABULARY DATASET ---
+    const vocabularyData = [
+      {
+        id: 1,
+        kanji: "但是",
+        kana: "でも",
+        romaji: "de mo",
+        cantonese: "但是 / 不過 (頭先講嘅轉折)",
+        english: "But, however",
+        pos: "Conjunction",
+        formality: "Casual",
+        cantoneseExplanation: "日常口語最常用嘅「但是/不過」，用嚟接續相反或者例外嘅意思。",
+        exampleJp: "行きたい。__、お金がない。",
+        exampleEn: "I want to go. But I don't have money.",
+        exampleCantonese: "好想去。不過，冇錢。",
+        exampleJpFull: "行きたい。でも、お金がない。",
+        targetWord: "でも"
+      },
+      {
+        id: 2,
+        kanji: "所以",
+        kana: "だから",
+        romaji: "da ka ra",
+        english: "Therefore, so",
+        cantonese: "所以 / 因爲咁",
+        pos: "Conjunction",
+        formality: "Casual",
+        cantoneseExplanation: "口語好常用，直接解釋原因同果，表示「所以 / 因而」。",
+        exampleJp: "雨が降っている。__、傘が必要だ。",
+        exampleEn: "It is raining. Therefore, an umbrella is necessary.",
+        exampleCantonese: "出面落緊雨。所以，需要帶把傘。",
+        exampleJpFull: "雨が降っている。だから、傘が必要だ。",
+        targetWord: "だから"
+      },
+      {
+        id: 3,
+        kanji: "于是",
+        kana: "それで",
+        romaji: "so re de",
+        english: "And then, because of that, so",
+        cantonese: "跟住 / 於是乎",
+        pos: "Conjunction",
+        formality: "Casual",
+        cantoneseExplanation: "順理成章接續下一件事，有「於是乎、跟住就...」嘅意思。",
+        exampleJp: "事故があった。__、電車が遅れた。",
+        exampleEn: "There was an accident. And because of that, the train was delayed.",
+        exampleCantonese: "發生咗事故。於是，電車延誤咗。",
+        exampleJpFull: "事故があった。それで、電車が遅れた。",
+        targetWord: "それで"
+      },
+      {
+        id: 4,
+        kanji: "而且",
+        kana: "それに",
+        romaji: "so re ni",
+        english: "Moreover, besides, in addition",
+        cantonese: "而且 / 同埋",
+        pos: "Conjunction",
+        formality: "Polite",
+        cantoneseExplanation: "用嚟補充資訊或者理由，表示「而且 / 仲要 / 同埋」。",
+        exampleJp: "この店は安い。__、美味しい。",
+        exampleEn: "This restaurant is cheap. Moreover, it's delicious.",
+        exampleCantonese: "呢間店好平。而且，仲好好食。",
+        exampleJpFull: "この店は安い。それに、美味しい。",
+        targetWord: "それに"
+      },
+      {
+        id: 5,
+        kanji: "但是",
+        kana: "しかし",
+        romaji: "shi ka si",
+        english: "However, but",
+        cantonese: "然而 / 但是 (正式或書面語)",
+        pos: "Conjunction",
+        formality: "Formal",
+        cantoneseExplanation: "「でも」嘅正式/書面語版本，常用於新聞、演講、正式討論或文章轉折。",
+        exampleJp: "全力を尽くした。__、失敗した。",
+        exampleEn: "We did our best. However, we failed.",
+        exampleCantonese: "我哋盡咗全力。然而，最後失敗咗。",
+        exampleJpFull: "全力を尽くした。しかし、失敗した。",
+        targetWord: "しかし"
+      },
+      {
+        id: 6,
+        kanji: "又",
+        kana: "また",
+        romaji: "ma ta",
+        english: "Also, again, furthermore",
+        cantonese: "另外 / 又 / 再者",
+        pos: "Conjunction",
+        formality: "Polite",
+        cantoneseExplanation: "用嚟並列補充其他事實，或者表示「再次、另外」嘅意思。",
+        exampleJp: "彼は歌手であり、__俳優でもある。",
+        exampleEn: "He is a singer, and also an actor.",
+        exampleCantonese: "佢係一位歌手，另外亦都係演員。",
+        exampleJpFull: "彼は歌手であり、また俳優でもある。",
+        targetWord: "また"
+      },
+      {
+        id: 7,
+        kanji: "而且",
+        kana: "その上",
+        romaji: "so no u e",
+        english: "On top of that, furthermore",
+        cantonese: "加上 / 仲要 / 再加上",
+        pos: "Conjunction",
+        formality: "Polite",
+        cantoneseExplanation: "喺前面嘅事實上再加上一點，強調「再者、加上、仲要」嘅遞進語氣。",
+        exampleJp: "雨が降り、__風も強くなってきた。",
+        exampleEn: "It rained, and on top of that, the wind became strong.",
+        exampleCantonese: "落緊雨，再加上風勢都變強咗。",
+        exampleJpFull: "雨が降り、その上風も強くなってきた。",
+        targetWord: "その上"
+      },
+      {
+        id: 8,
+        kanji: "但是",
+        kana: "だけど",
+        romaji: "da ke do",
+        english: "But, however",
+        cantonese: "不過 / 但係 (親密口語)",
+        pos: "Conjunction",
+        formality: "Casual",
+        cantoneseExplanation: "口語「だけど/だけど」係「けれども」嘅簡略講法，親友之間聊天好常用。",
+        exampleJp: "難しい。__、あきらめない。",
+        exampleEn: "It's difficult. But I won't give up.",
+        exampleCantonese: "好難。不過，我唔會放棄。",
+        exampleJpFull: "難しい。だけど、あきらめない。",
+        targetWord: "だけど"
+      },
+      {
+        id: 9,
+        kanji: "然后",
+        kana: "それから",
+        romaji: "so re ka ra",
+        english: "After that, then, and also",
+        cantonese: "跟住 / 然後 / 之後",
+        pos: "Conjunction",
+        formality: "Casual",
+        cantoneseExplanation: "按時間順序表達「跟住、之後」，或者喺列舉事物時表示「仲有」。",
+        exampleJp: "宿題をした。__、テレビを見た。",
+        exampleEn: "I did my homework. After that, I watched TV.",
+        exampleCantonese: "做完功課。然後，睇咗電視。",
+        exampleJpFull: "宿題をした。それから、テレビを見た。",
+        targetWord: "それから"
+      },
+      {
+        id: 10,
+        kanji: "因为",
+        kana: "なぜなら",
+        romaji: "na ze na ra",
+        english: "Because, the reason is that",
+        cantonese: "皆因 / 原因係...",
+        pos: "Conjunction",
+        formality: "Formal",
+        cantoneseExplanation: "先講結論再補充解釋原因，廣東話相當於「皆因 / 原因係...」，句尾常接「〜からだ」。",
+        exampleJp: "旅行を中止した。__、台風が来ているからだ。",
+        exampleEn: "We canceled the trip. Because a typhoon is approaching.",
+        exampleCantonese: "取消咗旅行。皆因颱風就嚟到。",
+        exampleJpFull: "旅行を中止した。なぜなら、台風が来ているからだ。",
+        targetWord: "なぜなら"
+      },
+      {
+        id: 11,
+        kanji: "不过",
+        kana: "ただし",
+        romaji: "ta da si",
+        english: "Provided that, however, except that",
+        cantonese: "不過 / 唯獨是 / 但條件係...",
+        pos: "Conjunction",
+        formality: "Formal",
+        cantoneseExplanation: "補充前面敘述嘅附加條件、例外或者注意事項，相當於「不過條件係.../唯獨是...」。",
+        exampleJp: "入場は無料です。__、予約が必要です。",
+        exampleEn: "Admission is free. However, a reservation is required.",
+        exampleCantonese: "免費入場。不過，需要提前預約。",
+        exampleJpFull: "入場は無料です。ただし、予約が必要です。",
+        targetWord: "ただし"
+      },
+      {
+        id: 12,
+        kanji: "如果",
+        kana: "もし",
+        romaji: "mo si",
+        english: "If, in case",
+        cantonese: "假若 / 假設 / 如果",
+        pos: "Conjunction",
+        formality: "Polite",
+        cantoneseExplanation: "放在句首表示「假設、如果」，通常搭配句尾嘅「〜たら」、「〜ば」或者「〜なら」。",
+        exampleJp: "__時間が合えば、一緒に行きましょう。",
+        exampleEn: "If time permits, let's go together.",
+        exampleCantonese: "如果時間夾得到，一齊去啦。",
+        exampleJpFull: "もし時間が合えば、一緒に行きましょう。",
+        targetWord: "もし"
+      }
+    ];
+
+    // --- STATE MANAGEMENT ---
+    let audioEnabled = true;
+    let quizQuestions = [];
+    let currentQuizIndex = 0;
+    let score = 0;
+    let selectedOption = null;
+
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      renderVocabGuide(vocabularyData);
+      prepareQuiz();
+    });
+
+    // --- AUDIO / SPEECH SYNTHESIS (Web Speech API) ---
+    function playTTS(text) {
+      if (!audioEnabled || !text) return;
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // Stop current playing speech
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ja-JP';
+        utterance.rate = 0.85; // Natural learning speed
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function playSoundEffect(type) {
+      if (!audioEnabled) return;
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'correct') {
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+          osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
+          gain.gain.setValueAtTime(0.12, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.3);
+        } else if (type === 'incorrect') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, ctx.currentTime); // A3
+          osc.frequency.setValueAtTime(174.61, ctx.currentTime + 0.15); // F3
+          gain.gain.setValueAtTime(0.12, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.35);
+        }
+      } catch (e) {
+        // Muted context fallback
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const icon = document.getElementById('audio-icon');
+      const text = document.getElementById('audio-text');
+      
+      if (audioEnabled) {
+        icon.setAttribute('data-lucide', 'volume-2');
+        icon.className = 'w-4 h-4 text-sky-400';
+        text.textContent = 'Audio On';
+      } else {
+        icon.setAttribute('data-lucide', 'volume-x');
+        icon.className = 'w-4 h-4 text-slate-500';
+        text.textContent = 'Audio Off';
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+      lucide.createIcons();
+    }
+
+    // --- TAB NAVIGATION ---
+    function switchTab(tab) {
+      const guideTab = document.getElementById('tab-guide');
+      const quizTab = document.getElementById('tab-quiz');
+      const btnGuide = document.getElementById('tab-btn-guide');
+      const btnQuiz = document.getElementById('tab-btn-quiz');
+
+      if (tab === 'guide') {
+        guideTab.classList.remove('hidden');
+        quizTab.classList.add('hidden');
+        btnGuide.className = 'px-3 sm:px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 bg-rose-500 text-white shadow-md';
+        btnQuiz.className = 'px-3 sm:px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 text-slate-400 hover:text-slate-200';
+      } else {
+        guideTab.classList.add('hidden');
+        quizTab.classList.remove('hidden');
+        btnQuiz.className = 'px-3 sm:px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 bg-rose-500 text-white shadow-md';
+        btnGuide.className = 'px-3 sm:px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 text-slate-400 hover:text-slate-200';
+      }
+    }
+
+    // --- GUIDE TAB RENDER & FILTER ---
+    function renderVocabGuide(items) {
+      const grid = document.getElementById('vocab-grid');
+      grid.innerHTML = '';
+
+      if (items.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-12 text-slate-500">
+            <i data-lucide="search-x" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+            <p class="text-base font-medium">No matching conjunctions found.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      items.forEach(item => {
+        const badgeColor = item.formality === 'Casual' 
+          ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' 
+          : item.formality === 'Polite' 
+            ? 'bg-sky-500/10 text-sky-400 border-sky-500/20' 
+            : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+
+        const card = document.createElement('div');
+        card.className = 'glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4 transition-all duration-200 hover:-translate-y-0.5';
+        card.innerHTML = `
+          <div>
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full border ${badgeColor}">
+                  ${item.formality}
+                </span>
+                <span class="text-xs text-slate-400 font-medium">ID: #${item.id.toString().padStart(2, '0')}</span>
+              </div>
+              <button onclick="playTTS('${item.kana}')" class="p-2 bg-slate-800/80 hover:bg-slate-700 text-sky-400 rounded-xl transition-colors border border-slate-700/50 flex items-center gap-1.5 text-xs font-medium" title="Listen Word">
+                <i data-lucide="volume-2" class="w-4 h-4"></i>
+                <span>Word</span>
+              </button>
+            </div>
+
+            <!-- Japanese Core Word -->
+            <div class="mb-3">
+              <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-extrabold text-white tracking-wide">${item.kana}</span>
+                <span class="text-lg font-medium text-slate-400">(${item.kanji})</span>
+              </div>
+              <div class="text-xs font-semibold text-rose-400 uppercase tracking-wider mt-0.5">${item.romaji}</div>
+            </div>
+
+            <!-- Cantonese Meaning & English -->
+            <div class="mb-2">
+              <p class="text-base font-bold text-amber-400">${item.cantonese}</p>
+              <p class="text-xs font-medium text-slate-400">${item.english}</p>
+            </div>
+            
+            <p class="text-xs text-slate-300 leading-relaxed mb-4 bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/60">${item.cantoneseExplanation}</p>
+          </div>
+
+          <!-- Example Sentence Section -->
+          <div class="pt-3 border-t border-slate-800/80 bg-slate-950/60 -mx-5 -mb-5 p-4 rounded-b-2xl">
+            <div class="flex items-center justify-between mb-1.5">
+              <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">例句 Context:</p>
+              <button onclick="playTTS('${item.exampleJpFull}')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-rose-400 rounded-lg transition-colors border border-slate-700/50 flex items-center gap-1 text-xs" title="Listen Example Sentence">
+                <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
+                <span>Sentence</span>
+              </button>
+            </div>
+            <p class="text-sm font-medium text-slate-100 mb-1 leading-relaxed">${item.exampleJp.replace('__', `<span class="text-rose-400 font-bold underline underline-offset-4">${item.targetWord}</span>`)}</p>
+            <p class="text-xs text-amber-400 font-medium">${item.exampleCantonese}</p>
+            <p class="text-xs text-slate-400">${item.exampleEn}</p>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    function filterVocab() {
+      const search = document.getElementById('search-input').value.toLowerCase().trim();
+      const formality = document.getElementById('formality-filter').value;
+
+      const filtered = vocabularyData.filter(item => {
+        const matchesSearch = item.kana.toLowerCase().includes(search) ||
+                              item.kanji.toLowerCase().includes(search) ||
+                              item.romaji.toLowerCase().includes(search) ||
+                              item.cantonese.toLowerCase().includes(search) ||
+                              item.english.toLowerCase().includes(search);
+        
+        const matchesFormality = formality === 'all' || item.formality === formality;
+
+        return matchesSearch && matchesFormality;
+      });
+
+      renderVocabGuide(filtered);
+    }
+
+    // --- QUIZ SYSTEM ---
+    function prepareQuiz() {
+      // Shuffle vocabulary to create 10 questions
+      const shuffled = [...vocabularyData].sort(() => 0.5 - Math.random());
+      quizQuestions = shuffled.slice(0, 10).map(item => {
+        // Generate options
+        const distractors = vocabularyData
+          .filter(v => v.id !== item.id)
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 3)
+          .map(v => v.kana);
+        
+        const options = [...distractors, item.kana].sort(() => 0.5 - Math.random());
+        
+        return {
+          questionItem: item,
+          options: options,
+          correctAnswer: item.kana
+        };
+      });
+
+      currentQuizIndex = 0;
+      score = 0;
+      showQuestion();
+    }
+
+    function showQuestion() {
+      selectedOption = null;
+      const q = quizQuestions[currentQuizIndex];
+      const item = q.questionItem;
+
+      // Update Header Info
+      document.getElementById('quiz-progress-num').textContent = `${currentQuizIndex + 1}/${quizQuestions.length}`;
+      document.getElementById('quiz-score').textContent = score;
+      
+      const progressPercent = ((currentQuizIndex) / quizQuestions.length) * 100;
+      document.getElementById('quiz-progress-bar').style.width = `${progressPercent}%`;
+
+      // Update Question Display
+      document.getElementById('quiz-sentence-jp').textContent = item.exampleJp.replace('__', '（ ？ ）');
+      document.getElementById('quiz-sentence-cantonese').textContent = item.exampleCantonese;
+      document.getElementById('quiz-sentence-en').textContent = item.exampleEn;
+
+      // Render Options
+      const optionsContainer = document.getElementById('quiz-options');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((opt, idx) => {
+        const label = String.fromCharCode(65 + idx); // A, B, C, D
+        const btn = document.createElement('button');
+        btn.onclick = () => selectAnswer(opt, btn);
+        btn.className = 'quiz-opt-btn glass-card p-4 rounded-xl text-left flex items-center gap-3 transition-all border border-slate-800 hover:border-slate-700 hover:bg-slate-800/50 group';
+        btn.innerHTML = `
+          <span class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 group-hover:border-rose-500/50 flex items-center justify-center font-bold text-sm text-slate-300 group-hover:text-rose-400 shrink-0">
+            ${label}
+          </span>
+          <span class="font-bold text-slate-100 text-lg">${opt}</span>
+        `;
+        optionsContainer.appendChild(btn);
+      });
+
+      // Reset Feedback Bar
+      const feedbackBar = document.getElementById('quiz-feedback-bar');
+      feedbackBar.className = 'hidden flex items-center justify-between p-4 rounded-xl border transition-all';
+      feedbackBar.innerHTML = `
+        <div id="quiz-feedback-text" class="text-sm font-semibold flex items-center gap-2"></div>
+        <button onclick="nextQuestion()" class="px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-semibold rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-rose-500/20">
+          <span>${currentQuizIndex === quizQuestions.length - 1 ? 'Finish Quiz' : 'Next'}</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      `;
+
+      // NOTE: Removed automatic autoplay on question load so it stays silent when idle.
+      lucide.createIcons();
+    }
+
+    function selectAnswer(answer, btnElement) {
+      if (selectedOption !== null) return; // Prevent multi-click
+      selectedOption = answer;
+
+      const q = quizQuestions[currentQuizIndex];
+      const isCorrect = answer === q.correctAnswer;
+
+      const allOptionButtons = document.querySelectorAll('.quiz-opt-btn');
+      allOptionButtons.forEach(btn => {
+        btn.disabled = true;
+        btn.classList.add('opacity-60', 'cursor-not-allowed');
+      });
+
+      btnElement.classList.remove('opacity-60');
+
+      if (isCorrect) {
+        score += 1;
+        document.getElementById('quiz-score').textContent = score;
+        btnElement.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-300');
+        playSoundEffect('correct');
+      } else {
+        btnElement.classList.add('bg-rose-500/20', 'border-rose-500', 'text-rose-300');
+        playSoundEffect('incorrect');
+
+        // Highlight correct answer
+        allOptionButtons.forEach(btn => {
+          if (btn.textContent.includes(q.correctAnswer)) {
+            btn.classList.remove('opacity-60');
+            btn.classList.add('bg-emerald-500/20', 'border-emerald-500/50');
+          }
+        });
+      }
+
+      // Show Feedback Bar
+      const feedbackBar = document.getElementById('quiz-feedback-bar');
+      const feedbackText = document.getElementById('quiz-feedback-text');
+      feedbackBar.classList.remove('hidden');
+
+      if (isCorrect) {
+        feedbackBar.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-400');
+        feedbackText.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5"></i> 答對了！非常棒。`;
+      } else {
+        feedbackBar.classList.add('bg-rose-500/10', 'border-rose-500/30', 'text-rose-400');
+        feedbackText.innerHTML = `<i data-lucide="x-circle" class="w-5 h-5"></i> 答錯了。正確答案係: <strong>${q.correctAnswer}</strong> (${q.questionItem.cantonese})`;
+      }
+
+      lucide.createIcons();
+    }
+
+    function playQuizAudio() {
+      const q = quizQuestions[currentQuizIndex];
+      playTTS(q.questionItem.exampleJpFull);
+    }
+
+    function nextQuestion() {
+      if (currentQuizIndex < quizQuestions.length - 1) {
+        currentQuizIndex++;
+        showQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      document.getElementById('quiz-card').classList.add('hidden');
+      const endCard = document.getElementById('quiz-end-card');
+      endCard.classList.remove('hidden');
+
+      const total = quizQuestions.length;
+      document.getElementById('final-score').textContent = score;
+      document.getElementById('final-total').textContent = total;
+
+      const percentage = (score / total) * 100;
+      let commentary = "";
+
+      if (percentage === 100) {
+        commentary = "🎉 滿分！(完璧!) 你已經完全掌握呢啲常用日文接續詞！";
+      } else if (percentage >= 80) {
+        commentary = "👏 表現得好好！你對日文轉折同接續詞有好好嘅理解。";
+      } else if (percentage >= 60) {
+        commentary = "👍 做得唔錯！可以去 Vocabulary Guide 溫習下口語同正式用語嘅分別。";
+      } else {
+        commentary = "📚 繼續加油！睇多幾次 Vocabulary Guide 嘅例句，然後再試一次啦。";
+      }
+
+      document.getElementById('performance-commentary').textContent = commentary;
+      lucide.createIcons();
+    }
+
+    function restartQuiz() {
+      document.getElementById('quiz-end-card').classList.add('hidden');
+      document.getElementById('quiz-card').classList.remove('hidden');
+      prepareQuiz();
+    }
+  </script>
+</body>
+</html>
