@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Praise & Compliments Vocabulary & Quiz | 日本語の褒め言葉</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#152033',
+                            900: '#0f172a',
+                            950: '#080d1a',
+                        },
+                        rose: {
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                        },
+                        sky: {
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 glass-card border-b border-slate-800/80 bg-slate-950/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 to-sky-500 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-rose-500/20">
+                    誉
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg sm:text-xl text-white tracking-tight flex items-center gap-2">
+                        日本語 Praise & Praise Words
+                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">語彙 & クイズ</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">Interactive Vocabulary Guide & Practice Quiz</p>
+                </div>
+            </div>
+
+            <!-- Controls & Navigation -->
+            <div class="flex items-center space-x-3">
+                <!-- Audio Toggle Button -->
+                <button id="audioToggleBtn" onclick="toggleAudio()" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/50 text-slate-300 hover:text-white transition flex items-center gap-2 text-xs font-medium" title="Toggle Audio Sound Effects">
+                    <i id="audioIcon" data-lucide="volume-2" class="w-4 h-4 text-sky-400"></i>
+                    <span id="audioStatus" class="hidden md:inline">Audio On</span>
+                </button>
+
+                <!-- Navigation Tabs -->
+                <div class="flex bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+                    <button id="tabGuideBtn" onclick="switchTab('guide')" class="px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 bg-gradient-to-r from-rose-500 to-rose-600 text-white shadow-md">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <span>Vocabulary</span>
+                    </button>
+                    <button id="tabQuizBtn" onclick="switchTab('quiz')" class="px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 text-slate-400 hover:text-white">
+                        <i data-lucide="help-circle" class="w-4 h-4"></i>
+                        <span>Quiz</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- TAB 1: VOCABULARY GUIDE -->
+        <section id="guideTab" class="space-y-6">
+            <!-- Hero / Filter Section -->
+            <div class="glass-card rounded-2xl p-6 border border-slate-800/80 bg-gradient-to-br from-slate-900 via-slate-900/90 to-slate-950">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <span>Japanese Compliments & Hype Words</span>
+                            <span class="text-xs bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2.5 py-1 rounded-full font-normal">17 Entries</span>
+                        </h2>
+                        <p class="text-sm text-slate-400 mt-1">Master words used to praise, express awe, hype up friends, or react to amazing talent in Japanese culture & anime.</p>
+                    </div>
+
+                    <!-- Search and Category Filters -->
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="relative min-w-[220px]">
+                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="searchInput" oninput="filterVocab()" placeholder="Search kanji, romaji, chinese..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-rose-500 transition">
+                        </div>
+                        <select id="categoryFilter" onchange="filterVocab()" class="bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-rose-500 transition">
+                            <option value="all">All Categories</option>
+                            <option value="i-adj">i-Adjective (い形容詞)</option>
+                            <option value="na-adj">na-Adjective / Noun</option>
+                            <option value="slang">Slang / Modern Expressions</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vocabulary Cards Grid -->
+            <div id="vocabGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Cards dynamically inserted via JS -->
+            </div>
+        </section>
+
+        <!-- TAB 2: INTERACTIVE QUIZ -->
+        <section id="quizTab" class="hidden max-w-3xl mx-auto space-y-6">
+            
+            <!-- Quiz Active Container -->
+            <div id="quizContainer" class="glass-card rounded-2xl p-6 md:p-8 border border-slate-800/80 shadow-2xl relative overflow-hidden">
+                
+                <!-- Quiz Progress Bar Header -->
+                <div class="flex items-center justify-between text-xs font-semibold text-slate-400 mb-3">
+                    <span id="questionNumText" class="text-rose-400 uppercase tracking-wider">Question 1 of 10</span>
+                    <span id="scoreTrackerText" class="bg-slate-800/80 border border-slate-700/60 px-3 py-1 rounded-full text-slate-300">Score: 0</span>
+                </div>
+
+                <div class="w-full bg-slate-950 rounded-full h-2.5 mb-6 overflow-hidden p-0.5 border border-slate-800">
+                    <div id="quizProgressBar" class="bg-gradient-to-r from-rose-500 to-sky-500 h-1.5 rounded-full transition-all duration-500" style="width: 10%"></div>
+                </div>
+
+                <!-- Question Prompt Card -->
+                <div class="bg-slate-950/60 rounded-xl p-5 border border-slate-800 mb-6 text-center relative">
+                    <span id="questionTypeBadge" class="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-800 text-sky-400 border border-sky-500/30 mb-3">
+                        Meaning Challenge
+                    </span>
+                    <div class="flex items-center justify-center gap-3">
+                        <h3 id="quizPromptText" class="text-3xl md:text-4xl font-extrabold text-white tracking-wide font-jp">
+                            すごい
+                        </h3>
+                        <button id="quizAudioBtn" onclick="playQuizPromptAudio()" class="p-2.5 rounded-full bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white transition shadow-md" title="Listen Pronunciation">
+                            <i data-lucide="volume-2" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                    <p id="quizSubPrompt" class="text-sm text-slate-400 mt-2 font-mono">
+                        Select the correct meaning for this Japanese term:
+                    </p>
+                </div>
+
+                <!-- Answer Options (A, B, C, D) -->
+                <div id="quizOptionsContainer" class="grid grid-cols-1 gap-3.5">
+                    <!-- Option Buttons dynamically generated -->
+                </div>
+
+                <!-- Feedback & Next Button Area -->
+                <div id="quizFeedbackArea" class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between min-h-[60px] opacity-0 transition-opacity">
+                    <div id="quizFeedbackMessage" class="text-sm font-semibold flex items-center gap-2">
+                        <!-- Dynamic feedback text -->
+                    </div>
+                    <button id="nextQuestionBtn" onclick="nextQuestion()" class="hidden px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-bold text-sm shadow-lg shadow-rose-500/25 transition flex items-center gap-2">
+                        <span>Next Question</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz End / Results Screen -->
+            <div id="quizResultContainer" class="hidden glass-card rounded-2xl p-8 border border-slate-800/80 text-center space-y-6">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-rose-500 to-sky-500 text-white flex items-center justify-center mx-auto shadow-xl shadow-rose-500/20">
+                    <i data-lucide="trophy" class="w-10 h-10"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-extrabold text-white">Quiz Completed!</h2>
+                    <p class="text-slate-400 text-sm mt-1">Here is how well you know Japanese Praise & Compliment vocabulary.</p>
+                </div>
+
+                <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-6 max-w-sm mx-auto">
+                    <div class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-sky-400" id="finalScoreText">
+                        8 / 10
+                    </div>
+                    <p id="resultCommentary" class="text-slate-300 font-medium text-sm mt-2">
+                        素晴らしい！ You've mastered these praise words!
+                    </p>
+                </div>
+
+                <div class="pt-4 flex justify-center gap-4">
+                    <button onclick="restartQuiz()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-bold text-sm shadow-lg shadow-rose-500/20 transition flex items-center gap-2">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <span>Try Again</span>
+                    </button>
+                    <button onclick="switchTab('guide')" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-sm transition flex items-center gap-2">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <span>Review Guide</span>
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="border-t border-slate-800/80 py-6 bg-slate-950 text-center text-xs text-slate-500">
+        <p>Japanese Vocabulary & Interactive Quiz App • Powered by Web Speech API & Tailwind CSS</p>
+    </footer>
+
+    <script>
+        const vocabularyData = [
+            {
+                id: 1,
+                kanji: "すごい",
+                kana: "すごい",
+                romaji: "sugoi",
+                meaningZh: "好厲害",
+                meaningEn: "Amazing / Incredible",
+                posLabel: "i-Adjective",
+                category: "i-adj",
+                nuance: "One of the most common praise words in Japanese, used when impressed by someone's skill or an impressive feat.",
+                lyricContext: "すごーい！本当に上手ですね！",
+                lyricTranslation: "So amazing! You're really skilled!"
+            },
+            {
+                id: 2,
+                kanji: "さすが",
+                kana: "さすが",
+                romaji: "sasuga",
+                meaningZh: "不愧是你",
+                meaningEn: "As expected of you / Impressive",
+                posLabel: "Expression",
+                category: "slang",
+                nuance: "Used to praise someone when their success or skill lives up to their high reputation.",
+                lyricContext: "さすが！期待を裏切らないね！",
+                lyricTranslation: "As expected of you! Never disappoints!"
+            },
+            {
+                id: 3,
+                kanji: "最高",
+                kana: "さいこう",
+                romaji: "saikou",
+                meaningZh: "最棒了",
+                meaningEn: "The best / Supreme",
+                posLabel: "na-Adjective",
+                category: "na-adj",
+                nuance: "Literally 'highest height'. Used to express extreme satisfaction or hype for a performance or experience.",
+                lyricContext: "今日のライブ、最高だったよ！",
+                lyricTranslation: "Today's live performance was the absolute best!"
+            },
+            {
+                id: 4,
+                kanji: "素敵",
+                kana: "すてき",
+                romaji: "suteki",
+                meaningZh: "好棒",
+                meaningEn: "Lovely / Wonderful / Charming",
+                posLabel: "na-Adjective",
+                category: "na-adj",
+                nuance: "An elegant, pleasant praise word used for style, gestures, songs, or aesthetic beauty.",
+                lyricContext: "そのドレス、とても素敵ですね。",
+                lyricTranslation: "That dress is so lovely."
+            },
+            {
+                id: 5,
+                kanji: "かっこいい",
+                kana: "かっこいい",
+                romaji: "kakkoii",
+                meaningZh: "好帥",
+                meaningEn: "Cool / Handsome",
+                posLabel: "i-Adjective",
+                category: "i-adj",
+                nuance: "Used to compliment someone's attractive appearance, cool behavior, or impressive style.",
+                lyricContext: "ギターを弾く姿がかっこいい！",
+                lyricTranslation: "The way you play the guitar is so cool!"
+            },
+            {
+                id: 6,
+                kanji: "かわいい",
+                kana: "かわいい",
+                romaji: "kawaii",
+                meaningZh: "好可愛",
+                meaningEn: "Cute / Adorable",
+                posLabel: "i-Adjective",
+                category: "i-adj",
+                nuance: "Ubiquitous Japanese word praising cuteness in looks, actions, voice, or personality.",
+                lyricContext: "笑顔が本当に広くてかわいい！",
+                lyricTranslation: "Your smile is truly wide and cute!"
+            },
+            {
+                id: 7,
+                kanji: "きれい",
+                kana: "きれい",
+                romaji: "kirei",
+                meaningZh: "好漂亮",
+                meaningEn: "Beautiful / Pretty / Clean",
+                posLabel: "na-Adjective",
+                category: "na-adj",
+                nuance: "Compliments visual beauty, neatness, or pure vocals/melody.",
+                lyricContext: "歌声がとてもきれいですね。",
+                lyricTranslation: "Your singing voice is so beautiful."
+            },
+            {
+                id: 8,
+                kanji: "美しい",
+                kana: "うつくしい",
+                romaji: "utsukushii",
+                meaningZh: "好美",
+                meaningEn: "Beautiful / Gorgeous / Graceful",
+                posLabel: "i-Adjective",
+                category: "i-adj",
+                nuance: "More formal and poetic than 'kirei', describing profound aesthetic or artistic beauty.",
+                lyricContext: "夕焼けの景色が美しすぎる。",
+                lyricTranslation: "The sunset scenery is overwhelmingly beautiful."
+            },
+            {
+                id: 9,
+                kanji: "おしゃれ",
+                kana: "おしゃれ",
+                romaji: "oshare",
+                meaningZh: "好時尚",
+                meaningEn: "Stylish / Fashionable",
+                posLabel: "na-Adjective",
+                category: "na-adj",
+                nuance: "Compliments fashion taste, interior design, music arrangement, or personal flair.",
+                lyricContext: "私服のセンスがおしゃれだね。",
+                lyricTranslation: "Your casual fashion sense is so stylish."
+            },
+            {
+                id: 10,
+                kanji: "天才",
+                kana: "てんさい",
+                romaji: "tensai",
+                meaningZh: "天才",
+                meaningEn: "Genius / Prodigy",
+                posLabel: "Noun",
+                category: "slang",
+                nuance: "Praising natural brilliance, clever ideas, or extraordinary talent.",
+                lyricContext: "こんな曲が作れるなんて天才！",
+                lyricTranslation: "Being able to write a song like this makes you a genius!"
+            },
+            {
+                id: 11,
+                kanji: "神",
+                kana: "かみ",
+                romaji: "kami",
+                meaningZh: "神了 (形容超凡表現)",
+                meaningEn: "God-tier / Legendary",
+                posLabel: "Slang",
+                category: "slang",
+                nuance: "Pop culture & internet slang praising godlike skill, a godly song, or legendary performance.",
+                lyricContext: "今回のソロパート、まじで神！",
+                lyricTranslation: "This solo part is seriously god-tier!"
+            },
+            {
+                id: 12,
+                kanji: "神業",
+                kana: "かみわざ",
+                romaji: "kamiwaza",
+                meaningZh: "神技",
+                meaningEn: "Divine skill / Superhuman feat",
+                posLabel: "Noun",
+                category: "slang",
+                nuance: "Refers to superhuman skill or unbelievable execution in sports, gaming, or arts.",
+                lyricContext: "あの高速ドラムはまさに神業だ。",
+                lyricTranslation: "That super-fast drumming is truly a divine skill."
+            },
+            {
+                id: 13,
+                kanji: "天晴れ",
+                kana: "あっぱれ",
+                romaji: "appare",
+                meaningZh: "太精彩了 (較古風的誇獎)",
+                meaningEn: "Splendid! / Bravo! / Well done!",
+                posLabel: "Classic Praise",
+                category: "slang",
+                nuance: "Classical, dramatic praise phrase used to express profound admiration for a heroic victory or performance.",
+                lyricContext: "見事な勝負、天晴れであった！",
+                lyricTranslation: "A brilliant match—splendidly done!"
+            },
+            {
+                id: 14,
+                kanji: "完璧",
+                kana: "かんぺき",
+                romaji: "kanpeki",
+                meaningZh: "完美",
+                meaningEn: "Perfect / Flawless",
+                posLabel: "na-Adjective",
+                category: "na-adj",
+                nuance: "Used when a performance or result leaves zero room for error or improvement.",
+                lyricContext: "準備は完璧、さあステージへ！",
+                lyricTranslation: "The preparation is perfect, let's head to the stage!"
+            },
+            {
+                id: 15,
+                kanji: "尊い",
+                kana: "とうとい",
+                romaji: "toutoi",
+                meaningZh: "太美好了一",
+                meaningEn: "Precious / Sacred / Touching",
+                posLabel: "i-Adjective / Slang",
+                category: "slang",
+                nuance: "In modern otaku/fan subculture, used to describe something so wholesome, precious, or wholesome that it touches your heart.",
+                lyricContext: "二人の絆が尊すぎて泣ける...",
+                lyricTranslation: "Their bond is so precious it brings tears to my eyes..."
+            },
+            {
+                id: 16,
+                kanji: "大好き",
+                kana: "だいすき",
+                romaji: "daisuki",
+                meaningZh: "超喜歡",
+                meaningEn: "Love / Very fond of",
+                posLabel: "na-Adjective",
+                category: "na-adj",
+                nuance: "Strong, joyful expression of affection towards people, songs, food, or hobbies.",
+                lyricContext: "みんなの笑顔が大好きだよ！",
+                lyricTranslation: "I love everyone's smiles so much!"
+            },
+            {
+                id: 17,
+                kanji: "エモい",
+                kana: "えもい",
+                romaji: "emoi",
+                meaningZh: "好有感觸 (emo外來語)",
+                meaningEn: "Emotional / Nostalgic / Moving",
+                posLabel: "Slang i-Adj",
+                category: "slang",
+                nuance: "Modern slang derived from 'Emotional' (emo). Used for melancholic, sentimental, nostalgic, or deeply moving atmosphere.",
+                lyricContext: "この曲のメロディー、エモいね。",
+                lyricTranslation: "The melody of this song is so emotional and nostalgic."
+            }
+        ];
+
+        const quizQuestions = [
+            {
+                prompt: "最高",
+                subPrompt: "What is the meaning of this Japanese word?",
+                options: ["好可愛 (Cute)", "最棒了 (The best)", "好時尚 (Stylish)", "完美 (Perfect)"],
+                correctIndex: 1,
+                audioText: "さいこう"
+            },
+            {
+                prompt: "「神業」の読み方はどれ？",
+                subPrompt: "Select the correct reading (Furigana) for 神業:",
+                options: ["かみわざ (kamiwaza)", "てんさい (tensai)", "かんぺき (kanpeki)", "とうとい (toutoi)"],
+                correctIndex: 0,
+                audioText: "かみわざ"
+            },
+            {
+                prompt: "さすが！期待を裏切らないね！",
+                subPrompt: "What does 「さすが」 signify in this context?",
+                options: ["太精彩了 (Bravo / Classic)", "不愧是你 (As expected of you)", "好有感觸 (Emotional)", "超喜歡 (Love so much)"],
+                correctIndex: 1,
+                audioText: "さすが"
+            },
+            {
+                prompt: "Which word is modern subculture slang meaning 'Precious / Wholesome / Touching'?",
+                subPrompt: "Select the Japanese word:",
+                options: ["尊い (とうとい)", "きれい", "完璧 (かんぺき)", "おしゃれ"],
+                correctIndex: 0,
+                audioText: "とうとい"
+            },
+            {
+                prompt: "エモい",
+                subPrompt: "What is the origin and meaning of 「エモい」?",
+                options: ["Derived from 'Emoji' (Cute graphics)", "Derived from 'Emotional' (Nostalgic / Moving)", "Derived from 'Elite' (God-tier)", "Derived from 'Energy' (Hyper)"],
+                correctIndex: 1,
+                audioText: "えもい"
+            },
+            {
+                prompt: "天晴れ",
+                subPrompt: "What is the nuance of this praise word 「あっぱれ」?",
+                options: ["Modern high school slang", "Classical/dramatic praise meaning 'Splendid / Bravo!'", "Negative complaint", "Polite apology"],
+                correctIndex: 1,
+                audioText: "あっぱれ"
+            },
+            {
+                prompt: "「かんぺき」に対応する漢字はどれ？",
+                subPrompt: "Select the correct Kanji for 'kanpeki' (Perfect):",
+                options: ["天才", "最高", "完璧", "神業"],
+                correctIndex: 2,
+                audioText: "かんぺき"
+            },
+            {
+                prompt: "かっこいい",
+                subPrompt: "Choose the correct Chinese meaning for this word:",
+                options: ["好漂亮", "好帥 (Cool / Handsome)", "好美", "好厲害"],
+                correctIndex: 1,
+                audioText: "かっこいい"
+            },
+            {
+                prompt: "神 (かみ)",
+                subPrompt: "In modern praise language, when someone says 'まじで神！', what do they mean?",
+                options: ["It is dangerous", "It is seriously god-tier / legendary", "It is mysterious", "It is old-fashioned"],
+                correctIndex: 1,
+                audioText: "かみ"
+            },
+            {
+                prompt: "おしゃれ",
+                subPrompt: "What does this word compliment?",
+                options: ["Fashion taste / Style", "Physical strength", "Academic grades", "Speed"],
+                correctIndex: 0,
+                audioText: "おしゃれ"
+            }
+        ];
+
+        let isAudioEnabled = true;
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let selectedOption = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderVocabCards(vocabularyData);
+        });
+
+        function speakJapanese(text) {
+            if (!isAudioEnabled) return;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP';
+                utterance.rate = 0.9;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function playBeep(isCorrect) {
+            if (!isAudioEnabled) return;
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (isCorrect) {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+                    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.35);
+                } else {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, ctx.currentTime);
+                    osc.frequency.setValueAtTime(164.81, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.4);
+                }
+            } catch(e) {}
+        }
+
+        function toggleAudio() {
+            isAudioEnabled = !isAudioEnabled;
+            const icon = document.getElementById('audioIcon');
+            const statusText = document.getElementById('audioStatus');
+            if (isAudioEnabled) {
+                icon.setAttribute('data-lucide', 'volume-2');
+                icon.className = 'w-4 h-4 text-sky-400';
+                statusText.innerText = 'Audio On';
+            } else {
+                icon.setAttribute('data-lucide', 'volume-x');
+                icon.className = 'w-4 h-4 text-slate-500';
+                statusText.innerText = 'Audio Off';
+                window.speechSynthesis.cancel();
+            }
+            lucide.createIcons();
+        }
+
+        function switchTab(tabName) {
+            const guideTab = document.getElementById('guideTab');
+            const quizTab = document.getElementById('quizTab');
+            const tabGuideBtn = document.getElementById('tabGuideBtn');
+            const tabQuizBtn = document.getElementById('tabQuizBtn');
+
+            if (tabName === 'guide') {
+                guideTab.classList.remove('hidden');
+                quizTab.classList.add('hidden');
+                
+                tabGuideBtn.className = "px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 bg-gradient-to-r from-rose-500 to-rose-600 text-white shadow-md";
+                tabQuizBtn.className = "px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 text-slate-400 hover:text-white";
+            } else {
+                guideTab.classList.add('hidden');
+                quizTab.classList.remove('hidden');
+                
+                tabQuizBtn.className = "px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 bg-gradient-to-r from-rose-500 to-rose-600 text-white shadow-md";
+                tabGuideBtn.className = "px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 text-slate-400 hover:text-white";
+                
+                if (currentQuizIndex === 0 && selectedOption === null) {
+                    loadQuizQuestion();
+                }
+            }
+            lucide.createIcons();
+        }
+
+        function renderVocabCards(cards) {
+            const container = document.getElementById('vocabGrid');
+            container.innerHTML = '';
+
+            if (cards.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-slate-500">
+                        <i data-lucide="search-x" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>
+                        <p>No matching vocabulary entries found.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            cards.forEach(item => {
+                const cardEl = document.createElement('div');
+                cardEl.className = "glass-card rounded-2xl p-5 border border-slate-800 hover:border-slate-700/80 transition-all duration-300 hover:shadow-xl hover:shadow-rose-500/5 group relative flex flex-col justify-between";
+                
+                cardEl.innerHTML = `
+                    <div>
+                        <div class="flex items-start justify-between mb-3">
+                            <div>
+                                <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-800 text-rose-400 border border-slate-700/60 inline-block mb-1">
+                                    ${item.posLabel}
+                                </span>
+                                <h3 class="text-2xl font-bold text-white tracking-wide font-jp flex items-baseline gap-2">
+                                    ${item.kanji}
+                                    <span class="text-xs font-normal text-slate-400">(${item.kana})</span>
+                                </h3>
+                                <p class="text-xs text-sky-400 font-mono tracking-wide">${item.romaji}</p>
+                            </div>
+
+                            <button onclick="speakJapanese('${item.kanji}')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-rose-500/20 text-slate-300 hover:text-rose-400 border border-slate-700/60 transition shadow-sm group-hover:scale-105" title="Listen Pronunciation">
+                                <i data-lucide="volume-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-1 my-3 bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-slate-400 uppercase w-12">ZH:</span>
+                                <span class="text-sm font-semibold text-rose-300">${item.meaningZh}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-slate-400 uppercase w-12">EN:</span>
+                                <span class="text-xs text-slate-300">${item.meaningEn}</span>
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+                            ${item.nuance}
+                        </p>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-800/80 bg-slate-900/40 -mx-5 -mb-5 p-4 rounded-b-2xl flex items-center justify-between gap-3">
+                        <div class="flex-grow">
+                            <p class="text-xs text-slate-300 font-jp font-medium hover:text-white transition cursor-pointer" onclick="speakJapanese('${item.lyricContext}')">
+                                “${item.lyricContext}”
+                            </p>
+                            <p class="text-[11px] text-slate-500 italic mt-0.5">${item.lyricTranslation}</p>
+                        </div>
+                        <button onclick="speakJapanese('${item.lyricContext}')" class="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-sky-300 transition" title="Listen Context Sentence">
+                            <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(cardEl);
+            });
+            lucide.createIcons();
+        }
+
+        function filterVocab() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const category = document.getElementById('categoryFilter').value;
+
+            const filtered = vocabularyData.filter(item => {
+                const matchesSearch = item.kanji.toLowerCase().includes(query) ||
+                                      item.kana.toLowerCase().includes(query) ||
+                                      item.romaji.toLowerCase().includes(query) ||
+                                      item.meaningZh.toLowerCase().includes(query) ||
+                                      item.meaningEn.toLowerCase().includes(query);
+
+                const matchesCategory = (category === 'all') || (item.category === category);
+
+                return matchesSearch && matchesCategory;
+            });
+
+            renderVocabCards(filtered);
+        }
+
+        function loadQuizQuestion() {
+            const q = quizQuestions[currentQuizIndex];
+            selectedOption = null;
+
+            document.getElementById('questionNumText').innerText = `Question ${currentQuizIndex + 1} of ${quizQuestions.length}`;
+            document.getElementById('scoreTrackerText').innerText = `Score: ${quizScore}`;
+            document.getElementById('quizProgressBar').style.width = `${((currentQuizIndex + 1) / quizQuestions.length) * 100}%`;
+
+            document.getElementById('quizPromptText').innerText = q.prompt;
+            document.getElementById('quizSubPrompt').innerText = q.subPrompt;
+
+            const feedbackArea = document.getElementById('quizFeedbackArea');
+            feedbackArea.classList.add('opacity-0');
+            document.getElementById('nextQuestionBtn').classList.add('hidden');
+
+            const optionsContainer = document.getElementById('quizOptionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const optionLabels = ['A', 'B', 'C', 'D'];
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-opt-btn w-full p-4 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-left transition flex items-center gap-3 text-slate-200 text-sm font-medium group";
+                btn.onclick = () => selectQuizAnswer(idx);
+
+                btn.innerHTML = `
+                    <span class="w-7 h-7 rounded-lg bg-slate-800 text-slate-400 group-hover:bg-rose-500/20 group-hover:text-rose-400 font-bold text-xs flex items-center justify-center transition border border-slate-700/60">
+                        ${optionLabels[idx]}
+                    </span>
+                    <span class="flex-grow">${opt}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            speakJapanese(q.audioText);
+            lucide.createIcons();
+        }
+
+        function playQuizPromptAudio() {
+            const q = quizQuestions[currentQuizIndex];
+            speakJapanese(q.audioText);
+        }
+
+        function selectQuizAnswer(selectedIndex) {
+            if (selectedOption !== null) return;
+            selectedOption = selectedIndex;
+
+            const q = quizQuestions[currentQuizIndex];
+            const isCorrect = (selectedIndex === q.correctIndex);
+            const optionsContainer = document.getElementById('quizOptionsContainer');
+            const buttons = optionsContainer.querySelectorAll('.quiz-opt-btn');
+
+            if (isCorrect) {
+                quizScore += 1;
+                playBeep(true);
+            } else {
+                playBeep(false);
+            }
+
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === q.correctIndex) {
+                    btn.className = "quiz-opt-btn w-full p-4 rounded-xl bg-emerald-950/80 border-2 border-emerald-500 text-emerald-200 text-left flex items-center gap-3 text-sm font-semibold shadow-lg shadow-emerald-500/10";
+                } else if (idx === selectedIndex && !isCorrect) {
+                    btn.className = "quiz-opt-btn w-full p-4 rounded-xl bg-rose-950/80 border-2 border-rose-500 text-rose-200 text-left flex items-center gap-3 text-sm font-semibold";
+                } else {
+                    btn.className = "quiz-opt-btn w-full p-4 rounded-xl bg-slate-900/40 border border-slate-800/50 text-slate-500 text-left flex items-center gap-3 text-sm opacity-50";
+                }
+            });
+
+            const feedbackArea = document.getElementById('quizFeedbackArea');
+            const feedbackMsg = document.getElementById('quizFeedbackMessage');
+            
+            if (isCorrect) {
+                feedbackMsg.innerHTML = `
+                    <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>
+                    <span class="text-emerald-400">Correct! 正解です！</span>
+                `;
+            } else {
+                feedbackMsg.innerHTML = `
+                    <i data-lucide="x-circle" class="w-5 h-5 text-rose-400"></i>
+                    <span class="text-rose-400">Incorrect. Correct answer: ${q.options[q.correctIndex]}</span>
+                `;
+            }
+
+            feedbackArea.classList.remove('opacity-0');
+            document.getElementById('nextQuestionBtn').classList.remove('hidden');
+            document.getElementById('scoreTrackerText').innerText = `Score: ${quizScore}`;
+            lucide.createIcons();
+        }
+
+        function nextQuestion() {
+            currentQuizIndex++;
+            if (currentQuizIndex < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                showQuizResults();
+            }
+        }
+
+        function showQuizResults() {
+            document.getElementById('quizContainer').classList.add('hidden');
+            const resultContainer = document.getElementById('quizResultContainer');
+            resultContainer.classList.remove('hidden');
+
+            document.getElementById('finalScoreText').innerText = `${quizScore} / ${quizQuestions.length}`;
+
+            const percentage = (quizScore / quizQuestions.length) * 100;
+            let commentary = "";
+            if (percentage === 100) {
+                commentary = "完璧 (Kanpeki)! Perfect score! You are a master of Japanese praise vocabulary!";
+            } else if (percentage >= 80) {
+                commentary = "素晴らしい (Subarashii)! Excellent job! Your praise vocabulary is top tier!";
+            } else if (percentage >= 60) {
+                commentary = "さすが (Sasuga)! Good effort! Review a few words in the guide to reach perfection.";
+            } else {
+                commentary = "Keep practicing! Explore the Vocabulary Guide and try again!";
+            }
+
+            document.getElementById('resultCommentary').innerText = commentary;
+            lucide.createIcons();
+        }
+
+        function restartQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            selectedOption = null;
+
+            document.getElementById('quizResultContainer').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('hidden');
+            loadQuizQuestion();
+        }
+    </script>
+</body>
+</html>
