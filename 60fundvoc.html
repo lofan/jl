@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Japanese Vocabulary & Quiz App</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fff1f2',
+              100: '#ffe4e6',
+              500: '#f43f5e',
+              600: '#e11d48',
+              700: '#be123c',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+    body {
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col custom-scrollbar antialiased">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="p-2 bg-rose-500/10 text-rose-400 rounded-lg border border-rose-500/20">
+          <i data-lucide="book-open" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight text-slate-100">日本語 Master</h1>
+          <p class="text-xs text-slate-400">Essential 60 Kanji & Vocabulary</p>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="flex items-center space-x-3">
+        <button id="audio-toggle-btn" onclick="toggleAudio()" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 transition-colors">
+          <i id="audio-icon" data-lucide="volume-2" class="w-4 h-4 text-emerald-400"></i>
+          <span id="audio-status-text">Audio On</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="bg-slate-900 border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-8">
+      <button id="tab-btn-vocab" onclick="switchTab('vocab')" class="flex items-center space-x-2 py-4 border-b-2 border-rose-500 text-rose-400 font-medium text-sm transition-colors">
+        <i data-lucide="list" class="w-4 h-4"></i>
+        <span>Vocabulary Guide (語彙)</span>
+      </button>
+      <button id="tab-btn-quiz" onclick="switchTab('quiz')" class="flex items-center space-x-2 py-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-medium text-sm transition-colors">
+        <i data-lucide="help-circle" class="w-4 h-4"></i>
+        <span>Interactive Quiz (クイズ)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- TAB 1: VOCABULARY GUIDE -->
+    <section id="tab-vocab" class="space-y-6">
+      <!-- Search & Filters -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-900 p-4 rounded-xl border border-slate-800">
+        <div class="relative w-full sm:w-80">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input type="text" id="vocab-search" oninput="filterVocab()" placeholder="Search Kanji, Kana, English..." class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-rose-500 transition-colors" />
+        </div>
+        <div class="flex items-center space-x-2 text-xs text-slate-400 w-full sm:w-auto justify-end">
+          <span id="vocab-count" class="font-semibold text-rose-400">60</span> Entries Available
+        </div>
+      </div>
+
+      <!-- Vocab Grid -->
+      <div id="vocab-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- TAB 2: INTERACTIVE QUIZ -->
+    <section id="tab-quiz" class="hidden space-y-6 max-w-2xl mx-auto">
+      
+      <!-- Quiz Interface Container -->
+      <div id="quiz-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl relative">
+        
+        <!-- Progress Bar & Header -->
+        <div class="space-y-3 mb-6">
+          <div class="flex justify-between items-center text-xs font-semibold text-slate-400">
+            <span id="quiz-progress-text">Question 1 of 10</span>
+            <span id="quiz-score-text" class="text-rose-400">Score: 0</span>
+          </div>
+          <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+            <div id="quiz-progress-bar" class="h-full bg-rose-500 transition-all duration-300 w-0"></div>
+          </div>
+        </div>
+
+        <!-- Question Card -->
+        <div class="space-y-6">
+          <div class="bg-slate-950 p-6 rounded-xl border border-slate-800/80 text-center space-y-3">
+            <span id="quiz-pos-badge" class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300">
+              Part of Speech
+            </span>
+            <div class="flex items-center justify-center space-x-3">
+              <h2 id="quiz-kanji" class="text-4xl font-bold text-slate-100">一</h2>
+              <button onclick="playQuizAudio()" class="p-2 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 rounded-full transition-colors" title="Listen Pronunciation">
+                <i data-lucide="volume-2" class="w-5 h-5"></i>
+              </button>
+            </div>
+            <p id="quiz-kana-romaji" class="text-sm text-slate-400">いち (ichi)</p>
+            <div id="quiz-context-box" class="pt-2 text-xs italic text-slate-400 border-t border-slate-800/60 mt-3">
+              Context: <span id="quiz-context-text" class="text-slate-300 not-italic">一冊の本を読む</span>
+            </div>
+          </div>
+
+          <!-- Options Grid -->
+          <div id="quiz-options" class="grid grid-cols-1 gap-3">
+            <!-- Options rendered via JS -->
+          </div>
+
+          <!-- Feedback Banner -->
+          <div id="quiz-feedback" class="hidden p-4 rounded-xl text-center text-sm font-semibold transition-all"></div>
+
+          <!-- Next Button -->
+          <button id="quiz-next-btn" onclick="nextQuestion()" class="hidden w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-rose-600/20">
+            Next Question
+          </button>
+        </div>
+      </div>
+
+      <!-- Quiz End Screen -->
+      <div id="quiz-results" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center space-y-6 shadow-xl">
+        <div class="w-16 h-16 bg-rose-500/10 text-rose-400 rounded-full flex items-center justify-center mx-auto border border-rose-500/20">
+          <i data-lucide="trophy" class="w-8 h-8"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-slate-100">Quiz Completed!</h2>
+          <p id="results-score-summary" class="text-slate-400 text-sm mt-1">You scored 0 out of 10</p>
+        </div>
+
+        <div id="results-feedback-box" class="p-4 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-300">
+          <!-- Custom performance commentary -->
+        </div>
+
+        <button onclick="startQuiz()" class="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-rose-600/20 flex items-center justify-center space-x-2">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          <span>Try Again</span>
+        </button>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Application Logic -->
+  <script>
+    // Complete 60 Vocabulary Dataset
+    const vocabData = [
+      { id: 1, kanji: "一", kana: "いち", romaji: "ichi", english: "One", pos: "Numeral", desc: "The primary numeral representing unity or the number 1.", context: "一から始める (Start from one)" },
+      { id: 2, kanji: "二", kana: "に", romaji: "ni", english: "Two", pos: "Numeral", desc: "The cardinal number representing 2.", context: "二月になります (It becomes February)" },
+      { id: 3, kanji: "三", kana: "さん", romaji: "san", english: "Three", pos: "Numeral", desc: "The cardinal number representing 3.", context: "三分待ってください (Please wait three minutes)" },
+      { id: 4, kanji: "四", kana: "よん", romaji: "yon", english: "Four", pos: "Numeral", desc: "The cardinal number representing 4.", context: "四季があります (There are four seasons)" },
+      { id: 5, kanji: "五", kana: "ご", romaji: "go", english: "Five", pos: "Numeral", desc: "The cardinal number representing 5.", context: "五つのリンゴ (Five apples)" },
+      { id: 6, kanji: "六", kana: "ろく", romaji: "roku", english: "Six", pos: "Numeral", desc: "The cardinal number representing 6.", context: "六時に起きます (Wake up at six o'clock)" },
+      { id: 7, kanji: "七", kana: "しち", romaji: "shichi / yon", english: "Seven", pos: "Numeral", desc: "The cardinal number representing 7.", context: "七人の侍 (Seven Samurai)" },
+      { id: 8, kanji: "八", kana: "はち", romaji: "hachi", english: "Eight", pos: "Numeral", desc: "The cardinal number representing 8.", context: "八日かかります (It takes eight days)" },
+      { id: 9, kanji: "九", kana: "きゅう", romaji: "kyuu / ku", english: "Nine", pos: "Numeral", desc: "The cardinal number representing 9.", context: "九時前に着く (Arrive before nine)" },
+      { id: 10, kanji: "十", kana: "じゅう", romaji: "juu", english: "Ten", pos: "Numeral", desc: "The cardinal number representing 10.", context: "十分な時間 (Sufficient/10-minute time)" },
+      { id: 11, kanji: "百", kana: "ひゃく", romaji: "hyaku", english: "Hundred", pos: "Numeral", desc: "Denotes 100 or a large number.", context: "百点満点 (A perfect score of 100)" },
+      { id: 12, kanji: "千", kana: "せん", romaji: "sen", english: "Thousand", pos: "Numeral", desc: "Denotes 1,000.", context: "千羽鶴を折る (Fold a thousand paper cranes)" },
+      { id: 13, kanji: "万", kana: "まん", romaji: "man", english: "Ten thousand", pos: "Numeral", desc: "Base unit for 10,000 in Japanese counting.", context: "一万円札 (A 10,000 yen bill)" },
+      { id: 14, kanji: "円", kana: "えん", romaji: "en", english: "Yen / Circle", pos: "Noun", desc: "Japanese currency standard unit; also means circle.", context: "五百円です (That is 500 yen)" },
+      { id: 15, kanji: "口", kana: "くち", romaji: "kuchi", english: "Mouth / Opening", pos: "Noun", desc: "Physical mouth or an entrance/opening.", context: "入口はこちら (The entrance is here)" },
+      { id: 16, kanji: "目", kana: "め", romaji: "me", english: "Eye", pos: "Noun", desc: "Organ of sight; also refers to focus or order.", context: "目が覚める (To wake up)" },
+      { id: 17, kanji: "耳", kana: "みみ", romaji: "mimi", english: "Ear", pos: "Noun", desc: "Organ of hearing.", context: "耳を澄ませる (Listen carefully)" },
+      { id: 18, kanji: "手", kana: "て", romaji: "te", english: "Hand", pos: "Noun", desc: "Physical hand; also used for skill or method.", context: "手を洗う (Wash hands)" },
+      { id: 19, kanji: "足", kana: "あし", romaji: "ashi", english: "Foot / Leg", pos: "Noun", desc: "Lower extremity used for walking.", context: "足が速い (Fast feet / runs fast)" },
+      { id: 20, kanji: "人", kana: "ひと", romaji: "hito", english: "Person / Human", pos: "Noun", desc: "Human being or individual.", context: "親切な人 (A kind person)" },
+      { id: 21, kanji: "子", kana: "こ", romaji: "ko", english: "Child", pos: "Noun", desc: "Young human or offspring.", context: "子供たちが遊ぶ (Children play)" },
+      { id: 22, kanji: "女", kana: "おんな", romaji: "onna", english: "Woman / Female", pos: "Noun", desc: "Female person.", context: "女性のグループ (Group of women)" },
+      { id: 23, kanji: "男", kana: "おとこ", romaji: "otoko", english: "Man / Male", pos: "Noun", desc: "Male person.", context: "男の友情 (Male friendship)" },
+      { id: 24, kanji: "母", kana: "はは", romaji: "haha", english: "Mother", pos: "Noun", desc: "One's own mother.", context: "母の手料理 (Mother's home cooking)" },
+      { id: 25, kanji: "父", kana: "ちち", romaji: "chichi", english: "Father", pos: "Noun", desc: "One's own father.", context: "父に相談する (Consult with father)" },
+      { id: 26, kanji: "学", kana: "がく", romaji: "gaku", english: "Study / Learning", pos: "Noun / Verb Root", desc: "Relates to education, scholarship, or learning.", context: "学校で学 (Study at school)" },
+      { id: 27, kanji: "校", kana: "こう", romaji: "kou", english: "School / Institution", pos: "Noun / Suffix", desc: "Educational facility or building suffix.", context: "小学校に通う (Attend elementary school)" },
+      { id: 28, kanji: "先", kana: "せん", romaji: "sen", english: "Ahead / Previous", pos: "Noun / Adverb", desc: "Preceding in time, space, or order.", context: "お先にどうぞ (Go ahead please)" },
+      { id: 29, kanji: "生", kana: "せい", romaji: "sei / iki", english: "Life / Birth / Student", pos: "Noun / Verb Root", desc: "Pertaining to living, being born, or students.", context: "先生に教わる (Be taught by a teacher)" },
+      { id: 30, kanji: "名", kana: "な", romaji: "na", english: "Name / Reputation", pos: "Noun", desc: "Label given to a person or thing.", context: "名前を書く (Write name)" },
+      { id: 31, kanji: "本", kana: "ほん", romaji: "hon", english: "Book / Origin", pos: "Noun", desc: "Bound reading material; origin or main element.", context: "本を読む (Read a book)" },
+      { id: 32, kanji: "語", kana: "ご", romaji: "go", english: "Language / Word", pos: "Noun / Suffix", desc: "Spoken or written language.", context: "日本語を話す (Speak Japanese)" },
+      { id: 33, kanji: "文", kana: "ぶん", romaji: "bun", english: "Sentence / Text", pos: "Noun", desc: "Grammatical sentence or written passage.", context: "文章を書く (Write a text)" },
+      { id: 34, kanji: "字", kana: "じ", romaji: "ji", english: "Character / Letter", pos: "Noun", desc: "Written symbol or character.", context: "漢字の練習 (Kanji practice)" },
+      { id: 35, kanji: "中", kana: "なか", romaji: "naka", english: "Inside / Middle", pos: "Noun / Preposition", desc: "Inner part or midpoint of something.", context: "箱の中を見る (Look inside the box)" },
+      { id: 36, kanji: "大", kana: "おお", romaji: "oo / dai", english: "Big / Large", pos: "Adjective Prefix", desc: "Large in size, degree, or intensity.", context: "大きな声 (A loud voice)" },
+      { id: 37, kanji: "小", kana: "ちい", romaji: "chii / shou", english: "Small / Little", pos: "Adjective Prefix", desc: "Little in size or amount.", context: "小さな家 (A small house)" },
+      { id: 38, kanji: "長", kana: "なが", romaji: "naga", english: "Long / Chief", pos: "Adjective / Noun", desc: "Extending far in distance or time.", context: "長い道のり (A long road)" },
+      { id: 39, kanji: "高", kana: "たか", romaji: "taka", english: "High / Expensive", pos: "Adjective", desc: "Tall in height or costly in price.", context: "背が高い (Tall in height)" },
+      { id: 40, kanji: "安", kana: "やす", romaji: "yasu", english: "Cheap / Peaceful", pos: "Adjective", desc: "Low price; feeling of security.", context: "安心してください (Please rest assured)" },
+      { id: 41, kanji: "新", kana: "あたら", romaji: "atara", english: "New / Fresh", pos: "Adjective", desc: "Recently made, discovered, or created.", context: "新しい車 (A new car)" },
+      { id: 42, kanji: "古", kana: "ふる", romaji: "furu", english: "Old / Ancient", pos: "Adjective", desc: "Having existed for a long time; not new.", context: "古い時計 (An old clock)" },
+      { id: 43, kanji: "多", kana: "おお", romaji: "oo", english: "Many / Much", pos: "Adjective", desc: "Large quantity or frequency.", context: "人が多い (There are many people)" },
+      { id: 44, kanji: "少", kana: "すく", romaji: "suku", english: "Few / Little", pos: "Adjective", desc: "Small quantity or amount.", context: "少し待つ (Wait a little bit)" },
+      { id: 45, kanji: "白", kana: "しろ", romaji: "shiro", english: "White", pos: "Noun / Adjective", desc: "Color white; pure.", context: "白い雪 (White snow)" },
+      { id: 46, kanji: "黒", kana: "くろ", romaji: "kuro", english: "Black", pos: "Noun / Adjective", desc: "Color black; dark.", context: "黒い猫 (A black cat)" },
+      { id: 47, kanji: "赤", kana: "あか", romaji: "aka", english: "Red", pos: "Noun / Adjective", desc: "Color red.", context: "赤いリンゴ (A red apple)" },
+      { id: 48, kanji: "青", kana: "あお", romaji: "ao", english: "Blue / Green", pos: "Noun / Adjective", desc: "Color blue; green traffic light.", context: "青い空 (Blue sky)" },
+      { id: 49, kanji: "天", kana: "てん", romaji: "ten", english: "Heaven / Sky", pos: "Noun", desc: "Atmosphere, sky, or celestial realm.", context: "天気がいい (The weather is good)" },
+      { id: 50, kanji: "気", kana: "き", romaji: "ki", english: "Spirit / Mind / Air", pos: "Noun", desc: "Energy, atmosphere, mood, or feeling.", context: "気をつけて (Take care / Be careful)" },
+      { id: 51, kanji: "空", kana: "そら", romaji: "sora", english: "Sky / Empty", pos: "Noun", desc: "The expanse above Earth; open air.", context: "空を見上げる (Look up at the sky)" },
+      { id: 52, kanji: "山", kana: "やま", romaji: "yama", english: "Mountain", pos: "Noun", desc: "Natural elevation of the earth surface.", context: "富士山に登る (Climb Mt. Fuji)" },
+      { id: 53, kanji: "川", kana: "かわ", romaji: "kawa", english: "River / Stream", pos: "Noun", desc: "Natural flowing watercourse.", context: "川が流れる (The river flows)" },
+      { id: 54, kanji: "花", kana: "はな", romaji: "hana", english: "Flower / Blossom", pos: "Noun", desc: "Floral bloom.", context: "綺麗な花 (Beautiful flower)" },
+      { id: 55, kanji: "雨", kana: "あめ", romaji: "ame", english: "Rain", pos: "Noun", desc: "Precipitation falling from clouds.", context: "雨が降る (It rains)" },
+      { id: 56, kanji: "電", kana: "でん", romaji: "den", english: "Electricity", pos: "Noun Prefix", desc: "Electric power or lightning.", context: "電車に乗る (Ride the electric train)" },
+      { id: 57, kanji: "車", kana: "くるま", romaji: "kuruma", english: "Car / Vehicle", pos: "Noun", desc: "Wheeled vehicle or automobile.", context: "車を運転する (Drive a car)" },
+      { id: 58, kanji: "駅", kana: "えき", romaji: "eki", english: "Station", pos: "Noun", desc: "Railway station.", context: "駅で待ち合わせ (Meet at the station)" },
+      { id: 59, kanji: "金", kana: "きん / かね", romaji: "kin / kane", english: "Gold / Money", pos: "Noun", desc: "Precious metal gold or money/currency.", context: "お金を払う (Pay money)" },
+      { id: 60, kanji: "土", kana: "つち", romaji: "tsuchi", english: "Soil / Earth", pos: "Noun", desc: "Ground, earth, or soil.", context: "土をいじる (Tinker with soil / gardening)" }
+    ];
+
+    // State Variables
+    let audioEnabled = true;
+    let currentQuizQuestions = [];
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+    let answeredCurrent = false;
+
+    // Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      renderVocabCards(vocabData);
+    });
+
+    // Audio Control Toggle
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const statusText = document.getElementById('audio-status-text');
+      const icon = document.getElementById('audio-icon');
+
+      if (audioEnabled) {
+        statusText.innerText = 'Audio On';
+        icon.setAttribute('data-lucide', 'volume-2');
+        icon.className = 'w-4 h-4 text-emerald-400';
+      } else {
+        statusText.innerText = 'Audio Off';
+        icon.setAttribute('data-lucide', 'volume-x');
+        icon.className = 'w-4 h-4 text-slate-500';
+        window.speechSynthesis.cancel();
+      }
+      lucide.createIcons();
+    }
+
+    // TTS Functionality using Web Speech API
+    function speakText(text) {
+      if (!audioEnabled || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel(); // stop preceding speech
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ja-JP';
+      utterance.rate = 0.9; // clear, natural speed
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Tab Switching Logic
+    function switchTab(tab) {
+      const vocabTab = document.getElementById('tab-vocab');
+      const quizTab = document.getElementById('tab-quiz');
+      const btnVocab = document.getElementById('tab-btn-vocab');
+      const btnQuiz = document.getElementById('tab-btn-quiz');
+
+      if (tab === 'vocab') {
+        vocabTab.classList.remove('hidden');
+        quizTab.classList.add('hidden');
+        btnVocab.className = 'flex items-center space-x-2 py-4 border-b-2 border-rose-500 text-rose-400 font-medium text-sm transition-colors';
+        btnQuiz.className = 'flex items-center space-x-2 py-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-medium text-sm transition-colors';
+      } else {
+        vocabTab.classList.add('hidden');
+        quizTab.classList.remove('hidden');
+        btnQuiz.className = 'flex items-center space-x-2 py-4 border-b-2 border-rose-500 text-rose-400 font-medium text-sm transition-colors';
+        btnVocab.className = 'flex items-center space-x-2 py-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-medium text-sm transition-colors';
+        if (currentQuizQuestions.length === 0) {
+          startQuiz();
+        }
+      }
+    }
+
+    // Render Vocabulary Cards
+    function renderVocabCards(items) {
+      const grid = document.getElementById('vocab-grid');
+      document.getElementById('vocab-count').innerText = items.length;
+
+      if (items.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-500">
+            No Japanese vocabulary matched your query.
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = items.map(item => `
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all flex flex-col justify-between group">
+          <div>
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-semibold px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                #${item.id} · ${item.pos}
+              </span>
+              <button onclick="speakText('${item.kanji}')" class="p-1.5 bg-slate-800 text-slate-300 hover:text-rose-400 hover:bg-slate-700 rounded-lg transition-colors" title="Listen">
+                <i data-lucide="volume-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+            
+            <div class="my-2">
+              <span class="text-3xl font-bold text-slate-100 mr-2">${item.kanji}</span>
+              <span class="text-sm font-medium text-rose-400">${item.kana}</span>
+              <span class="text-xs text-slate-500 block sm:inline sm:ml-1">(${item.romaji})</span>
+            </div>
+
+            <p class="text-sm font-semibold text-slate-200 mt-1">${item.english}</p>
+            <p class="text-xs text-slate-400 mt-1 leading-relaxed">${item.desc}</p>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-800/80">
+            <p class="text-xs text-slate-500">Context Example:</p>
+            <p class="text-xs font-japanese text-slate-300 mt-0.5">${item.context}</p>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    // Filter Vocabulary Search
+    function filterVocab() {
+      const query = document.getElementById('vocab-search').value.toLowerCase().trim();
+      const filtered = vocabData.filter(item => 
+        item.kanji.toLowerCase().includes(query) ||
+        item.kana.toLowerCase().includes(query) ||
+        item.romaji.toLowerCase().includes(query) ||
+        item.english.toLowerCase().includes(query)
+      );
+      renderVocabCards(filtered);
+    }
+
+    // Quiz Logic
+    function startQuiz() {
+      // Shuffle & pick 10 random items
+      const shuffled = [...vocabData].sort(() => 0.5 - Math.random());
+      currentQuizQuestions = shuffled.slice(0, 10).map(item => {
+        // Generate options
+        const incorrect = vocabData
+          .filter(v => v.id !== item.id)
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 3)
+          .map(v => v.english);
+
+        const options = [...incorrect, item.english].sort(() => 0.5 - Math.random());
+        return {
+          item,
+          options,
+          correctAnswer: item.english
+        };
+      });
+
+      currentQuizIndex = 0;
+      quizScore = 0;
+      
+      document.getElementById('quiz-results').classList.add('hidden');
+      document.getElementById('quiz-box').classList.remove('hidden');
+
+      displayQuestion();
+    }
+
+    function displayQuestion() {
+      answeredCurrent = false;
+      const q = currentQuizQuestions[currentQuizIndex];
+      
+      // Update Progress Header
+      document.getElementById('quiz-progress-text').innerText = `Question ${currentQuizIndex + 1} of 10`;
+      document.getElementById('quiz-score-text').innerText = `Score: ${quizScore}`;
+      document.getElementById('quiz-progress-bar').style.width = `${((currentQuizIndex + 1) / 10) * 100}%`;
+
+      // Update Card
+      document.getElementById('quiz-pos-badge').innerText = q.item.pos;
+      document.getElementById('quiz-kanji').innerText = q.item.kanji;
+      document.getElementById('quiz-kana-romaji').innerText = `${q.item.kana} (${q.item.romaji})`;
+      document.getElementById('quiz-context-text').innerText = q.item.context;
+
+      // Reset Feedback & Next Button
+      const feedback = document.getElementById('quiz-feedback');
+      feedback.className = 'hidden p-4 rounded-xl text-center text-sm font-semibold transition-all';
+      feedback.innerText = '';
+      document.getElementById('quiz-next-btn').classList.add('hidden');
+
+      // Render Options
+      const optionsContainer = document.getElementById('quiz-options');
+      optionsContainer.innerHTML = q.options.map((opt, idx) => {
+        const optionLabel = String.fromCharCode(65 + idx); // A, B, C, D
+        return `
+          <button onclick="selectOption('${opt.replace(/'/g, "\\'")}', this)" class="option-btn w-full p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/50 text-left flex items-center justify-between transition-all group">
+            <div class="flex items-center space-x-3">
+              <span class="w-7 h-7 rounded-lg bg-slate-800 group-hover:bg-rose-500/20 text-slate-400 group-hover:text-rose-400 font-semibold text-xs flex items-center justify-center border border-slate-700/50 transition-colors">
+                ${optionLabel}
+              </span>
+              <span class="text-sm font-medium text-slate-200">${opt}</span>
+            </div>
+            <i data-lucide="circle" class="w-4 h-4 text-slate-600 group-hover:text-slate-400"></i>
+          </button>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+
+      // Auto play TTS for question
+      speakText(q.item.kanji);
+    }
+
+    function playQuizAudio() {
+      if (currentQuizQuestions[currentQuizIndex]) {
+        speakText(currentQuizQuestions[currentQuizIndex].item.kanji);
+      }
+    }
+
+    function selectOption(selected, btnElement) {
+      if (answeredCurrent) return;
+      answeredCurrent = true;
+
+      const q = currentQuizQuestions[currentQuizIndex];
+      const feedback = document.getElementById('quiz-feedback');
+      const allButtons = document.querySelectorAll('.option-btn');
+
+      allButtons.forEach(btn => btn.disabled = true);
+
+      if (selected === q.correctAnswer) {
+        quizScore++;
+        document.getElementById('quiz-score-text').innerText = `Score: ${quizScore}`;
+        btnElement.classList.add('bg-emerald-500/10', 'border-emerald-500', 'text-emerald-400');
+        feedback.className = 'p-4 rounded-xl text-center text-sm font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400';
+        feedback.innerText = '正解 (Correct!) Great job.';
+      } else {
+        btnElement.classList.add('bg-rose-500/10', 'border-rose-500', 'text-rose-400');
+        
+        // Highlight correct answer
+        allButtons.forEach(btn => {
+          if (btn.innerText.includes(q.correctAnswer)) {
+            btn.classList.add('bg-emerald-500/10', 'border-emerald-500/50', 'text-emerald-400');
+          }
+        });
+
+        feedback.className = 'p-4 rounded-xl text-center text-sm font-semibold bg-rose-500/10 border border-rose-500/20 text-rose-400';
+        feedback.innerText = `残念 (Incorrect)! Correct answer: ${q.correctAnswer}`;
+      }
+
+      feedback.classList.remove('hidden');
+      document.getElementById('quiz-next-btn').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      currentQuizIndex++;
+      if (currentQuizIndex < currentQuizQuestions.length) {
+        displayQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('quiz-box').classList.add('hidden');
+      const results = document.getElementById('quiz-results');
+      results.classList.remove('hidden');
+
+      document.getElementById('results-score-summary').innerText = `You scored ${quizScore} out of 10`;
+
+      const feedbackBox = document.getElementById('results-feedback-box');
+      if (quizScore === 10) {
+        feedbackBox.innerHTML = '<p class="text-emerald-400 font-bold mb-1">Perfect Score! 素晴らしく完璧です！</p><p>You have completely mastered these Kanji characters and vocabulary entries.</p>';
+      } else if (quizScore >= 7) {
+        feedbackBox.innerHTML = '<p class="text-rose-400 font-bold mb-1">Great Job! よく出来ました！</p><p>You have a solid understanding of these fundamental Japanese words.</p>';
+      } else {
+        feedbackBox.innerHTML = '<p class="text-amber-400 font-bold mb-1">Keep Practicing! 頑張ってください！</p><p>Review the Vocabulary Guide tab and try again to reinforce your recognition.</p>';
+      }
+    }
+  </script>
+</body>
+</html>
