@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Love (初恋) - Japanese Learning App</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+        }
+        ruby rt {
+            font-size: 0.65em;
+            color: #f43f5e;
+            user-select: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-rose-500/10 rounded-xl text-rose-400 border border-rose-500/20">
+                    <i data-lucide="music" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg sm:text-xl text-slate-100 flex items-center gap-2">
+                        First Love <span class="text-xs px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-normal">宇多田ヒカル</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Interactive Song Vocabulary & Quiz</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <!-- Audio Toggle -->
+                <button id="sound-toggle" onclick="toggleSound()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors">
+                    <i data-lucide="volume-2" id="sound-icon" class="w-4 h-4 text-emerald-400"></i>
+                    <span id="sound-label">Audio On</span>
+                </button>
+
+                <!-- YouTube Link -->
+                <a href="https://www.youtube.com/watch?v=zWj1afeU--E" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/30 transition-colors">
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                    <span>YouTube</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+
+        <!-- Embedded Video Player Section -->
+        <section class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl p-4 sm:p-6">
+            <div class="max-w-3xl mx-auto">
+                <div class="aspect-video w-full rounded-xl overflow-hidden bg-slate-950 border border-slate-800 relative shadow-inner">
+                    <iframe 
+                        class="w-full h-full" 
+                        src="https://www.youtube-nocookie.com/embed/zWj1afeU--E?rel=0" 
+                        title="Hikaru Utada - First Love" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-slate-800 space-x-2">
+            <button id="tab-btn-vocab" onclick="switchTab('vocab')" class="flex items-center gap-2 px-5 py-3 font-medium text-sm border-b-2 border-rose-500 text-rose-400 transition-all">
+                <i data-lucide="book-open" class="w-4 h-4"></i>
+                <span>Vocabulary Guide (歌詞の語彙)</span>
+            </button>
+            <button id="tab-btn-quiz" onclick="switchTab('quiz')" class="flex items-center gap-2 px-5 py-3 font-medium text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all">
+                <i data-lucide="help-circle" class="w-4 h-4"></i>
+                <span>Interactive Quiz (クイズ)</span>
+            </button>
+        </div>
+
+        <!-- TAB 1: VOCABULARY GUIDE -->
+        <section id="tab-vocab" class="space-y-4">
+            <div class="flex justify-between items-center mb-2">
+                <p class="text-sm text-slate-400">Master 15 core Japanese vocabulary words featured in "First Love".</p>
+            </div>
+            <div id="vocab-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Cards injected dynamically via JS -->
+            </div>
+        </section>
+
+        <!-- TAB 2: INTERACTIVE QUIZ -->
+        <section id="tab-quiz" class="hidden space-y-6 max-w-3xl mx-auto">
+            
+            <!-- Quiz Card -->
+            <div id="quiz-container" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl relative">
+                
+                <!-- Progress & Score Bar -->
+                <div class="flex justify-between items-center mb-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                    <span id="quiz-progress-text">Question 1 of 15</span>
+                    <span id="quiz-score-text" class="text-sky-400">Score: 0</span>
+                </div>
+
+                <!-- Progress Bar Graphic -->
+                <div class="w-full bg-slate-800 h-2 rounded-full mb-6 overflow-hidden">
+                    <div id="quiz-progress-bar" class="bg-rose-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- Question Box -->
+                <div class="mb-6 space-y-3 bg-slate-950/60 p-4 sm:p-5 rounded-xl border border-slate-800">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-slate-400 font-medium uppercase tracking-wide">Lyrics Context</span>
+                        <button id="quiz-audio-btn" class="p-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg border border-rose-500/20 transition-colors" title="Listen Sentence">
+                            <i data-lucide="volume-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <p id="quiz-context-line" class="text-lg sm:text-xl font-jp text-slate-200">--</p>
+                    <p id="quiz-question-prompt" class="text-sm text-rose-400 font-medium">What is the meaning of the target word?</p>
+                </div>
+
+                <!-- Multiple Choice Options -->
+                <div id="quiz-options" class="grid grid-cols-1 gap-3">
+                    <!-- Dynamic Answer Buttons -->
+                </div>
+
+                <!-- Feedback Banner -->
+                <div id="quiz-feedback" class="hidden mt-6 p-4 rounded-xl border flex items-start gap-3">
+                    <i id="feedback-icon" class="w-5 h-5 mt-0.5 shrink-0"></i>
+                    <div>
+                        <h4 id="feedback-title" class="font-bold text-sm"></h4>
+                        <p id="feedback-detail" class="text-xs mt-1 text-slate-300"></p>
+                    </div>
+                </div>
+
+                <!-- Next Question Button -->
+                <div class="mt-6 flex justify-end">
+                    <button id="quiz-next-btn" onclick="nextQuestion()" class="hidden flex items-center gap-2 px-6 py-2.5 bg-rose-500 hover:bg-rose-600 text-white text-sm font-semibold rounded-xl shadow-lg transition-all">
+                        <span>Next Question</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Results Screen -->
+            <div id="quiz-results" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center space-y-6 shadow-xl">
+                <div class="w-16 h-16 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-full flex items-center justify-center mx-auto">
+                    <i data-lucide="award" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100">Quiz Complete!</h2>
+                    <p id="final-score" class="text-3xl font-extrabold text-rose-400 mt-2">0 / 15</p>
+                </div>
+                <p id="results-commentary" class="text-sm text-slate-300 max-w-md mx-auto">Great effort studying Japanese lyrics!</p>
+                <button onclick="restartQuiz()" class="inline-flex items-center gap-2 px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-xl shadow-lg transition-all">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    <span>Try Again</span>
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-900/50 py-6 mt-12 text-center text-xs text-slate-500">
+        <p>Interactive Japanese Learning Application • "First Love" (宇多田ヒカル)</p>
+        <p class="mt-1">
+            <a href="https://www.youtube.com/watch?v=zWj1afeU--E" target="_blank" class="hover:text-rose-400 underline transition-colors">Watch original music video on YouTube</a>
+        </p>
+    </footer>
+
+    <!-- App Logic -->
+    <script>
+        // State
+        let soundEnabled = true;
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let answered = false;
+
+        // Vocabulary Data (15 Items)
+        const vocabularyData = [
+            {
+                kanji: "最後の",
+                kana: "さいごの",
+                romaji: "saigo no",
+                meaning: "Last / Final",
+                pos: "Noun / N5-N4",
+                explanation: "Combines '最' (most) and '後' (after/end) to indicate the final item in a sequence.",
+                context: "最後のキスはタバコのflavorがした"
+            },
+            {
+                kanji: "切ない",
+                kana: "せつない",
+                romaji: "setsunai",
+                meaning: "Painful / Heartbreaking / Bitter-sweet",
+                pos: "i-Adjective / N2",
+                explanation: "Expresses a poignant, bittersweet feeling of sadness or heartache related to love.",
+                context: "ニガくて切ない香り"
+            },
+            {
+                kanji: "明日",
+                kana: "あした",
+                romaji: "ashita",
+                meaning: "Tomorrow",
+                pos: "Noun / N5",
+                explanation: "Standard term for 'tomorrow'. Expresses looking forward into the immediate future.",
+                context: "明日の今頃には"
+            },
+            {
+                kanji: "誰か",
+                kana: "だれか",
+                romaji: "dareka",
+                meaning: "Someone / Somebody",
+                pos: "Pronoun / N5",
+                explanation: "Created by adding particle 'か' to '誰' (who), designating an unspecified person.",
+                context: "いつか誰かとまた恋に落ちても"
+            },
+            {
+                kanji: "忘れる",
+                kana: "わすれる",
+                romaji: "wasureru",
+                meaning: "To forget",
+                pos: "Verb (Ichidan) / N5",
+                explanation: "Common verb meaning to erase from memory or leave behind.",
+                context: "あなたが教えてくれたことを忘れない"
+            },
+            {
+                kanji: "落ちる",
+                kana: "おちる",
+                romaji: "ochiru",
+                meaning: "To fall",
+                pos: "Verb (Ichidan) / N4",
+                explanation: "Used here in the idiom '恋に落ちる' (koi ni ochiru) which means 'to fall in love'.",
+                context: "恋に落ちても"
+            },
+            {
+                kanji: "今頃",
+                kana: "いまごろ",
+                romaji: "imagoro",
+                meaning: "About this time",
+                pos: "Noun / N3",
+                explanation: "Refers to a specific time slot corresponding to now on a different day or context.",
+                context: "明日の今頃には わたしはきっと泣いている"
+            },
+            {
+                kanji: "泣く",
+                kana: "なく",
+                romaji: "naku",
+                meaning: "To cry / weep",
+                pos: "Verb (Godan) / N5",
+                explanation: "Basic verb for shedding tears out of sadness, grief, or emotion.",
+                context: "わたしはきっと泣いている"
+            },
+            {
+                kanji: "教える",
+                kana: "おしえる",
+                romaji: "oshieru",
+                meaning: "To teach / to show",
+                pos: "Verb (Ichidan) / N5",
+                explanation: "In love contexts, 'You taught me how to love' uses this verb.",
+                context: "You taught me how. あなたが教えてくれた"
+            },
+            {
+                kanji: "立ち止まる",
+                kana: "たちどまる",
+                romaji: "tachidomaru",
+                meaning: "To stop / halt / pause",
+                pos: "Verb (Godan) / N3",
+                explanation: "Compound verb: 立 (stand) + 止まる (stop). To pause physical or mental movement.",
+                context: "立ち止まる時間が"
+            },
+            {
+                kanji: "動く",
+                kana: "うごく",
+                romaji: "ugoku",
+                meaning: "To move / step forward",
+                pos: "Verb (Godan) / N4",
+                explanation: "To move or function. Contextually refers to time or heart moving forward again.",
+                context: "動き出そうとしている"
+            },
+            {
+                kanji: "想い出",
+                kana: "おもいで",
+                romaji: "omoide",
+                meaning: "Memories / Reminiscence",
+                pos: "Noun / N3",
+                explanation: "Refers to cherished thoughts, recollections, and past memories.",
+                context: "忘れたくない想い出"
+            },
+            {
+                kanji: "香り",
+                kana: "かおり",
+                romaji: "kaori",
+                meaning: "Aroma / Fragrance / Scent",
+                pos: "Noun / N3",
+                explanation: "Refers to a pleasant or distinctive smell, often triggering nostalgic memories.",
+                context: "ニガくて切ない香り"
+            },
+            {
+                kanji: "場所",
+                kana: "ばしょ",
+                romaji: "basho",
+                meaning: "Place / Spot / Space",
+                pos: "Noun / N4",
+                explanation: "Combines '場' (location) and '所' (place) to mean a physical or metaphorical place.",
+                context: "いつも最高の場所"
+            },
+            {
+                kanji: "苦しい",
+                kana: "くるしい",
+                romaji: "kurushii",
+                meaning: "Painful / Agonizing / Difficult",
+                pos: "i-Adjective / N4",
+                explanation: "Describes emotional pain, physical distress, or suffocating heartbreak.",
+                context: "苦しくて切ない香り"
+            }
+        ];
+
+        // Quiz Question Dataset (15 Questions)
+        const quizQuestions = [
+            {
+                context: "最後のキスはタバコのflavorがした",
+                target: "最後の (さいごの)",
+                prompt: "What does '最後の' mean in this line?",
+                options: ["First", "Last / Final", "Sweet", "Unforgettable"],
+                correct: 1,
+                explanation: "『最後の』 means 'Last' or 'Final'. '最後のキス' = 'The last kiss'."
+            },
+            {
+                context: "ニガくて切ない香り",
+                target: "切ない (せつない)",
+                prompt: "What emotion does '切ない' express?",
+                options: ["Joyful", "Angry", "Bitter-sweet / Heartbreaking", "Bored"],
+                correct: 2,
+                explanation: "『切ない』 describes a poignant, heartbreaking, or bittersweet emotional sensation."
+            },
+            {
+                context: "明日の今頃には わたしはきっと泣いている",
+                target: "明日 (あした)",
+                prompt: "What timeframe does '明日' refer to?",
+                options: ["Yesterday", "Today", "Tomorrow", "Next week"],
+                correct: 2,
+                explanation: "『明日』 means 'Tomorrow'. '明日の今頃' = 'About this time tomorrow'."
+            },
+            {
+                context: "いつか誰かとまた恋に落ちても",
+                target: "誰か (だれか)",
+                prompt: "What is the meaning of '誰か' in this line?",
+                options: ["Someone / Somebody", "No one", "Everyone", "Myself"],
+                correct: 0,
+                explanation: "『誰か』 means 'someone' or 'somebody'."
+            },
+            {
+                context: "恋に落ちても (koi ni ochitemo)",
+                target: "落ちる (おちる)",
+                prompt: "Combined with '恋に', what does '落ちる' complete?",
+                options: ["To fall in love", "To end a relationship", "To forget love", "To search for love"],
+                correct: 0,
+                explanation: "『恋に落ちる』 is the idiomatic Japanese phrase for 'to fall in love'."
+            },
+            {
+                context: "明日の今頃には わたしはきっと泣いている",
+                target: "泣く (なく)",
+                prompt: "What action is described by '泣いている'?",
+                options: ["Singing", "Crying / Weeping", "Sleeping", "Laughing"],
+                correct: 1,
+                explanation: "『泣く』 means to cry. '泣いている' = 'I will surely be crying'."
+            },
+            {
+                context: "You taught me how. あなたが教えてくれた",
+                target: "教える (おしえる)",
+                prompt: "What does '教えてくれた' mean in this lyric?",
+                options: ["You showed/taught me", "You hid from me", "You promised me", "You asked me"],
+                correct: 0,
+                explanation: "『教える』 means to teach or show. '教えてくれた' = 'You kindly taught/showed me'."
+            },
+            {
+                context: "動き出そうとしている",
+                target: "動く (うごく)",
+                prompt: "What does the verb '動く' mean?",
+                options: ["To stay still", "To move / step forward", "To break down", "To remember"],
+                correct: 1,
+                explanation: "『動く』 means to move. '動き出そうとしている' = 'Trying to move forward'."
+            },
+            {
+                context: "忘れたくない想い出",
+                target: "想い出 (おもいで)",
+                prompt: "What does '想い出' mean?",
+                options: ["Future plans", "Secrets", "Memories", "Promises"],
+                correct: 2,
+                explanation: "『想い出』 means memories or recollections from the past."
+            },
+            {
+                context: "あなたが教えてくれたことを忘れない",
+                target: "忘れる (わすれる)",
+                prompt: "In '忘れない', how is '忘れる' modified?",
+                options: ["I will forget", "I won't forget", "Did you forget?", "Please forget"],
+                correct: 1,
+                explanation: "『忘れない』 is the negative form of '忘れる' (to forget), meaning 'I will not forget'."
+            },
+            {
+                context: "ニガくて切ない香り",
+                target: "香り (かおり)",
+                prompt: "What does '香り' mean in this context?",
+                options: ["Taste", "Scent / Fragrance", "Sound", "Color"],
+                correct: 1,
+                explanation: "『香り』 means aroma, scent, or fragrance."
+            },
+            {
+                context: "立ち止まる時間が 動き出そうとしている",
+                target: "立ち止まる (たちどまる)",
+                prompt: "What action does '立ち止まる' express?",
+                options: ["To run fast", "To stop / pause", "To look back", "To turn around"],
+                correct: 1,
+                explanation: "『立ち止まる』 is a compound verb meaning to come to a complete stop or pause."
+            },
+            {
+                context: "いつも休まる場所",
+                target: "場所 (ばしょ)",
+                prompt: "What is the meaning of '場所'?",
+                options: ["Time", "Place / Spot", "Person", "Reason"],
+                correct: 1,
+                explanation: "『場所』 means a place, location, or spot."
+            },
+            {
+                context: "苦しくて切ない香り",
+                target: "苦しい (くるしい)",
+                prompt: "What state does '苦しい' describe?",
+                options: ["Exciting / Fun", "Painful / Agonizing", "Sweet / Mild", "Strange"],
+                correct: 1,
+                explanation: "『苦しい』 means painful, agonizing, or heart-wrenching."
+            },
+            {
+                context: "明日の今頃には わたしはきっと泣いている",
+                target: "今頃 (いまごろ)",
+                prompt: "What does '今頃' mean in this sentence?",
+                options: ["Right now", "About this time", "Sometime later", "A long time ago"],
+                correct: 1,
+                explanation: "『今頃』 means 'about this time' (e.g., about this time tomorrow)."
+            }
+        ];
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderVocabularyCards();
+            renderQuizQuestion();
+        });
+
+        // Tab Switching
+        function switchTab(tab) {
+            const vocabTab = document.getElementById('tab-vocab');
+            const quizTab = document.getElementById('tab-quiz');
+            const btnVocab = document.getElementById('tab-btn-vocab');
+            const btnQuiz = document.getElementById('tab-btn-quiz');
+
+            if (tab === 'vocab') {
+                vocabTab.classList.remove('hidden');
+                quizTab.classList.add('hidden');
+                btnVocab.className = "flex items-center gap-2 px-5 py-3 font-medium text-sm border-b-2 border-rose-500 text-rose-400 transition-all";
+                btnQuiz.className = "flex items-center gap-2 px-5 py-3 font-medium text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all";
+            } else {
+                vocabTab.classList.add('hidden');
+                quizTab.classList.remove('hidden');
+                btnQuiz.className = "flex items-center gap-2 px-5 py-3 font-medium text-sm border-b-2 border-rose-500 text-rose-400 transition-all";
+                btnVocab.className = "flex items-center gap-2 px-5 py-3 font-medium text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all";
+            }
+        }
+
+        // Audio TTS Function
+        function speakText(text) {
+            if (!soundEnabled) return;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop active speech
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Sound Toggle
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            const label = document.getElementById('sound-label');
+
+            if (soundEnabled) {
+                icon.setAttribute('data-lucide', 'volume-2');
+                icon.className = "w-4 h-4 text-emerald-400";
+                label.innerText = "Audio On";
+            } else {
+                icon.setAttribute('data-lucide', 'volume-x');
+                icon.className = "w-4 h-4 text-slate-500";
+                label.innerText = "Muted";
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                }
+            }
+            lucide.createIcons();
+        }
+
+        // Render Tab 1 Vocabulary Cards
+        function renderVocabularyCards() {
+            const container = document.getElementById('vocab-list');
+            container.innerHTML = vocabularyData.map((item) => `
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col justify-between hover:border-slate-700 transition-all shadow-md">
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <ruby class="text-2xl font-bold text-slate-100 font-jp">
+                                    ${item.kanji} <rt class="font-normal">${item.kana}</rt>
+                                </ruby>
+                                <p class="text-xs text-rose-400 font-mono mt-0.5">${item.romaji}</p>
+                            </div>
+                            <button onclick="speakText('${item.kanji}')" class="p-2 bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 text-slate-400 rounded-lg border border-slate-700 hover:border-rose-500/30 transition-all" title="Listen">
+                                <i data-lucide="volume-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-sky-400 font-medium border border-slate-700">${item.pos}</span>
+                            <span class="text-sm font-semibold text-slate-200">${item.meaning}</span>
+                        </div>
+
+                        <p class="text-xs text-slate-400 leading-relaxed">${item.explanation}</p>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-800/80 bg-slate-950/40 -mx-5 -mb-5 p-4 rounded-b-xl">
+                        <p class="text-xs text-slate-500 mb-1 font-medium uppercase tracking-wider">Lyric Context</p>
+                        <p class="text-xs text-slate-300 font-jp font-medium">"${item.context}"</p>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // Render Tab 2 Quiz Question
+        function renderQuizQuestion() {
+            answered = false;
+            const q = quizQuestions[currentQuestionIdx];
+
+            document.getElementById('quiz-progress-text').innerText = `Question ${currentQuestionIdx + 1} of ${quizQuestions.length}`;
+            document.getElementById('quiz-score-text').innerText = `Score: ${score}`;
+            document.getElementById('quiz-progress-bar').style.width = `${((currentQuestionIdx + 1) / quizQuestions.length) * 100}%`;
+            
+            document.getElementById('quiz-context-line').innerText = `"${q.context}"`;
+            document.getElementById('quiz-question-prompt').innerText = q.prompt;
+
+            const audioBtn = document.getElementById('quiz-audio-btn');
+            audioBtn.onclick = () => speakText(q.context);
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = q.options.map((opt, idx) => `
+                <button onclick="selectAnswer(${idx})" class="quiz-opt-btn w-full text-left p-4 rounded-xl border border-slate-800 bg-slate-950 hover:bg-slate-800/80 hover:border-slate-700 text-slate-200 font-medium text-sm transition-all flex items-center justify-between">
+                    <span><strong class="text-slate-500 mr-2">${String.fromCharCode(65 + idx)}.</strong> ${opt}</span>
+                    <i data-lucide="circle" class="w-4 h-4 text-slate-600 shrink-0"></i>
+                </button>
+            `).join('');
+
+            document.getElementById('quiz-feedback').className = "hidden mt-6 p-4 rounded-xl border flex items-start gap-3";
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+            lucide.createIcons();
+        }
+
+        // Handle Quiz Answer Selection
+        function selectAnswer(selectedIdx) {
+            if (answered) return;
+            answered = true;
+
+            const q = quizQuestions[currentQuestionIdx];
+            const isCorrect = selectedIdx === q.correct;
+            const buttons = document.querySelectorAll('.quiz-opt-btn');
+
+            if (isCorrect) {
+                score++;
+                document.getElementById('quiz-score-text').innerText = `Score: ${score}`;
+            }
+
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === q.correct) {
+                    btn.className = "w-full text-left p-4 rounded-xl border border-emerald-500/50 bg-emerald-500/10 text-emerald-300 font-medium text-sm flex items-center justify-between";
+                } else if (idx === selectedIdx && !isCorrect) {
+                    btn.className = "w-full text-left p-4 rounded-xl border border-rose-500/50 bg-rose-500/10 text-rose-300 font-medium text-sm flex items-center justify-between";
+                } else {
+                    btn.className = "w-full text-left p-4 rounded-xl border border-slate-800 bg-slate-950/40 text-slate-600 font-medium text-sm flex items-center justify-between";
+                }
+            });
+
+            // Feedback Banner
+            const feedback = document.getElementById('quiz-feedback');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackDetail = document.getElementById('feedback-detail');
+            const feedbackIcon = document.getElementById('feedback-icon');
+
+            feedback.classList.remove('hidden');
+            if (isCorrect) {
+                feedback.className = "mt-6 p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-200 flex items-start gap-3";
+                feedbackIcon.setAttribute('data-lucide', 'check-circle');
+                feedbackIcon.className = "w-5 h-5 text-emerald-400 shrink-0 mt-0.5";
+                feedbackTitle.innerText = "Correct Answer!";
+            } else {
+                feedback.className = "mt-6 p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-200 flex items-start gap-3";
+                feedbackIcon.setAttribute('data-lucide', 'x-circle');
+                feedbackIcon.className = "w-5 h-5 text-rose-400 shrink-0 mt-0.5";
+                feedbackTitle.innerText = "Incorrect";
+            }
+            feedbackDetail.innerText = q.explanation;
+
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+            lucide.createIcons();
+            
+            // Speak target word/phrase
+            speakText(q.target);
+        }
+
+        // Next Question or End Quiz
+        function nextQuestion() {
+            currentQuestionIdx++;
+            if (currentQuestionIdx < quizQuestions.length) {
+                renderQuizQuestion();
+            } else {
+                showQuizResults();
+            }
+        }
+
+        // Show End of Quiz Results
+        function showQuizResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            const results = document.getElementById('quiz-results');
+            results.classList.remove('hidden');
+
+            document.getElementById('final-score').innerText = `${score} / ${quizQuestions.length}`;
+            
+            const commentary = document.getElementById('results-commentary');
+            const pct = (score / quizQuestions.length) * 100;
+
+            if (pct === 100) {
+                commentary.innerText = "Perfect score! You have completely mastered all 15 vocabulary words of Hikaru Utada's 'First Love'!";
+            } else if (pct >= 70) {
+                commentary.innerText = "Fantastic job! You have a strong grasp of the lyrics' key vocabulary.";
+            } else if (pct >= 50) {
+                commentary.innerText = "Good effort! Review the vocabulary tab to strengthen your score.";
+            } else {
+                commentary.innerText = "Keep practicing! Go through the Vocabulary Guide tab to review the words and listen to their pronunciation.";
+            }
+        }
+
+        // Restart Quiz
+        function restartQuiz() {
+            currentQuestionIdx = 0;
+            score = 0;
+            document.getElementById('quiz-results').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            renderQuizQuestion();
+        }
+    </script>
+</body>
+</html>
