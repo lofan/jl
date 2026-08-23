@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>N5日文單字03 - 身體各部位 Flashcard & Quiz Tool</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              900: '#14532d',
+            },
+            darkBg: '#121212',
+            darkCard: '#1E1E1E',
+            darkBorder: '#2A2A2A',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React 18 & ReactDOM UMD -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel for inline JSX compilation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-darkBg text-gray-200 antialiased min-h-screen selection:bg-brand-500 selection:text-white">
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useCallback, useMemo } = React;
+
+    // --- Dataset: N5 Body Parts ---
+    const BODY_PARTS_DATA = [
+      { id: 1, kanji: '体', kana: 'からだ', romaji: 'karada', accent: '[0]', zh: '身體', exampleJa: '体をつよくします。', exampleZh: '鍛鍊身體。' },
+      { id: 2, kanji: '頭', kana: 'あたま', romaji: 'atama', accent: '[3]', zh: '頭、腦袋', exampleJa: '頭が痛いです。', exampleZh: '頭痛。' },
+      { id: 3, kanji: '髪', kana: 'かみ', romaji: 'kami', accent: '[2]', zh: '頭髮', exampleJa: '髪が長いです。', exampleZh: '頭髮很長。' },
+      { id: 4, kanji: '顔', kana: 'かお', romaji: 'kao', accent: '[0]', zh: '臉', exampleJa: '顔を洗います。', exampleZh: '洗臉。' },
+      { id: 5, kanji: '目', kana: 'め', romaji: 'me', accent: '[1]', zh: '眼睛', exampleJa: '目が大きいです。', exampleZh: '眼睛很大。' },
+      { id: 6, kanji: '耳', kana: 'みみ', romaji: 'mimi', accent: '[2]', zh: '耳朵', exampleJa: '耳がいいです。', exampleZh: '聽力很好。' },
+      { id: 7, kanji: '鼻', kana: 'はな', romaji: 'hana', accent: '[0]', zh: '鼻子', exampleJa: '鼻が高いです。', exampleZh: '鼻子挺。' },
+      { id: 8, kanji: '口', kana: 'くち', romaji: 'kuchi', accent: '[0]', zh: '嘴巴', exampleJa: '口を開けてください。', exampleZh: '請張開嘴巴。' },
+      { id: 9, kanji: '歯', kana: 'は', romaji: 'ha', accent: '[1]', zh: '牙齒', exampleJa: '歯をみがきます。', exampleZh: '刷牙。' },
+      { id: 10, kanji: '首', kana: 'くび', romaji: 'kubi', accent: '[0]', zh: '脖子', exampleJa: '首が太いです。', exampleZh: '脖子粗。' },
+      { id: 11, kanji: '手', kana: 'て', romaji: 'te', accent: '[1]', zh: '手', exampleJa: '手を洗ってください。', exampleZh: '請洗手。' },
+      { id: 12, kanji: '足', kana: 'あし', romaji: 'ashi', accent: '[2]', zh: '腳、腿', exampleJa: '足が速いです。', exampleZh: '跑得很快。' },
+      { id: 13, kanji: 'お腹', kana: 'おなか', romaji: 'onaka', accent: '[0]', zh: '肚子', exampleJa: 'お腹が空きました。', exampleZh: '肚子餓了。' },
+      { id: 14, kanji: '背中', kana: 'せなか', romaji: 'senaka', accent: '[0]', zh: '背部', exampleJa: '背中が痛いです。', exampleZh: '背痛。' },
+      { id: 15, kanji: '心', kana: 'こころ', romaji: 'kokoro', accent: '[2]', zh: '心靈、內心', exampleJa: '心がやさしいです。', exampleZh: '心地善良。' }
+    ];
+
+    // --- TTS Audio Helper ---
+    const playTTS = (text) => {
+      if (!('speechSynthesis' in window)) {
+        alert('您的瀏覽器不支援語音合成機能。');
+        return;
+      }
+      window.speechSynthesis.cancel(); // Stop current speech
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ja-JP';
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+    };
+
+    // --- Helper: Array Shuffle ---
+    const shuffleArray = (array) => {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    };
+
+    // --- Main App Component ---
+    function App() {
+      const [view, setView] = useState('menu'); // 'menu' | 'study' | 'quiz' | 'result'
+      const [quizQuestionCount, setQuizQuestionCount] = useState(10);
+      const [quizItems, setQuizItems] = useState([]);
+      const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+      const [userAnswers, setUserAnswers] = useState([]);
+      const [selectedOption, setSelectedOption] = useState(null);
+      const [isAnswered, setIsAnswered] = useState(false);
+
+      // Trigger Lucide icon parsing on view change
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, [view, currentQuestionIndex, isAnswered]);
+
+      // --- Navigation Handlers ---
+      const startStudy = () => setView('study');
+      
+      const startQuiz = (count = quizQuestionCount) => {
+        const shuffled = shuffleArray(BODY_PARTS_DATA);
+        const selected = shuffled.slice(0, Math.min(count, BODY_PARTS_DATA.length));
+        
+        // Build question dataset with options
+        const preparedQuestions = selected.map((item) => {
+          // Select 3 distractors from the rest of dataset
+          const distractors = shuffleArray(BODY_PARTS_DATA.filter(d => d.id !== item.id)).slice(0, 3);
+          const options = shuffleArray([item, ...distractors]);
+          return { item, options };
+        });
+
+        setQuizItems(preparedQuestions);
+        setCurrentQuestionIndex(0);
+        setUserAnswers([]);
+        setSelectedOption(null);
+        setIsAnswered(false);
+        setView('quiz');
+      };
+
+      const handleSelectOption = (option) => {
+        if (isAnswered) return;
+
+        setSelectedOption(option);
+        setIsAnswered(true);
+
+        const currentQ = quizItems[currentQuestionIndex];
+        const isCorrect = option.id === currentQ.item.id;
+
+        // Auto play speech for learning reinforcement
+        playTTS(currentQ.item.kana);
+
+        const newAnswer = {
+          questionItem: currentQ.item,
+          selectedOption: option,
+          isCorrect
+        };
+
+        setUserAnswers((prev) => [...prev, newAnswer]);
+
+        // Auto progress after 1.4 seconds
+        setTimeout(() => {
+          if (currentQuestionIndex + 1 < quizItems.length) {
+            setCurrentQuestionIndex((prev) => prev + 1);
+            setSelectedOption(null);
+            setIsAnswered(false);
+          } else {
+            setView('result');
+          }
+        }, 1400);
+      };
+
+      return (
+        <div className="max-w-4xl mx-auto px-4 py-8 min-h-screen flex flex-col justify-between">
+          {/* Header */}
+          <header className="border-b border-darkBorder pb-4 mb-8 flex items-center justify-between">
+            <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setView('menu')}>
+              <div className="w-10 h-10 rounded-lg bg-brand-500 flex items-center justify-center text-darkBg font-bold text-xl shadow-lg shadow-brand-500/20">
+                体
+              </div>
+              <div>
+                <h1 className="text-xl font-bold tracking-tight text-white">N5日文單字03</h1>
+                <p className="text-xs text-gray-400">身體各部位 名詞（身體各部位）</p>
+              </div>
+            </div>
+            {view !== 'menu' && (
+              <button 
+                onClick={() => setView('menu')} 
+                className="px-3 py-1.5 rounded-lg bg-darkCard border border-darkBorder text-xs text-gray-300 hover:text-white hover:border-brand-500 transition-colors flex items-center gap-1.5"
+              >
+                <i data-lucide="home" className="w-3.5 h-3.5"></i>
+                主選單
+              </button>
+            )}
+          </header>
+
+          {/* Dynamic Views */}
+          <main className="flex-1">
+            {view === 'menu' && (
+              <MenuView 
+                startStudy={startStudy} 
+                startQuiz={startQuiz} 
+                quizQuestionCount={quizQuestionCount}
+                setQuizQuestionCount={setQuizQuestionCount}
+              />
+            )}
+            {view === 'study' && <StudyView items={BODY_PARTS_DATA} />}
+            {view === 'quiz' && (
+              <QuizView 
+                currentQuestionIndex={currentQuestionIndex}
+                totalQuestions={quizItems.length}
+                questionData={quizItems[currentQuestionIndex]}
+                selectedOption={selectedOption}
+                isAnswered={isAnswered}
+                handleSelectOption={handleSelectOption}
+              />
+            )}
+            {view === 'result' && (
+              <ResultView 
+                userAnswers={userAnswers} 
+                startQuiz={startQuiz}
+                setView={setView}
+              />
+            )}
+          </main>
+
+          {/* Footer */}
+          <footer className="mt-12 pt-4 border-t border-darkBorder text-center text-xs text-gray-500">
+            JLPT N5 Vocabulary Master &copy; {new Date().getFullYear()} &bull; Interactive Learning Suite
+          </footer>
+        </div>
+      );
+    }
+
+    // --- View Component 1: Menu Dashboard ---
+    function MenuView({ startStudy, startQuiz, quizQuestionCount, setQuizQuestionCount }) {
+      return (
+        <div className="space-y-8 animate-fadeIn">
+          {/* Welcome Banner */}
+          <div className="bg-gradient-to-r from-darkCard to-brand-900/30 border border-darkBorder rounded-2xl p-6 sm:p-8">
+            <h2 className="text-2xl font-bold text-white mb-2">掌握身體各部位單字</h2>
+            <p className="text-sm text-gray-300 max-w-xl leading-relaxed">
+              包含 15 個必學 N5 基礎身體部位單字，附帶重音標註、漢字、假名、拼音與實用例句。支援 Native Web Speech 語音朗讀。
+            </p>
+          </div>
+
+          {/* Action Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Study Mode */}
+            <div className="bg-darkCard border border-darkBorder rounded-xl p-6 flex flex-col justify-between hover:border-brand-500/50 transition-all group">
+              <div>
+                <div className="w-12 h-12 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <i data-lucide="book-open" className="w-6 h-6"></i>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-1">對照學習與複習 (Study Table)</h3>
+                <p className="text-xs text-gray-400 mb-6">
+                  系統化瀏覽全套單字表，點擊發音圖示收聽標準日語發音，對照單字重音標註與例句。
+                </p>
+              </div>
+              <button 
+                onClick={startStudy}
+                className="w-full py-2.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-darkBg font-semibold text-sm transition-colors flex items-center justify-center gap-2 shadow-md shadow-brand-500/20"
+              >
+                <i data-lucide="list" className="w-4 h-4"></i>
+                進入學習對照表
+              </button>
+            </div>
+
+            {/* Quiz Mode */}
+            <div className="bg-darkCard border border-darkBorder rounded-xl p-6 flex flex-col justify-between hover:border-brand-500/50 transition-all group">
+              <div>
+                <div className="w-12 h-12 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <i data-lucide="brain" className="w-6 h-6"></i>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-1">測驗模式 (Interactive Quiz)</h3>
+                <p className="text-xs text-gray-400 mb-4">
+                  隨機選擇題測試記憶，即時給予對錯反饋與題目自動推進。
+                </p>
+
+                {/* Question Count Selector */}
+                <div className="mb-6">
+                  <label className="block text-xs text-gray-400 mb-2">選擇測驗題數：</label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {[5, 10, 15].map((cnt) => (
+                      <button
+                        key={cnt}
+                        onClick={() => setQuizQuestionCount(cnt)}
+                        className={`py-1.5 text-xs rounded-md border transition-all ${
+                          quizQuestionCount === cnt
+                            ? 'bg-brand-500 text-darkBg font-bold border-brand-500'
+                            : 'bg-darkBg border-darkBorder text-gray-400 hover:border-gray-600'
+                        }`}
+                      >
+                        {cnt} 題
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => startQuiz(quizQuestionCount)}
+                className="w-full py-2.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-darkBg font-semibold text-sm transition-colors flex items-center justify-center gap-2 shadow-md shadow-brand-500/20"
+              >
+                <i data-lucide="play" className="w-4 h-4"></i>
+                開始單字測驗
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- View Component 2: Study Reference Table ---
+    function StudyView({ items }) {
+      const [filter, setFilter] = useState('');
+
+      const filteredItems = useMemo(() => {
+        if (!filter.trim()) return items;
+        const lower = filter.toLowerCase();
+        return items.filter(
+          item => 
+            item.kanji.includes(lower) || 
+            item.kana.includes(lower) || 
+            item.romaji.toLowerCase().includes(lower) || 
+            item.zh.includes(lower)
+        );
+      }, [items, filter]);
+
+      return (
+        <div className="space-y-6">
+          {/* Top Control Bar */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-white">單字對照與語音學習表</h2>
+              <p className="text-xs text-gray-400">點擊喇叭圖示可收聽標準單字發音</p>
+            </div>
+
+            {/* Search Input */}
+            <div className="relative w-full sm:w-64">
+              <input
+                type="text"
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                placeholder="搜尋日文、假名、中文..."
+                className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg bg-darkCard border border-darkBorder text-white focus:outline-none focus:border-brand-500 transition-colors"
+              />
+              <i data-lucide="search" className="w-4 h-4 absolute left-3 top-2 text-gray-500"></i>
+            </div>
+          </div>
+
+          {/* Reference Table */}
+          <div className="overflow-x-auto rounded-xl border border-darkBorder bg-darkCard shadow-xl">
+            <table className="w-full text-left text-sm border-collapse">
+              <thead>
+                <tr className="border-b border-darkBorder bg-darkBg/50 text-gray-400 text-xs">
+                  <th className="p-3.5">日文 (Kanji)</th>
+                  <th className="p-3.5">假名 / Romaji</th>
+                  <th className="p-3.5">重音</th>
+                  <th className="p-3.5">中文</th>
+                  <th className="p-3.5">實用例句</th>
+                  <th className="p-3.5 text-center">發音</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-darkBorder/60 text-gray-200">
+                {filteredItems.map((item) => (
+                  <tr key={item.id} className="hover:bg-darkBg/40 transition-colors">
+                    <td className="p-3.5 font-bold text-white text-base">{item.kanji}</td>
+                    <td className="p-3.5">
+                      <div className="font-medium text-brand-400">{item.kana}</div>
+                      <div className="text-xs text-gray-500">{item.romaji}</div>
+                    </td>
+                    <td className="p-3.5 font-mono text-xs text-amber-400">{item.accent}</td>
+                    <td className="p-3.5 font-medium">{item.zh}</td>
+                    <td className="p-3.5 text-xs text-gray-300">
+                      <div>{item.exampleJa}</div>
+                      <div className="text-gray-500">{item.exampleZh}</div>
+                    </td>
+                    <td className="p-3.5 text-center">
+                      <button
+                        onClick={() => playTTS(item.kana)}
+                        className="p-2 rounded-lg bg-darkBg border border-darkBorder hover:border-brand-500 text-brand-400 hover:text-brand-300 transition-colors"
+                        title="播放日文發音"
+                      >
+                        <i data-lucide="volume-2" className="w-4 h-4"></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    }
+
+    // --- View Component 3: Quiz Engine ---
+    function QuizView({
+      currentQuestionIndex,
+      totalQuestions,
+      questionData,
+      selectedOption,
+      isAnswered,
+      handleSelectOption,
+    }) {
+      if (!questionData) return null;
+
+      const { item, options } = questionData;
+      const progressPercent = Math.round(((currentQuestionIndex + 1) / totalQuestions) * 100);
+
+      return (
+        <div className="max-w-xl mx-auto space-y-6">
+          {/* Progress Bar */}
+          <div>
+            <div className="flex justify-between text-xs text-gray-400 mb-2">
+              <span>進度：題目 {currentQuestionIndex + 1} / {totalQuestions}</span>
+              <span>{progressPercent}%</span>
+            </div>
+            <div className="w-full bg-darkCard rounded-full h-2 overflow-hidden border border-darkBorder">
+              <div 
+                className="bg-brand-500 h-2 transition-all duration-300 ease-out" 
+                style={{ width: `${progressPercent}%` }}
+              ></div>
+            </div>
+          </div>
+
+          {/* Question Card */}
+          <div className="bg-darkCard border border-darkBorder rounded-2xl p-8 text-center space-y-4 shadow-2xl relative overflow-hidden">
+            <span className="inline-block text-xs uppercase tracking-wider px-2.5 py-1 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20">
+              問題 {currentQuestionIndex + 1}
+            </span>
+
+            <div className="py-2">
+              <div className="text-5xl font-extrabold text-white tracking-wide mb-2">
+                {item.kanji}
+              </div>
+              <div className="text-sm text-gray-400 font-mono">
+                [重音 {item.accent}]
+              </div>
+            </div>
+
+            <button
+              onClick={() => playTTS(item.kana)}
+              className="inline-flex items-center gap-1.5 text-xs text-brand-400 hover:text-brand-300 bg-darkBg border border-darkBorder px-3 py-1.5 rounded-full transition-colors"
+            >
+              <i data-lucide="volume-2" className="w-3.5 h-3.5"></i>
+              聽題目語音
+            </button>
+          </div>
+
+          {/* Options Grid */}
+          <div className="grid grid-cols-1 gap-3">
+            {options.map((opt) => {
+              let btnStyle = "bg-darkCard border-darkBorder text-gray-200 hover:border-brand-500/60";
+
+              if (isAnswered) {
+                if (opt.id === item.id) {
+                  // Correct answer highlight
+                  btnStyle = "bg-brand-900/40 border-brand-500 text-brand-400 font-bold";
+                } else if (selectedOption && opt.id === selectedOption.id) {
+                  // Incorrect user choice
+                  btnStyle = "bg-rose-950/40 border-rose-500 text-rose-400 font-bold";
+                } else {
+                  btnStyle = "bg-darkCard border-darkBorder text-gray-500 opacity-50";
+                }
+              }
+
+              return (
+                <button
+                  key={opt.id}
+                  disabled={isAnswered}
+                  onClick={() => handleSelectOption(opt)}
+                  className={`w-full p-4 rounded-xl border text-left flex items-center justify-between transition-all ${btnStyle}`}
+                >
+                  <div className="space-y-0.5">
+                    <div className="text-base font-bold">{opt.zh}</div>
+                    <div className="text-xs opacity-75">{opt.kana} ({opt.romaji})</div>
+                  </div>
+
+                  {isAnswered && opt.id === item.id && (
+                    <i data-lucide="check-circle-2" className="w-5 h-5 text-brand-400"></i>
+                  )}
+                  {isAnswered && selectedOption && opt.id === selectedOption.id && opt.id !== item.id && (
+                    <i data-lucide="x-circle" className="w-5 h-5 text-rose-400"></i>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    // --- View Component 4: Results & Weakness Review ---
+    function ResultView({ userAnswers, startQuiz, setView }) {
+      const total = userAnswers.length;
+      const correctCount = userAnswers.filter((a) => a.isCorrect).length;
+      const percentage = Math.round((correctCount / total) * 100);
+      const incorrectList = userAnswers.filter((a) => !a.isCorrect);
+
+      return (
+        <div className="max-w-2xl mx-auto space-y-8 animate-fadeIn">
+          {/* Score Header */}
+          <div className="bg-darkCard border border-darkBorder rounded-2xl p-8 text-center space-y-4">
+            <h2 className="text-xl font-bold text-gray-300">測驗完成 (Quiz Completed)</h2>
+            <div className="text-5xl font-extrabold text-brand-400">
+              {percentage}<span className="text-2xl text-gray-400">%</span>
+            </div>
+            <p className="text-sm text-gray-400">
+              您答對了 <span className="text-white font-bold">{correctCount}</span> / {total} 題
+            </p>
+
+            <div className="flex justify-center gap-3 pt-4">
+              <button
+                onClick={() => startQuiz(total)}
+                className="px-5 py-2.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-darkBg font-bold text-sm transition-colors flex items-center gap-2"
+              >
+                <i data-lucide="rotate-ccw" className="w-4 h-4"></i>
+                重新測驗
+              </button>
+              <button
+                onClick={() => setView('menu')}
+                className="px-5 py-2.5 rounded-lg bg-darkBg border border-darkBorder hover:border-gray-500 text-gray-300 text-sm transition-colors"
+              >
+                返回選單
+              </button>
+            </div>
+          </div>
+
+          {/* Incorrect Answers / Weakness Review */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="alert-circle" className="w-5 h-5 text-amber-400"></i>
+              弱點複習清單 (Missed Items: {incorrectList.length})
+            </h3>
+
+            {incorrectList.length === 0 ? (
+              <div className="p-6 bg-darkCard border border-darkBorder rounded-xl text-center text-sm text-gray-400">
+                太棒了！您本次測驗完全沒有答錯的題目。
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {incorrectList.map((ans, idx) => (
+                  <div 
+                    key={idx} 
+                    className="p-4 bg-darkCard border border-darkBorder rounded-xl flex items-center justify-between"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xl font-bold text-white">{ans.questionItem.kanji}</span>
+                        <span className="text-sm text-brand-400">{ans.questionItem.kana}</span>
+                        <span className="text-xs text-amber-400 font-mono">{ans.questionItem.accent}</span>
+                      </div>
+                      <div className="text-xs text-gray-400">
+                        正確中文：<span className="text-white font-medium">{ans.questionItem.zh}</span>
+                      </div>
+                      <div className="text-xs text-rose-400">
+                        您選擇的答案：{ans.selectedOption.zh} ({ans.selectedOption.kanji})
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => playTTS(ans.questionItem.kana)}
+                      className="p-2 rounded-lg bg-darkBg border border-darkBorder hover:border-brand-500 text-brand-400 transition-colors"
+                      title="朗讀日文"
+                    >
+                      <i data-lucide="volume-2" className="w-4 h-4"></i>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // Render App Component
+    const rootElement = document.getElementById('root');
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<App />);
+  </script>
+</body>
+</html>

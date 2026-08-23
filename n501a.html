@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日文數字互動學習與測驗工具</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#121212',
+                        cardBg: '#1E1E1E',
+                        cardHover: '#2A2A2A',
+                        accent: '#FF5722',
+                        accentHover: '#F4511E',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- React 18 & ReactDOM UMD -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel for in-browser JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-darkBg text-[#E0E0E0] min-h-screen font-sans antialiased selection:bg-accent selection:text-white">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- Dataset ---
+        const numbers1to10 = [
+            { num: 1, kanji: '1', reading: 'いち (ichi)', altReading: 'ひとつ (hitotsu)', type: '基數 / 音讀與訓讀', note: '基本數詞' },
+            { num: 2, kanji: '2', reading: 'に (ni)', altReading: 'ふたつ (futatsu)', type: '基數 / 音讀與訓讀', note: '基本數詞' },
+            { num: 3, kanji: '3', reading: 'さん (san)', altReading: 'みっつ (mittsu)', type: '基數 / 音讀與訓讀', note: '基本數詞' },
+            { num: 4, kanji: '4', reading: 'よん (yon)', altReading: 'よっつ (yottsu)', alt2: 'し (shi)', type: '避諱注意', note: '日常多用よん（避開「死」）' },
+            { num: 5, kanji: '5', reading: 'ご (go)', altReading: 'いつつ (itsutsu)', type: '基數 / 音讀與訓讀', note: '基本數詞' },
+            { num: 6, kanji: '6', reading: 'ろく (roku)', altReading: 'むっつ (muttsu)', type: '基數 / 音讀與訓讀', note: '基本數詞' },
+            { num: 7, kanji: '7', reading: 'なな (nana)', altReading: 'ななつ (nanatsu)', alt2: 'しち (shichi)', type: '避諱/混淆注意', note: '多用なな（避免與いち混淆）' },
+            { num: 8, kanji: '8', reading: 'はち (hachi)', altReading: 'やっつ (yattsu)', type: '基數 / 音讀與訓讀', note: '基本數詞' },
+            { num: 9, kanji: '9', reading: 'きゅう (kyuu)', altReading: 'ここのつ (kokonotsu)', alt2: 'く (ku)', type: '避諱注意', note: '多用きゅう（避開「苦」）' },
+            { num: 10, kanji: '10', reading: 'じゅう (juu)', altReading: 'とお (too)', type: '基數 / 音讀與訓讀', note: '進位基礎' }
+        ];
+
+        const numbersTens = [
+            { num: 10, kanji: '10', reading: 'じゅう (juu)', note: '基本型' },
+            { num: 20, kanji: '20', reading: 'にじゅう (ni-juu)', note: '2 × 10' },
+            { num: 30, kanji: '30', reading: 'さんじゅう (san-juu)', note: '3 × 10' },
+            { num: 40, kanji: '40', reading: 'よんじゅう (yon-juu)', note: '不用し' },
+            { num: 50, kanji: '50', reading: 'ごじゅう (go-juu)', note: '5 × 10' },
+            { num: 60, kanji: '60', reading: 'ろくじゅう (roku-juu)', note: '6 × 10' },
+            { num: 70, kanji: '70', reading: 'ななじゅう (nana-juu)', note: '較常用' },
+            { num: 80, kanji: '80', reading: 'はちじゅう (hachi-juu)', note: '8 × 10' },
+            { num: 90, kanji: '90', reading: 'きゅうじゅう (kyuu-juu)', note: '9 × 10' },
+            { num: 100, kanji: '100', reading: 'ひゃく (hyaku)', note: '百單位基礎' }
+        ];
+
+        const numbersHundreds = [
+            { num: 100, kanji: '100', reading: 'ひゃく (hyaku)', note: '基本型' },
+            { num: 200, kanji: '200', reading: 'にひゃく (ni-hyaku)', note: '基本型' },
+            { num: 300, kanji: '300', reading: 'さんびゃく (san-byaku)', note: '⚠️ 音變 (byaku)' },
+            { num: 400, kanji: '400', reading: 'よんひゃく (yon-hyaku)', note: '基本型' },
+            { num: 500, kanji: '500', reading: 'ごひゃく (go-hyaku)', note: '基本型' },
+            { num: 600, kanji: '600', reading: 'ろっぴゃく (roppyaku)', note: '⚠️ 音變 (ppyaku)' },
+            { num: 700, kanji: '700', reading: 'ななひゃく (nana-hyaku)', note: '基本型' },
+            { num: 800, kanji: '800', reading: 'はっぴゃく (happyaku)', note: '⚠️ 音變 (ppyaku)' },
+            { num: 900, kanji: '900', reading: 'きゅうひゃく (kyuu-hyaku)', note: '基本型' },
+            { num: 1000, kanji: '1000', reading: 'せん (sen)', note: '千單位基礎' }
+        ];
+
+        const numbersThousands = [
+            { num: 1000, kanji: '1,000', reading: 'せん (sen)', note: '基本型' },
+            { num: 2000, kanji: '2,000', reading: 'にせん (ni-sen)', note: '基本型' },
+            { num: 3000, kanji: '3,000', reading: 'さんぜん (san-zen)', note: '⚠️ 音變 (zen)' },
+            { num: 4000, kanji: '4,000', reading: 'よんせん (yon-sen)', note: '基本型' },
+            { num: 5000, kanji: '5,000', reading: 'ごせん (go-sen)', note: '基本型' },
+            { num: 6000, kanji: '6,000', reading: 'ろくせん (roku-sen)', note: '基本型' },
+            { num: 7000, kanji: '7,000', reading: 'ななせん (nana-sen)', note: '基本型' },
+            { num: 8000, kanji: '8,000', reading: 'はっせん (has-sen)', note: '⚠️ 音變 (hassen)' },
+            { num: 9000, kanji: '9,000', reading: 'きゅうせん (kyuu-sen)', note: '基本型' },
+            { num: 10000, kanji: '10,000', reading: 'いちまん (ichi-man)', note: '萬單位基礎' }
+        ];
+
+        const allQuizItems = [...numbers1to10, ...numbersTens, ...numbersHundreds, ...numbersThousands];
+
+        // --- Audio Helper ---
+        const speakText = (text) => {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const cleanText = text.split(' ')[0]; // Extract Japanese part
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.lang = 'ja-JP';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        };
+
+        // --- Main App Component ---
+        function App() {
+            const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard', 'study', 'quiz', 'result'
+            const [quizQuestions, setQuizQuestions] = useState([]);
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [score, setScore] = useState(0);
+            const [selectedAnswer, setSelectedAnswer] = useState(null);
+            const [isCorrect, setIsCorrect] = useState(null);
+            const [incorrectList, setIncorrectList] = useState([]);
+            const [studyTab, setStudyTab] = useState('1-10');
+
+            const timerRef = useRef(null);
+
+            useEffect(() => {
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }, [currentView, studyTab, currentIndex]);
+
+            useEffect(() => {
+                return () => {
+                    if (timerRef.current) clearTimeout(timerRef.current);
+                };
+            }, [currentView]);
+
+            const startQuiz = (count) => {
+                if (timerRef.current) clearTimeout(timerRef.current);
+                const shuffled = [...allQuizItems].sort(() => 0.5 - Math.random());
+                const selected = shuffled.slice(0, count);
+                
+                const formattedQuestions = selected.map(item => {
+                    const correctAnswer = item.reading;
+                    const distractors = allQuizItems
+                        .filter(i => i.reading !== correctAnswer)
+                        .sort(() => 0.5 - Math.random())
+                        .slice(0, 3)
+                        .map(i => i.reading);
+                    
+                    const options = [...distractors, correctAnswer].sort(() => 0.5 - Math.random());
+
+                    return {
+                        question: `「 ${item.kanji} 」的正確日文讀音為何？`,
+                        target: item.kanji,
+                        subNote: item.note || '',
+                        options,
+                        answer: correctAnswer,
+                        itemRef: item
+                    };
+                });
+
+                setQuizQuestions(formattedQuestions);
+                setCurrentIndex(0);
+                setScore(0);
+                setSelectedAnswer(null);
+                setIsCorrect(null);
+                setIncorrectList([]);
+                setCurrentView('quiz');
+            };
+
+            const handleAnswerSelect = (option) => {
+                if (selectedAnswer !== null) return;
+
+                setSelectedAnswer(option);
+                const currentQ = quizQuestions[currentIndex];
+                const correct = option === currentQ.answer;
+                setIsCorrect(correct);
+
+                if (correct) {
+                    setScore(prev => prev + 1);
+                } else {
+                    setIncorrectList(prev => [...prev, { ...currentQ, userChoice: option }]);
+                }
+
+                if (timerRef.current) clearTimeout(timerRef.current);
+
+                timerRef.current = setTimeout(() => {
+                    if (currentIndex + 1 < quizQuestions.length) {
+                        setCurrentIndex(prev => prev + 1);
+                        setSelectedAnswer(null);
+                        setIsCorrect(null);
+                    } else {
+                        setCurrentView('result');
+                    }
+                }, 1200);
+            };
+
+            const handleQuitQuiz = () => {
+                if (timerRef.current) clearTimeout(timerRef.current);
+                setSelectedAnswer(null);
+                setIsCorrect(null);
+                setCurrentView('dashboard');
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col bg-darkBg text-[#E0E0E0]">
+                    {/* Header */}
+                    <header className="border-b border-zinc-800 bg-cardBg/80 backdrop-blur sticky top-0 z-50">
+                        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+                            <div className="flex items-center space-x-3 cursor-pointer" onClick={handleQuitQuiz}>
+                                <div className="bg-accent p-2 rounded-xl text-white">
+                                    <i data-lucide="book-open" className="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h1 className="font-bold text-lg text-white">日文數字學習小幫手</h1>
+                                    <p className="text-xs text-zinc-400">音讀、訓讀與音變互動教室</p>
+                                </div>
+                            </div>
+                            <nav className="flex space-x-2">
+                                <button 
+                                    onClick={handleQuitQuiz}
+                                    className={`px-3 py-1.5 rounded-lg text-sm transition flex items-center space-x-1 ${currentView === 'dashboard' ? 'bg-accent text-white font-medium' : 'text-zinc-400 hover:bg-zinc-800'}`}
+                                >
+                                    <i data-lucide="home" className="w-4 h-4"></i>
+                                    <span className="hidden sm:inline">首頁</span>
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        if (timerRef.current) clearTimeout(timerRef.current);
+                                        setCurrentView('study');
+                                    }}
+                                    className={`px-3 py-1.5 rounded-lg text-sm transition flex items-center space-x-1 ${currentView === 'study' ? 'bg-accent text-white font-medium' : 'text-zinc-400 hover:bg-zinc-800'}`}
+                                >
+                                    <i data-lucide="table" className="w-4 h-4"></i>
+                                    <span className="hidden sm:inline">對照表</span>
+                                </button>
+                            </nav>
+                        </div>
+                    </header>
+
+                    {/* Main Container */}
+                    <main className="flex-1 max-w-4xl w-full mx-auto p-4 md:p-6">
+                        {currentView === 'dashboard' && (
+                            <Dashboard 
+                                onStartQuiz={startQuiz} 
+                                onGoStudy={() => setCurrentView('study')} 
+                            />
+                        )}
+
+                        {currentView === 'study' && (
+                            <StudyTable 
+                                studyTab={studyTab} 
+                                setStudyTab={setStudyTab} 
+                                onBack={() => setCurrentView('dashboard')} 
+                            />
+                        )}
+
+                        {currentView === 'quiz' && quizQuestions.length > 0 && (
+                            <QuizView 
+                                currentQ={quizQuestions[currentIndex]}
+                                currentIndex={currentIndex}
+                                total={quizQuestions.length}
+                                selectedAnswer={selectedAnswer}
+                                isCorrect={isCorrect}
+                                onSelect={handleAnswerSelect}
+                                onQuit={handleQuitQuiz}
+                            />
+                        )}
+
+                        {currentView === 'result' && (
+                            <ResultView 
+                                score={score}
+                                total={quizQuestions.length}
+                                incorrectList={incorrectList}
+                                onRetry={() => startQuiz(quizQuestions.length)}
+                                onHome={handleQuitQuiz}
+                            />
+                        )}
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="border-t border-zinc-800 py-4 text-center text-xs text-zinc-500">
+                        &copy; 2026 日文數字互動學習系統. All rights reserved.
+                    </footer>
+                </div>
+            );
+        }
+
+        // --- Dashboard Component ---
+        function Dashboard({ onStartQuiz, onGoStudy }) {
+            return (
+                <div className="space-y-6 animate-fadeIn">
+                    <div className="bg-cardBg border border-zinc-800 rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+                        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-accent/10 to-transparent pointer-events-none"></div>
+                        <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">掌握日文數字的奧秘</h2>
+                        <p className="text-zinc-400 text-sm md:text-base leading-relaxed mb-6 max-w-2xl">
+                            日文數字同時存在「音讀」與「訓讀」，更有 4、7、9 的避諱念法以及百、千位數的音變規則（含 2000~9000 唸法）。透過互動查閱與智慧測驗，輕鬆突破日文數字難關！
+                        </p>
+                        <div className="flex flex-wrap gap-3">
+                            <button 
+                                onClick={onGoStudy}
+                                className="bg-zinc-800 hover:bg-zinc-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition flex items-center space-x-2 border border-zinc-700"
+                            >
+                                <i data-lucide="book-open" className="w-4 h-4 text-accent"></i>
+                                <span>瀏覽完整對照表</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="bg-cardBg border border-zinc-800 rounded-2xl p-6 md:p-8 shadow-xl">
+                        <div className="flex items-center space-x-3 mb-4">
+                            <div className="bg-accent/20 p-2 rounded-lg text-accent">
+                                <i data-lucide="help-circle" className="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-white">開始互動測驗</h3>
+                                <p className="text-xs text-zinc-400">選擇題數來檢測你的學習成果</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+                            <button 
+                                onClick={() => onStartQuiz(5)}
+                                className="bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/50 hover:border-accent p-4 rounded-xl text-center transition group"
+                            >
+                                <span className="block text-2xl font-bold text-white group-hover:text-accent mb-1">5 題</span>
+                                <span className="text-xs text-zinc-400">快速隨機小考</span>
+                            </button>
+                            <button 
+                                onClick={() => onStartQuiz(10)}
+                                className="bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/50 hover:border-accent p-4 rounded-xl text-center transition group"
+                            >
+                                <span className="block text-2xl font-bold text-white group-hover:text-accent mb-1">10 題</span>
+                                <span className="text-xs text-zinc-400">標準綜合測驗</span>
+                            </button>
+                            <button 
+                                onClick={() => onStartQuiz(15)}
+                                className="bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/50 hover:border-accent p-4 rounded-xl text-center transition group"
+                            >
+                                <span className="block text-2xl font-bold text-white group-hover:text-accent mb-1">15 題</span>
+                                <span className="text-xs text-zinc-400">深度挑戰測驗</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="bg-cardBg border border-zinc-800 p-5 rounded-xl">
+                            <h4 className="font-bold text-white text-sm mb-1 flex items-center space-x-2">
+                                <span className="w-2 h-2 rounded-full bg-accent"></span>
+                                <span>音讀 vs 訓讀</span>
+                            </h4>
+                            <p className="text-xs text-zinc-400 leading-relaxed">音讀源自中國漢語，常用於計數、時間；訓讀為日本原生念法，常用於數量、物品。</p>
+                        </div>
+                        <div className="bg-cardBg border border-zinc-800 p-5 rounded-xl">
+                            <h4 className="font-bold text-white text-sm mb-1 flex items-center space-x-2">
+                                <span className="w-2 h-2 rounded-full bg-accent"></span>
+                                <span>百/千位數音變</span>
+                            </h4>
+                            <p className="text-xs text-zinc-400 leading-relaxed">300(さんびゃく)、600(ろっぴゃく)、800(はっぴゃく) 及 3000(さんぜん)、8000(はっせん) 具備音變規則。</p>
+                        </div>
+                        <div className="bg-cardBg border border-zinc-800 p-5 rounded-xl">
+                            <h4 className="font-bold text-white text-sm mb-1 flex items-center space-x-2">
+                                <span className="w-2 h-2 rounded-full bg-accent"></span>
+                                <span>四位一組進位</span>
+                            </h4>
+                            <p className="text-xs text-zinc-400 leading-relaxed">日文以「萬（まん）」、「億（おく）」為四位一組的進位單位，與中文概念相近。</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // --- Study Table Component ---
+        function StudyTable({ studyTab, setStudyTab, onBack }) {
+            const currentData = studyTab === '1-10' ? numbers1to10 : studyTab === 'tens' ? numbersTens : studyTab === 'hundreds' ? numbersHundreds : numbersThousands;
+
+            return (
+                <div className="space-y-6 animate-fadeIn">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h2 className="text-xl font-bold text-white">日文數字對照表</h2>
+                            <p className="text-xs text-zinc-400">點擊喇叭按鈕可聆聽標準日語發音</p>
+                        </div>
+                        <button 
+                            onClick={onBack}
+                            className="text-xs text-zinc-400 hover:text-white bg-zinc-800 px-3 py-1.5 rounded-lg border border-zinc-700 transition"
+                        >
+                            返回首頁
+                        </button>
+                    </div>
+
+                    {/* Sub Tabs */}
+                    <div className="flex flex-wrap gap-2 border-b border-zinc-800 pb-3">
+                        <button 
+                            onClick={() => setStudyTab('1-10')}
+                            className={`px-4 py-2 rounded-xl text-xs md:text-sm font-medium transition ${studyTab === '1-10' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'bg-zinc-800/60 text-zinc-400 hover:bg-zinc-800'}`}
+                        >
+                            1－10
+                        </button>
+                        <button 
+                            onClick={() => setStudyTab('tens')}
+                            className={`px-4 py-2 rounded-xl text-xs md:text-sm font-medium transition ${studyTab === 'tens' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'bg-zinc-800/60 text-zinc-400 hover:bg-zinc-800'}`}
+                        >
+                            10－100
+                        </button>
+                        <button 
+                            onClick={() => setStudyTab('hundreds')}
+                            className={`px-4 py-2 rounded-xl text-xs md:text-sm font-medium transition ${studyTab === 'hundreds' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'bg-zinc-800/60 text-zinc-400 hover:bg-zinc-800'}`}
+                        >
+                            100－1000
+                        </button>
+                        <button 
+                            onClick={() => setStudyTab('thousands')}
+                            className={`px-4 py-2 rounded-xl text-xs md:text-sm font-medium transition ${studyTab === 'thousands' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'bg-zinc-800/60 text-zinc-400 hover:bg-zinc-800'}`}
+                        >
+                            1000－10000 (含2000~9000)
+                        </button>
+                    </div>
+
+                    {/* Table Container */}
+                    <div className="bg-cardBg border border-zinc-800 rounded-2xl overflow-hidden shadow-xl">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="border-b border-zinc-800 text-xs text-zinc-400 bg-zinc-900/50">
+                                        <th className="p-4 font-medium">數字</th>
+                                        <th className="p-4 font-medium">標準念法 / 音讀</th>
+                                        {studyTab === '1-10' && <th className="p-4 font-medium">訓讀 (原生念法)</th>}
+                                        {studyTab === '1-10' && <th className="p-4 font-medium">其他念法</th>}
+                                        <th className="p-4 font-medium">備註 / 說明</th>
+                                        <th className="p-4 font-medium text-right">發音</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-zinc-800/60 text-sm">
+                                    {currentData.map((item, idx) => (
+                                        <tr key={idx} className="hover:bg-zinc-800/30 transition">
+                                            <td className="p-4 font-bold text-white text-base">{item.kanji}</td>
+                                            <td className="p-4 text-accent font-medium">{item.reading}</td>
+                                            {studyTab === '1-10' && <td className="p-4 text-zinc-300">{item.altReading || '-'}</td>}
+                                            {studyTab === '1-10' && <td className="p-4 text-zinc-400 text-xs">{item.alt2 || '-'}</td>}
+                                            <td className="p-4 text-zinc-400 text-xs">{item.note || '-'}</td>
+                                            <td className="p-4 text-right">
+                                                <button 
+                                                    onClick={() => speakText(item.reading)}
+                                                    className="p-2 bg-zinc-800 hover:bg-accent hover:text-white rounded-lg text-zinc-400 transition inline-flex items-center justify-center"
+                                                    title="播放發音"
+                                                >
+                                                    <i data-lucide="volume-2" className="w-4 h-4"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // --- Quiz View Component ---
+        function QuizView({ currentQ, currentIndex, total, selectedAnswer, isCorrect, onSelect, onQuit }) {
+            const progressPercent = ((currentIndex + 1) / total) * 100;
+
+            return (
+                <div className="max-w-xl mx-auto space-y-6 animate-fadeIn">
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                            問題 {currentIndex + 1} / {total}
+                        </span>
+                        <button 
+                            onClick={onQuit}
+                            className="text-xs text-zinc-400 hover:text-white bg-zinc-800 px-3 py-1.5 rounded-lg border border-zinc-700 transition"
+                        >
+                            放棄測驗
+                        </button>
+                    </div>
+
+                    <div className="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
+                        <div className="bg-accent h-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
+                    </div>
+
+                    <div className="bg-cardBg border border-zinc-800 rounded-2xl p-6 md:p-8 shadow-xl text-center space-y-6">
+                        <div className="inline-block bg-accent/10 border border-accent/20 px-4 py-1.5 rounded-full text-accent text-xs font-semibold">
+                            {currentQ.subNote || '日文數字測驗'}
+                        </div>
+                        
+                        <div>
+                            <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-2">{currentQ.target}</h2>
+                            <p className="text-zinc-400 text-sm">{currentQ.question}</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-3 pt-2">
+                            {currentQ.options.map((option, idx) => {
+                                let btnStyle = "bg-zinc-800/80 hover:bg-zinc-700 border-zinc-700 text-zinc-200";
+                                
+                                if (selectedAnswer !== null) {
+                                    if (option === currentQ.answer) {
+                                        btnStyle = "bg-emerald-600/90 border-emerald-500 text-white shadow-lg shadow-emerald-900/20";
+                                    } else if (option === selectedAnswer) {
+                                        btnStyle = "bg-rose-600/90 border-rose-500 text-white shadow-lg shadow-rose-900/20";
+                                    } else {
+                                        btnStyle = "bg-zinc-800/40 border-zinc-800 text-zinc-500 opacity-50";
+                                    }
+                                }
+
+                                return (
+                                    <button
+                                        key={idx}
+                                        disabled={selectedAnswer !== null}
+                                        onClick={() => onSelect(option)}
+                                        className={`w-full py-4 px-6 rounded-xl font-medium text-base md:text-lg border transition flex items-center justify-between ${btnStyle}`}
+                                    >
+                                        <span>{option}</span>
+                                        {selectedAnswer !== null && option === currentQ.answer && (
+                                            <i data-lucide="check-circle" className="w-5 h-5 text-emerald-200"></i>
+                                        )}
+                                        {selectedAnswer !== null && option === selectedAnswer && option !== currentQ.answer && (
+                                            <i data-lucide="x-circle" className="w-5 h-5 text-rose-200"></i>
+                                        )}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // --- Result View Component ---
+        function ResultView({ score, total, incorrectList, onRetry, onHome }) {
+            const percentage = Math.round((score / total) * 100);
+
+            return (
+                <div className="max-w-xl mx-auto space-y-6 animate-fadeIn">
+                    <div className="bg-cardBg border border-zinc-800 rounded-2xl p-6 md:p-8 shadow-xl text-center space-y-4">
+                        <div className="w-16 h-16 bg-accent/20 text-accent rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i data-lucide="award" className="w-8 h-8"></i>
+                        </div>
+                        <h2 className="text-2xl font-bold text-white">測驗結算完成</h2>
+                        
+                        <div className="py-4">
+                            <span className="text-5xl font-extrabold text-white">{percentage}%</span>
+                            <p className="text-zinc-400 text-sm mt-1">答對 {score} 題 / 共 {total} 題</p>
+                        </div>
+
+                        <div className="flex flex-wrap justify-center gap-3 pt-2">
+                            <button 
+                                onClick={onRetry}
+                                className="bg-accent hover:bg-accentHover text-white px-6 py-2.5 rounded-xl font-medium text-sm transition shadow-lg shadow-accent/20 flex items-center space-x-2"
+                            >
+                                <i data-lucide="rotate-ccw" className="w-4 h-4"></i>
+                                <span>再次挑戰</span>
+                            </button>
+                            <button 
+                                onClick={onHome}
+                                className="bg-zinc-800 hover:bg-zinc-700 text-white px-6 py-2.5 rounded-xl font-medium text-sm transition border border-zinc-700 flex items-center space-x-2"
+                            >
+                                <i data-lucide="home" className="w-4 h-4"></i>
+                                <span>返回首頁</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {incorrectList.length > 0 && (
+                        <div className="bg-cardBg border border-zinc-800 rounded-2xl p-6 shadow-xl space-y-4">
+                            <h3 className="font-bold text-white text-base flex items-center space-x-2">
+                                <i data-lucide="alert-triangle" className="w-5 h-5 text-rose-500"></i>
+                                <span>錯題複習專區 ({incorrectList.length} 題)</span>
+                            </h3>
+                            <div className="space-y-3">
+                                {incorrectList.map((item, idx) => (
+                                    <div key={idx} className="bg-zinc-900/60 border border-zinc-800 p-4 rounded-xl flex items-center justify-between">
+                                        <div>
+                                            <div className="flex items-center space-x-2">
+                                                <span className="text-lg font-bold text-white">{item.target}</span>
+                                                <span className="text-xs px-2 py-0.5 bg-rose-500/10 text-rose-400 rounded-md">答錯</span>
+                                            </div>
+                                            <p className="text-xs text-zinc-400 mt-1">正確答案：<span className="text-accent font-medium">{item.answer}</span></p>
+                                        </div>
+                                        <button 
+                                            onClick={() => speakText(item.answer)}
+                                            className="p-2 bg-zinc-800 hover:bg-accent hover:text-white rounded-lg text-zinc-400 transition"
+                                            title="聆聽發音"
+                                        >
+                                            <i data-lucide="volume-2" className="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // --- Render Application ---
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日文家族稱謂對照表 (謙稱 vs 尊稱) 互動學習工具</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React 18 & ReactDOM UMD -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <!-- Babel for JSX transformation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background-color: #121212;
+      color: #E0E0E0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #1e1e1e;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #4b5563;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+  <div id="root" class="flex-grow flex flex-col"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // Comprehensive Family Relationship Dataset
+    const FAMILY_DATA = [
+      { id: 1, relation: "家族整體", self: "家族", selfKana: "かぞく", honorific: "ご家族", honorificKana: "ごかぞく" },
+      { id: 2, relation: "父母", self: "両親", selfKana: "りょうしん", honorific: "ご両親", honorificKana: "ごりょうしん" },
+      { id: 3, relation: "父親", self: "父", selfKana: "ちち", honorific: "お父さん", honorificKana: "おとうさん" },
+      { id: 4, relation: "母親", self: "母", selfKana: "はは", honorific: "お母さん", honorificKana: "おかあさん" },
+      { id: 5, relation: "夫妻", self: "夫婦", selfKana: "ふうふ", honorific: "ご夫婦", honorificKana: "ごふうふ" },
+      { id: 6, relation: "丈夫／先生", self: "夫 / 主人", selfKana: "おっと / しゅじん", honorific: "ご主人 / 旦那さん", honorificKana: "ごしゅじん / だんなさん" },
+      { id: 7, relation: "妻子／太太", self: "妻 / 家内", selfKana: "つま / かない", honorific: "奥さん", honorificKana: "おくさん" },
+      { id: 8, relation: "孩子", self: "子供", selfKana: "こども", honorific: "お子さん", honorificKana: "おこさん" },
+      { id: 9, relation: "兒子", self: "息子", selfKana: "むすこ", honorific: "息子さん", honorificKana: "むすこさん" },
+      { id: 10, relation: "女兒", self: "娘", selfKana: "むすめ", honorific: "娘さん", honorificKana: "むすめさん" },
+      { id: 11, relation: "哥哥", self: "兄", selfKana: "あに", honorific: "お兄さん", honorificKana: "おにいさん" },
+      { id: 12, relation: "姐姐", self: "姉", selfKana: "あね", honorific: "お姉さん", honorificKana: "おねえさん" },
+      { id: 13, relation: "弟弟", self: "弟", selfKana: "おとうと", honorific: "弟さん", honorificKana: "おとうとさん" },
+      { id: 14, relation: "妹妹", self: "妹", selfKana: "いもうと", honorific: "妹さん", honorificKana: "いもうとさん" },
+      { id: 15, relation: "祖父／爺爺", self: "祖父", selfKana: "そふ", honorific: "おじいさん", honorificKana: "おじいさん" },
+      { id: 16, relation: "祖母／奶奶", self: "祖母", selfKana: "そぼ", honorific: "おばあさん", honorificKana: "おばあさん" },
+      { id: 17, relation: "叔伯舅姑丈", self: "叔父 / 伯父", selfKana: "おじ", honorific: "おじさん", honorificKana: "おじさん" },
+      { id: 18, relation: "姑姨伯母嬸", self: "叔母 / 伯母", selfKana: "おば", honorific: "おばさん", honorificKana: "おばさん" },
+      { id: 19, relation: "堂表兄弟姊妹", self: "従兄弟 / 従姉妹", selfKana: "いとこ", honorific: "ご従兄弟 / いとこさん", honorificKana: "ごいとこ / いとこさん" },
+      { id: 20, relation: "孫子／孫女", self: "孫", selfKana: "まご", honorific: "お孫さん", honorificKana: "おまごさん" }
+    ];
+
+    // Web Speech API Pronunciation
+    const playAudio = (text) => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const targetText = text.split('/')[0].trim();
+        const utterance = new SpeechSynthesisUtterance(targetText);
+        utterance.lang = 'ja-JP';
+        utterance.rate = 0.85;
+        window.speechSynthesis.speak(utterance);
+      }
+    };
+
+    function App() {
+      const [view, setView] = useState('menu'); // 'menu', 'tutorial', 'study', 'quiz', 'result'
+      const [questionCount, setQuestionCount] = useState(5);
+      const [quizQuestions, setQuizQuestions] = useState([]);
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [selectedAnswer, setSelectedAnswer] = useState(null);
+      const [isAnswered, setIsAnswered] = useState(false);
+      const [score, setScore] = useState(0);
+      const [incorrectItems, setIncorrectItems] = useState([]);
+      const timerRef = useRef(null);
+
+      useEffect(() => {
+        return () => clearTimeout(timerRef.current);
+      }, []);
+
+      const startQuiz = (count, mode = 'mixed') => {
+        const targetCount = Math.min(count, FAMILY_DATA.length);
+        const shuffled = [...FAMILY_DATA].sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, targetCount);
+
+        const generatedQuestions = selected.map((item) => {
+          let currentMode = mode;
+          if (mode === 'mixed') {
+            currentMode = Math.random() > 0.5 ? 'self_to_honorific' : 'honorific_to_self';
+          }
+
+          const isSelfToHonorific = currentMode === 'self_to_honorific';
+          const promptLabel = isSelfToHonorific 
+            ? `稱呼【自己】的「${item.relation}」為：${item.self} (${item.selfKana})。那稱呼【對方】的${item.relation}（尊稱）是？`
+            : `稱呼【對方】的「${item.relation}」為：${item.honorific} (${item.honorificKana})。那稱呼【自己】的${item.relation}（謙稱）是？`;
+
+          const correctAnswer = isSelfToHonorific 
+            ? `${item.honorific} (${item.honorificKana})`
+            : `${item.self} (${item.selfKana})`;
+
+          const distractorPool = FAMILY_DATA.filter(v => v.id !== item.id);
+          const shuffledDistractors = distractorPool.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+          const distractors = shuffledDistractors.map(d => 
+            isSelfToHonorific ? `${d.honorific} (${d.honorificKana})` : `${d.self} (${d.selfKana})`
+          );
+
+          const options = [...distractors, correctAnswer].sort(() => 0.5 - Math.random());
+
+          return {
+            ...item,
+            promptLabel,
+            correctAnswer,
+            targetAudioText: isSelfToHonorific ? item.honorific : item.self,
+            options,
+            mode: currentMode
+          };
+        });
+
+        setQuizQuestions(generatedQuestions);
+        setCurrentIndex(0);
+        setScore(0);
+        setIncorrectItems([]);
+        setSelectedAnswer(null);
+        setIsAnswered(false);
+        setQuestionCount(targetCount);
+        setView('quiz');
+      };
+
+      const handleSelectOption = (option) => {
+        if (isAnswered) return;
+
+        setSelectedAnswer(option);
+        setIsAnswered(true);
+
+        const currentQ = quizQuestions[currentIndex];
+        const isCorrect = option === currentQ.correctAnswer;
+
+        playAudio(currentQ.targetAudioText);
+
+        if (isCorrect) {
+          setScore(prev => prev + 1);
+        } else {
+          setIncorrectItems(prev => [...prev, { ...currentQ, userAnswer: option }]);
+        }
+
+        timerRef.current = setTimeout(() => {
+          if (currentIndex + 1 < quizQuestions.length) {
+            setCurrentIndex(prev => prev + 1);
+            setSelectedAnswer(null);
+            setIsAnswered(false);
+          } else {
+            setView('result');
+          }
+        }, 1800);
+      };
+
+      return (
+        <div className="max-w-5xl mx-auto w-full p-4 flex-grow flex flex-col">
+          {/* Header */}
+          <header className="flex justify-between items-center py-4 mb-6 border-b border-gray-800">
+            <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setView('menu')}>
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-indigo-900/30">
+                家
+              </div>
+              <div>
+                <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-300">
+                  日文家族稱謂對照庫
+                </h1>
+                <p className="text-xs text-gray-400">稱呼自己家人（謙稱）vs 稱呼對方家人（尊稱）</p>
+              </div>
+            </div>
+
+            {view !== 'menu' && (
+              <button
+                onClick={() => setView('menu')}
+                className="px-3.5 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm transition flex items-center space-x-2 border border-gray-700 shadow-sm"
+              >
+                <i className="fa-solid fa-house"></i>
+                <span className="hidden sm:inline">主選單</span>
+              </button>
+            )}
+          </header>
+
+          {/* Main Content Area */}
+          <main className="flex-grow flex flex-col justify-center">
+            {/* 1. Main Dashboard / Menu */}
+            {view === 'menu' && (
+              <div className="space-y-6 max-w-3xl mx-auto w-full py-4">
+                <div className="bg-gradient-to-r from-indigo-950/60 via-purple-950/40 to-gray-900 p-6 rounded-2xl border border-indigo-500/20 shadow-xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                  <span className="px-2.5 py-1 text-xs font-semibold rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    內（うち）與 外（そと）
+                  </span>
+                  <h2 className="text-2xl font-bold mt-3 text-white">日文家族稱謂特訓</h2>
+                  <p className="text-sm text-gray-300 mt-2 leading-relaxed">
+                    在日文中，向外人提及「自己家人」時使用謙稱，稱呼「對方家人」時使用尊稱。點擊下方專區閱讀詳細文法觀念、瀏覽對照表或進行互動測驗！
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Tutorial Card */}
+                  <button
+                    onClick={() => setView('tutorial')}
+                    className="p-5 rounded-2xl bg-gray-800/80 hover:bg-gray-800 border border-gray-700 text-left transition hover:border-indigo-500/50 group flex flex-col justify-between h-48 shadow-lg"
+                  >
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-lg font-bold text-gray-200 group-hover:text-indigo-400 transition">
+                          稱謂教學解析
+                        </span>
+                        <i className="fa-solid fa-graduation-cap text-2xl text-indigo-400"></i>
+                      </div>
+                      <p className="text-xs text-gray-400">
+                        深入了解「お父さん vs 父」的使用時機、親戚關係漢字區分與老公老婆的口語眉角。
+                      </p>
+                    </div>
+                    <span className="text-xs text-indigo-400 font-semibold flex items-center gap-1">
+                      閱讀教學 <i className="fa-solid fa-arrow-right text-[10px]"></i>
+                    </span>
+                  </button>
+
+                  {/* Study Table Card */}
+                  <button
+                    onClick={() => setView('study')}
+                    className="p-5 rounded-2xl bg-gray-800/80 hover:bg-gray-800 border border-gray-700 text-left transition hover:border-purple-500/50 group flex flex-col justify-between h-48 shadow-lg"
+                  >
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-lg font-bold text-gray-200 group-hover:text-purple-400 transition">
+                          對照學習表
+                        </span>
+                        <i className="fa-solid fa-table-list text-2xl text-purple-400"></i>
+                      </div>
+                      <p className="text-xs text-gray-400">
+                        20 組完整「關係、謙稱、尊稱」對照清單，支援點擊即時語音發音。
+                      </p>
+                    </div>
+                    <span className="text-xs text-purple-400 font-semibold flex items-center gap-1">
+                      瀏覽單字庫 <i className="fa-solid fa-arrow-right text-[10px]"></i>
+                    </span>
+                  </button>
+
+                  {/* Quiz Card */}
+                  <div className="p-5 rounded-2xl bg-gray-800/80 border border-gray-700 flex flex-col justify-between h-48 shadow-lg">
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-lg font-bold text-gray-200">測驗挑戰</span>
+                        <i className="fa-solid fa-vial-circle-check text-2xl text-emerald-400"></i>
+                      </div>
+                      <p className="text-xs text-gray-400 mb-3">
+                        隨機出題考驗尊稱與謙稱之轉換：
+                      </p>
+                    </div>
+                    <div className="flex space-x-1.5">
+                      {[5, 10, 20].map((count) => (
+                        <button
+                          key={count}
+                          onClick={() => startQuiz(count, 'mixed')}
+                          className="flex-1 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/40 text-xs font-bold transition shadow-sm"
+                        >
+                          {count === 20 ? '20題' : `${count}題`}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 2. NEW TUTORIAL SECTION */}
+            {view === 'tutorial' && (
+              <div className="space-y-6 max-w-4xl mx-auto w-full">
+                <div className="bg-gray-800/90 p-6 rounded-2xl border border-gray-700 shadow-2xl space-y-6">
+                  <div className="border-b border-gray-700 pb-4">
+                    <span className="text-xs text-indigo-400 font-semibold tracking-wider uppercase">Tutorial & Explanation</span>
+                    <h2 className="text-2xl font-bold text-white mt-1">日文家族稱謂詳細教學與眉角</h2>
+                  </div>
+
+                  {/* Section 1 */}
+                  <div className="space-y-3">
+                    <h3 className="text-lg font-bold text-indigo-300 flex items-center gap-2">
+                      <i className="fa-solid fa-circle-question"></i> 一、 為什麼稱呼自己家人也會用「お父さん／お母さん」？
+                    </h3>
+                    <p className="text-sm text-gray-300 leading-relaxed pl-4 border-l-2 border-indigo-500/40">
+                      理論上，向外人提及自己父母時應使用謙稱（<strong className="text-emerald-400">父 ちち</strong> / <strong className="text-emerald-400">母 はは</strong>）。但在實際生活中，常聽到日本人對外人說「うちのお父さんが…」（我們家爸爸…），原因如下：
+                    </p>
+                    <ul className="text-sm text-gray-300 space-y-2 pl-6 list-disc">
+                      <li><strong>內部稱呼的延伸：</strong> 在家庭內部，晚輩對長輩直呼「お父さん、お母さん」。習慣後，在非正式場合或與親密朋友聊天時，會不自覺沿用內部稱呼。</li>
+                      <li><strong>語氣的親近感：</strong> 「父 / 母」非常正式硬朗；在社交或媽媽友閒聊時，使用「お父さん / お母さん」給人一種親切、接地氣的感覺。</li>
+                      <li><strong>使用注意事項：</strong> 在<span className="text-amber-400">商業職場、正式面試、面對長輩或上司</span>時，務必嚴格使用謙稱「<strong>父（ちち）</strong>」與「<strong>母（はは）</strong>」，否則會顯得欠缺社會人教養（不分內外）。</li>
+                    </ul>
+                  </div>
+
+                  {/* Section 2 */}
+                  <div className="space-y-3 pt-2">
+                    <h3 className="text-lg font-bold text-indigo-300 flex items-center gap-2">
+                      <i className="fa-solid fa-sitemap"></i> 二、 繁複親戚關係的簡化與漢字區分
+                    </h3>
+                    <p className="text-sm text-gray-300 leading-relaxed">
+                      日文親戚稱謂不分堂/表、內/外或父系/母系，採取「大類歸納」，但在<strong>書面漢字</strong>上會有微妙差異：
+                    </p>
+                    <div className="overflow-x-auto custom-scrollbar">
+                      <table className="w-full text-xs text-left border-collapse border border-gray-700 rounded-lg">
+                        <thead>
+                          <tr className="bg-gray-900/80 text-gray-400 border-b border-gray-700">
+                            <th className="p-3">關係類別</th>
+                            <th className="p-3">假名發音</th>
+                            <th className="p-3">稱呼對方/長輩 (尊稱)</th>
+                            <th className="p-3">稱呼自己/晚輩 (謙稱)</th>
+                            <th className="p-3">漢字細分說明</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-700/60 text-gray-300">
+                          <tr>
+                            <td className="p-3 font-semibold text-white">祖父 / 外公</td>
+                            <td className="p-3 font-mono text-indigo-300">おじいさん</td>
+                            <td className="p-3">おじいさん</td>
+                            <td className="p-3">祖父（そふ）</td>
+                            <td className="p-3 text-gray-400">漢字皆可寫成「祖父」</td>
+                          </tr>
+                          <tr>
+                            <td className="p-3 font-semibold text-white">祖母 / 外婆</td>
+                            <td className="p-3 font-mono text-indigo-300">おばあさん</td>
+                            <td className="p-3">おばあさん</td>
+                            <td className="p-3">祖母（そぼ）</td>
+                            <td className="p-3 text-gray-400">漢字皆可寫成「祖母」</td>
+                          </tr>
+                          <tr>
+                            <td className="p-3 font-semibold text-white">叔/伯/舅/姑丈</td>
+                            <td className="p-3 font-mono text-indigo-300">おじさん</td>
+                            <td className="p-3">おじさん</td>
+                            <td className="p-3">叔父 / 伯父（おじ）</td>
+                            <td className="p-3 text-gray-400">比父母大寫「<strong>伯父</strong>」，比父母小寫「<strong>叔父</strong>」</td>
+                          </tr>
+                          <tr>
+                            <td className="p-3 font-semibold text-white">姨/伯母/姑/嬸</td>
+                            <td className="p-3 font-mono text-indigo-300">おばさん</td>
+                            <td className="p-3">おばさん</td>
+                            <td className="p-3">叔母 / 伯母（おば）</td>
+                            <td className="p-3 text-gray-400">比父母大寫「<strong>伯母</strong>」，比父母小寫「<strong>叔母</strong>」</td>
+                          </tr>
+                          <tr>
+                            <td className="p-3 font-semibold text-white">堂表兄弟姊妹</td>
+                            <td className="p-3 font-mono text-indigo-300">いとこ</td>
+                            <td className="p-3">—</td>
+                            <td className="p-3">いとこ</td>
+                            <td className="p-3 text-gray-400">依性別/長幼可寫作：従兄、従弟、従姉、従妹</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Section 3 */}
+                  <div className="space-y-3 pt-2">
+                    <h3 className="text-lg font-bold text-indigo-300 flex items-center gap-2">
+                      <i className="fa-solid fa-heart"></i> 三、 配偶稱謂的常用語與隱形眉角
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div className="bg-gray-900/60 p-4 rounded-xl border border-gray-700/80 space-y-2">
+                        <h4 className="font-bold text-emerald-400 border-b border-gray-700 pb-1">丈夫（老公）的稱呼</h4>
+                        <ul className="space-y-1 text-xs text-gray-300">
+                          <li><strong className="text-white">夫（おっと）：</strong> 最標準官方/法律/公眾場合用語。</li>
+                          <li><strong className="text-white">主人（しゅじん）：</strong> 傳統稱自己丈夫。稱他人丈夫加尊稱「ご主人」。</li>
+                          <li><strong className="text-white">旦那（だんな）：</strong> 日常生活最常見口語（我家老公）。稱他人丈夫用「旦那さん」。</li>
+                        </ul>
+                      </div>
+
+                      <div className="bg-gray-900/60 p-4 rounded-xl border border-gray-700/80 space-y-2">
+                        <h4 className="font-bold text-purple-400 border-b border-gray-700 pb-1">妻子（老婆）的稱呼</h4>
+                        <ul className="space-y-1 text-xs text-gray-300">
+                          <li><strong className="text-white">妻（つま）：</strong> 最標準官方/正式用語。向他人介紹最體面。</li>
+                          <li><strong className="text-white">奥さん（おくさん）：</strong> 本專用於稱呼他人太太。現代私下聊天亦有人說「うちの奥さん」。</li>
+                          <li><strong className="text-white">嫁（よめ）：</strong> 本義為「媳婦」。口語常聽到但嚴謹文法中不算正確。</li>
+                          <li><strong className="text-white">家内（かない）：</strong> 傳統稱自己妻子的謙詞，年輕族群較少用。</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 flex justify-end">
+                    <button
+                      onClick={() => setView('study')}
+                      className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition flex items-center gap-2"
+                    >
+                      查看完整對照表 <i className="fa-solid fa-arrow-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 3. Reference / Study Table View */}
+            {view === 'study' && (
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                  <h2 className="text-xl font-bold text-indigo-400 flex items-center gap-2">
+                    <i className="fa-solid fa-book-open"></i> 家族稱謂對照總覽 (共 {FAMILY_DATA.length} 組)
+                  </h2>
+                  <span className="text-xs text-gray-400">點擊語音按鈕即可聆聽標準日文發音</span>
+                </div>
+
+                <div className="bg-gray-800/60 rounded-2xl border border-gray-700 overflow-hidden shadow-2xl">
+                  <div className="overflow-x-auto custom-scrollbar">
+                    <table className="w-full text-left border-collapse min-w-[640px]">
+                      <thead>
+                        <tr className="bg-gray-800 border-b border-gray-700 text-gray-400 text-xs uppercase tracking-wider">
+                          <th className="p-4">稱呼對象 (關係)</th>
+                          <th className="p-4">稱呼自己家人（謙稱/內）</th>
+                          <th className="p-4">稱呼對方家人（尊稱/外）</th>
+                          <th className="p-4 text-center">語音練習</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-700/60 text-sm">
+                        {FAMILY_DATA.map((item) => (
+                          <tr key={item.id} className="hover:bg-gray-700/30 transition">
+                            <td className="p-4 font-semibold text-gray-200 border-r border-gray-800/80">
+                              {item.relation}
+                            </td>
+                            <td className="p-4">
+                              <div className="font-semibold text-emerald-400 text-base">{item.self}</div>
+                              <div className="text-xs text-gray-400 font-mono mt-0.5">{item.selfKana}</div>
+                            </td>
+                            <td className="p-4">
+                              <div className="font-semibold text-purple-400 text-base">{item.honorific}</div>
+                              <div className="text-xs text-gray-400 font-mono mt-0.5">{item.honorificKana}</div>
+                            </td>
+                            <td className="p-4 text-center">
+                              <div className="flex justify-center space-x-2">
+                                <button
+                                  onClick={() => playAudio(item.self)}
+                                  className="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/30 text-emerald-400 transition text-xs flex items-center gap-1 border border-emerald-500/20"
+                                >
+                                  <i className="fa-solid fa-volume-high"></i> 謙稱
+                                </button>
+                                <button
+                                  onClick={() => playAudio(item.honorific)}
+                                  className="px-2.5 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500/30 text-purple-400 transition text-xs flex items-center gap-1 border border-purple-500/20"
+                                >
+                                  <i className="fa-solid fa-volume-high"></i> 尊稱
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 4. Quiz Engine View */}
+            {view === 'quiz' && quizQuestions.length > 0 && (
+              <div className="max-w-xl mx-auto w-full space-y-6">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs text-gray-400">
+                    <span>題目: {currentIndex + 1} / {quizQuestions.length}</span>
+                    <span>目前得分: {score}</span>
+                  </div>
+                  <div className="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden border border-gray-700">
+                    <div
+                      className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full transition-all duration-300"
+                      style={{ width: `${((currentIndex + 1) / quizQuestions.length) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-800 p-6 sm:p-8 rounded-2xl border border-gray-700 text-center space-y-4 shadow-2xl relative">
+                  <span className="px-3 py-1 text-xs rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    {quizQuestions[currentIndex].mode === 'self_to_honorific' ? '謙稱 ➔ 尊稱轉換' : '尊稱 ➔ 謙稱轉換'}
+                  </span>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-100 leading-relaxed mt-2">
+                    {quizQuestions[currentIndex].promptLabel}
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3">
+                  {quizQuestions[currentIndex].options.map((option, idx) => {
+                    let btnStyle = "bg-gray-800 hover:bg-gray-700/80 text-gray-200 border-gray-700";
+
+                    if (isAnswered) {
+                      if (option === quizQuestions[currentIndex].correctAnswer) {
+                        btnStyle = "bg-emerald-600/90 text-white border-emerald-500 font-bold shadow-lg shadow-emerald-950/50";
+                      } else if (option === selectedAnswer) {
+                        btnStyle = "bg-rose-600/90 text-white border-rose-500 font-bold shadow-lg shadow-rose-950/50";
+                      } else {
+                        btnStyle = "bg-gray-800/40 text-gray-500 border-gray-800";
+                      }
+                    }
+
+                    return (
+                      <button
+                        key={idx}
+                        disabled={isAnswered}
+                        onClick={() => handleSelectOption(option)}
+                        className={`p-4 rounded-xl border text-left text-base transition flex items-center justify-between ${btnStyle}`}
+                      >
+                        <span>{option}</span>
+                        {isAnswered && option === quizQuestions[currentIndex].correctAnswer && (
+                          <i className="fa-solid fa-circle-check text-white text-lg"></i>
+                        )}
+                        {isAnswered && option === selectedAnswer && option !== quizQuestions[currentIndex].correctAnswer && (
+                          <i className="fa-solid fa-circle-xmark text-white text-lg"></i>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 5. Result & Review View */}
+            {view === 'result' && (
+              <div className="max-w-xl mx-auto w-full space-y-6 text-center">
+                <div className="bg-gray-800 p-8 rounded-2xl border border-gray-700 shadow-2xl space-y-4">
+                  <div className="inline-block p-4 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-2">
+                    <i className="fa-solid fa-award text-5xl text-indigo-400"></i>
+                  </div>
+                  <h2 className="text-2xl font-bold text-white">測驗結果</h2>
+                  <div className="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+                    {Math.round((score / questionCount) * 100)}%
+                  </div>
+                  <p className="text-gray-300 text-sm">
+                    正確答對 <span className="text-indigo-400 font-bold">{score}</span> / {questionCount} 題
+                  </p>
+
+                  <div className="pt-4 flex justify-center gap-3">
+                    <button
+                      onClick={() => startQuiz(questionCount, 'mixed')}
+                      className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition flex items-center gap-2 text-sm shadow-lg shadow-indigo-950/50"
+                    >
+                      <i className="fa-solid fa-rotate-right"></i> 重新測驗
+                    </button>
+                    <button
+                      onClick={() => setView('menu')}
+                      className="px-5 py-2.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-gray-200 font-semibold transition text-sm"
+                    >
+                      返回選單
+                    </button>
+                  </div>
+                </div>
+
+                {incorrectItems.length > 0 ? (
+                  <div className="bg-gray-800/80 p-6 rounded-2xl border border-rose-900/40 text-left space-y-4 shadow-xl">
+                    <h3 className="text-lg font-bold text-rose-400 flex items-center gap-2">
+                      <i className="fa-solid fa-triangle-exclamation"></i> 錯題檢討與弱點複習
+                    </h3>
+                    <div className="divide-y divide-gray-700/60">
+                      {incorrectItems.map((item, idx) => (
+                        <div key={idx} className="py-3 flex justify-between items-center">
+                          <div className="space-y-1">
+                            <div className="text-sm font-semibold text-gray-200">
+                              關聯：<span className="text-indigo-300">{item.relation}</span>
+                            </div>
+                            <div className="text-xs text-gray-400">
+                              謙稱: <span className="text-emerald-400 font-mono">{item.self} ({item.selfKana})</span>
+                            </div>
+                            <div className="text-xs text-gray-400">
+                              尊稱: <span className="text-purple-400 font-mono">{item.honorific} ({item.honorificKana})</span>
+                            </div>
+                            <div className="text-xs text-rose-400">
+                              您的回答：{item.userAnswer}
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <button
+                              onClick={() => playAudio(item.self)}
+                              className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 text-xs hover:bg-emerald-500/40 transition flex items-center gap-1"
+                            >
+                              <i className="fa-solid fa-volume-high text-[10px]"></i> 謙稱
+                            </button>
+                            <button
+                              onClick={() => playAudio(item.honorific)}
+                              className="px-2 py-1 rounded bg-purple-500/20 text-purple-300 text-xs hover:bg-purple-500/40 transition flex items-center gap-1"
+                            >
+                              <i className="fa-solid fa-volume-high text-[10px]"></i> 尊稱
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-emerald-950/30 border border-emerald-800/40 p-4 rounded-xl text-emerald-300 text-sm">
+                    <i className="fa-solid fa-circle-check mr-2"></i> 太棒了！本次測驗全對，完全掌握了日文家族稱謂的尊謙轉換！
+                  </div>
+                )}
+              </div>
+            )}
+          </main>
+
+          {/* Footer */}
+          <footer className="text-center py-4 text-xs text-gray-600 border-t border-gray-800/60 mt-6">
+            日語文法學習工具 • 家族稱謂對照篇 (謙稱 vs 尊稱)
+          </footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

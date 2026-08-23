@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>N5日文單字：向他人介紹自己的家人</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React & ReactDOM CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <!-- Babel for JSX compilation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+    body {
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+      background-color: #121212;
+      color: #E0E0E0;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #1e1e1e;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #4b5563;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useCallback, useRef } = React;
+
+    // --- Dataset: N5 Family Vocabulary (Introducing Own Family) ---
+    const VOCAB_DATA = [
+      { id: 1, kanji: "家族", kana: "かぞく", pitch: "[1]", zh: "家人、家族", note: "統稱，稱呼自己的家人" },
+      { id: 2, kanji: "両親", kana: "りょうしん", pitch: "[1]", zh: "雙親、父母", note: "稱呼自己的父母" },
+      { id: 3, kanji: "父", kana: "ちち", pitch: "[2]", zh: "父親、爸爸", note: "對外人稱呼自己的父親" },
+      { id: 4, kanji: "母", kana: "はは", pitch: "[1]", zh: "母親、媽媽", note: "對外人稱呼自己的母親" },
+      { id: 5, kanji: "兄弟", kana: "きょうだい", pitch: "[1]", zh: "兄弟姊妹", note: "統稱，包含兄弟姊妹" },
+      { id: 6, kanji: "兄", kana: "あに", pitch: "[1]", zh: "哥哥", note: "對外人稱呼自己的哥哥" },
+      { id: 7, kanji: "姉", kana: "あね", pitch: "[0]", zh: "姐姐", note: "對外人稱呼自己的姐姐" },
+      { id: 8, kanji: "弟", kana: "おとうと", pitch: "[4]", zh: "弟弟", note: "對外人稱呼自己的弟弟" },
+      { id: 9, kanji: "妹", kana: "いもうと", pitch: "[4]", zh: "妹妹", note: "對外人稱呼自己的妹妹" },
+      { id: 10, kanji: "夫婦", kana: "ふうふ", pitch: "[1]", zh: "夫妻", note: "對外人稱呼自己夫婦或一般夫妻" },
+      { id: 11, kanji: "夫", kana: "おっと", pitch: "[0]", zh: "丈夫、老公", note: "對外人稱呼自己的丈夫" },
+      { id: 12, kanji: "主人の", kana: "しゅじん", pitch: "[1]", zh: "外子、老公", note: "較傳統對外人稱呼自己的丈夫" },
+      { id: 13, kanji: "妻", kana: "つま", pitch: "[1]", zh: "妻子、老婆", note: "對外人稱呼自己的妻子" },
+      { id: 14, kanji: "家內", kana: "かない", pitch: "[1]", zh: "內人、老婆", note: "較傳統對外人稱呼自己的妻子" },
+      { id: 15, kanji: "子供", kana: "こども", pitch: "[0]", zh: "小孩、子女", note: "稱呼自己的孩子" },
+      { id: 16, kanji: "息子", kana: "むすこ", pitch: "[0]", zh: "兒子", note: "對外人稱呼自己的兒子" },
+      { id: 17, kanji: "娘", kana: "むすめ", pitch: "[3]", zh: "女兒", note: "對外人稱呼自己的女兒" },
+      { id: 18, kanji: "祖父母", kana: "そふぼ", pitch: "[1]", zh: "祖父母", note: "對外人稱呼自己的爺爺奶奶" },
+      { id: 19, kanji: "祖父", kana: "そふ", pitch: "[1]", zh: "祖父、外公", note: "對外人稱呼自己的爺爺/外公" },
+      { id: 20, kanji: "祖母", kana: "そぼ", pitch: "[1]", zh: "祖母、外婆", note: "對外人稱呼自己的奶奶/外婆" },
+      { id: 21, kanji: "孫", kana: "まご", pitch: "[2]", zh: "孫子、孫女", note: "對外人稱呼自己的孫輩" },
+      { id: 22, kanji: "叔父 / 伯父", kana: "おじ", pitch: "[0]", zh: "叔叔、伯伯、舅舅", note: "對外人稱呼自己的長輩男親屬" },
+      { id: 23, kanji: "叔母 / 伯母", kana: "おば", pitch: "[0]", zh: "阿姨、姑姑、嬸嬸", note: "對外人稱呼自己的長輩女親屬" }
+    ];
+
+    // Helper speech function
+    const playAudio = (text) => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ja-JP';
+        utterance.rate = 0.85;
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert("您的瀏覽器不支援語音播放功能。");
+      }
+    };
+
+    // Main App Component
+    function App() {
+      const [view, setView] = useState('menu'); // 'menu', 'study', 'quiz', 'result'
+      const [quizConfig, setQuizConfig] = useState({ count: 5, mode: 'kanjiToZh' });
+      const [quizQueue, setQuizQueue] = useState([]);
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [score, setScore] = useState(0);
+      const [answersHistory, setAnswersHistory] = useState([]);
+      const [selectedAnswer, setSelectedAnswer] = useState(null);
+      const [isAnswered, setIsAnswered] = useState(false);
+      const [options, setOptions] = useState([]);
+
+      // Initialize icon renderings on view updates
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, [view, currentIndex, selectedAnswer]);
+
+      // Generate Quiz Options
+      const generateOptions = useCallback((currentItem, dataset) => {
+        const wrongOptions = dataset
+          .filter(item => item.id !== currentItem.id)
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 3);
+        
+        const allOptions = [...wrongOptions, currentItem].sort(() => 0.5 - Math.random());
+        return allOptions;
+      }, []);
+
+      // Start Quiz Setup
+      const startQuiz = (count) => {
+        const shuffled = [...VOCAB_DATA].sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, Math.min(count, VOCAB_DATA.length));
+        
+        setQuizConfig(prev => ({ ...prev, count }));
+        setQuizQueue(selected);
+        setCurrentIndex(0);
+        setScore(0);
+        setAnswersHistory([]);
+        setIsAnswered(false);
+        setSelectedAnswer(null);
+        setOptions(generateOptions(selected[0], VOCAB_DATA));
+        setView('quiz');
+      };
+
+      // Handle Option Choice
+      const handleSelectOption = (option) => {
+        if (isAnswered) return;
+
+        const currentQuestion = quizQueue[currentIndex];
+        const isCorrect = option.id === currentQuestion.id;
+
+        setSelectedAnswer(option);
+        setIsAnswered(true);
+
+        // Auto play speech for learning reinforcement
+        playAudio(currentQuestion.kanji);
+
+        if (isCorrect) {
+          setScore(prev => prev + 1);
+        }
+
+        setAnswersHistory(prev => [
+          ...prev,
+          { question: currentQuestion, selected: option, isCorrect }
+        ]);
+
+        // Auto progress
+        setTimeout(() => {
+          if (currentIndex + 1 < quizQueue.length) {
+            const nextIndex = currentIndex + 1;
+            setCurrentIndex(nextIndex);
+            setIsAnswered(false);
+            setSelectedAnswer(null);
+            setOptions(generateOptions(quizQueue[nextIndex], VOCAB_DATA));
+          } else {
+            setView('result');
+          }
+        }, 1500);
+      };
+
+      return (
+        <div className="max-w-4xl mx-auto p-4 sm:p-6 w-full flex-grow flex flex-col justify-center">
+          {/* Header */}
+          <header className="mb-8 text-center border-b border-gray-800 pb-4">
+            <div className="inline-flex items-center space-x-2 text-rose-500 mb-2">
+              <i data-lucide="users" className="w-8 h-8"></i>
+              <span className="text-xs font-semibold tracking-widest uppercase bg-rose-950/60 text-rose-300 px-3 py-1 rounded-full border border-rose-800">
+                JLPT N5 日文單字
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-wide">
+              向他人介紹自己的家人
+            </h1>
+            <p className="text-gray-400 text-sm mt-1">日語稱呼自己家人的專用詞彙與發音練習</p>
+          </header>
+
+          {/* VIEW 1: MAIN MENU */}
+          {view === 'menu' && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="bg-gradient-to-r from-rose-950/30 via-neutral-900 to-neutral-900 border border-rose-900/40 rounded-2xl p-6 shadow-xl">
+                <h2 className="text-lg font-semibold text-rose-300 mb-2 flex items-center gap-2">
+                  <i data-lucide="info" className="w-5 h-5 text-rose-400"></i>
+                  學習重點說明
+                </h2>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  在日本文化中，向外人介紹或提及自己的家人時，會使用<strong className="text-rose-400 font-semibold">謙稱（謙遜語）</strong>，與稱呼對方家人的尊稱（如：お父さん、お母さん）完全不同。本章節專注於掌握稱呼<span className="underline decoration-rose-500/50 underline-offset-4">自己家人</span>的正確單字。
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Study Card */}
+                <div 
+                  onClick={() => setView('study')}
+                  className="bg-[#1E1E1E] hover:bg-[#252525] border border-gray-800 hover:border-rose-500/50 rounded-2xl p-6 cursor-pointer transition-all duration-200 group flex flex-col justify-between shadow-lg"
+                >
+                  <div>
+                    <div className="w-12 h-12 bg-rose-500/10 text-rose-400 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <i data-lucide="book-open" className="w-6 h-6"></i>
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-2">單字學習與總覽列表</h3>
+                    <p className="text-gray-400 text-sm">系統化瀏覽所有單字、日文假名、重音標記、音檔播放與用法補充說明。</p>
+                  </div>
+                  <div className="mt-6 flex items-center text-rose-400 text-sm font-semibold group-hover:translate-x-1 transition-transform">
+                    前往總覽列表 <i data-lucide="chevron-right" className="w-4 h-4 ml-1"></i>
+                  </div>
+                </div>
+
+                {/* Quiz Selection Card */}
+                <div className="bg-[#1E1E1E] border border-gray-800 rounded-2xl p-6 flex flex-col justify-between shadow-lg">
+                  <div>
+                    <div className="w-12 h-12 bg-rose-500/10 text-rose-400 rounded-xl flex items-center justify-center mb-4">
+                      <i data-lucide="brain-circuit" className="w-6 h-6"></i>
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-2">單字測驗挑戰</h3>
+                    <p className="text-gray-400 text-sm mb-4">透過隨機選擇題型進行實測，加強記憶與即時反應能力。</p>
+                  </div>
+
+                  <div>
+                    <span className="text-xs text-gray-400 uppercase tracking-wider font-semibold block mb-2">選擇測驗題數</span>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[5, 10, 23].map(count => (
+                        <button
+                          key={count}
+                          onClick={() => startQuiz(count)}
+                          className="py-2.5 px-3 bg-neutral-800 hover:bg-rose-600 hover:text-white text-rose-300 font-semibold rounded-xl border border-gray-700/60 hover:border-rose-500 transition-all text-sm flex items-center justify-center gap-1"
+                        >
+                          <i data-lucide="play" className="w-3.5 h-3.5"></i>
+                          {count === 23 ? '全部' : `${count} 題`}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* VIEW 2: STUDY TABLE */}
+          {view === 'study' && (
+            <div className="space-y-4 animate-fadeIn">
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => setView('menu')}
+                  className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm font-medium py-2 px-3 rounded-lg hover:bg-gray-800"
+                >
+                  <i data-lucide="arrow-left" className="w-4 h-4"></i> 返回主選單
+                </button>
+                <span className="text-xs text-gray-500">共收錄 {VOCAB_DATA.length} 個家族單字</span>
+              </div>
+
+              <div className="bg-[#1E1E1E] border border-gray-800 rounded-2xl overflow-hidden shadow-xl">
+                <div className="overflow-x-auto custom-scrollbar">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-neutral-900/80 border-b border-gray-800 text-gray-400 text-xs tracking-wider uppercase">
+                        <th className="py-3 px-4 font-semibold">發音</th>
+                        <th className="py-3 px-4 font-semibold">單字 (漢字)</th>
+                        <th className="py-3 px-4 font-semibold">讀音 (假名)</th>
+                        <th className="py-3 px-4 font-semibold">重音</th>
+                        <th className="py-3 px-4 font-semibold">中文意思</th>
+                        <th className="py-3 px-4 font-semibold">備註補充</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-800 text-sm">
+                      {VOCAB_DATA.map((item) => (
+                        <tr key={item.id} className="hover:bg-neutral-800/50 transition-colors">
+                          <td className="py-3.5 px-4">
+                            <button
+                              onClick={() => playAudio(item.kanji)}
+                              className="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition-colors"
+                              title="聽發音"
+                            >
+                              <i data-lucide="volume-2" className="w-4 h-4"></i>
+                            </button>
+                          </td>
+                          <td className="py-3.5 px-4 font-bold text-white text-base">{item.kanji}</td>
+                          <td className="py-3.5 px-4 text-rose-300 font-medium">{item.kana}</td>
+                          <td className="py-3.5 px-4 text-gray-400 font-mono text-xs">{item.pitch}</td>
+                          <td className="py-3.5 px-4 text-gray-200 font-medium">{item.zh}</td>
+                          <td className="py-3.5 px-4 text-gray-400 text-xs">{item.note}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* VIEW 3: QUIZ ENGINE */}
+          {view === 'quiz' && quizQueue.length > 0 && (
+            <div className="max-w-xl mx-auto w-full space-y-6 animate-fadeIn">
+              {/* Quiz Header Info */}
+              <div className="flex items-center justify-between text-sm">
+                <button
+                  onClick={() => setView('menu')}
+                  className="text-gray-400 hover:text-white flex items-center gap-1"
+                >
+                  <i data-lucide="x" className="w-4 h-4"></i> 放棄測驗
+                </button>
+                <span className="text-gray-400 font-medium">
+                  第 <span className="text-rose-400 font-bold">{currentIndex + 1}</span> / {quizQueue.length} 題
+                </span>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                <div 
+                  className="bg-rose-500 h-full transition-all duration-300 ease-out"
+                  style={{ width: `${((currentIndex + 1) / quizQueue.length) * 100}%` }}
+                ></div>
+              </div>
+
+              {/* Question Card */}
+              <div className="bg-[#1E1E1E] border border-gray-800 rounded-2xl p-8 text-center shadow-2xl relative overflow-hidden">
+                <div className="text-xs font-semibold text-rose-400 tracking-wider uppercase mb-2">請選擇正確的中文意思</div>
+                
+                <div className="flex items-center justify-center gap-3 my-4">
+                  <h2 className="text-4xl font-extrabold text-white tracking-wide">
+                    {quizQueue[currentIndex].kanji}
+                  </h2>
+                  <button
+                    onClick={() => playAudio(quizQueue[currentIndex].kanji)}
+                    className="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-full transition-colors"
+                  >
+                    <i data-lucide="volume-2" className="w-5 h-5"></i>
+                  </button>
+                </div>
+                
+                <p className="text-rose-300/80 text-lg font-medium">
+                  {quizQueue[currentIndex].kana} <span className="text-xs text-gray-500 ml-1">{quizQueue[currentIndex].pitch}</span>
+                </p>
+              </div>
+
+              {/* Options */}
+              <div className="grid grid-cols-1 gap-3">
+                {options.map((opt, idx) => {
+                  let btnStyle = "bg-[#1E1E1E] hover:bg-[#282828] text-gray-200 border-gray-800";
+                  
+                  if (isAnswered) {
+                    if (opt.id === quizQueue[currentIndex].id) {
+                      btnStyle = "bg-emerald-950/80 border-emerald-600 text-emerald-200 font-semibold";
+                    } else if (selectedAnswer && selectedAnswer.id === opt.id) {
+                      btnStyle = "bg-rose-950/80 border-rose-600 text-rose-200 font-semibold";
+                    } else {
+                      btnStyle = "bg-[#1E1E1E] border-gray-800 opacity-40";
+                    }
+                  }
+
+                  return (
+                    <button
+                      key={idx}
+                      disabled={isAnswered}
+                      onClick={() => handleSelectOption(opt)}
+                      className={`p-4 rounded-xl border text-left flex items-center justify-between transition-all duration-200 shadow-md ${btnStyle}`}
+                    >
+                      <span className="text-base font-medium">{opt.zh}</span>
+                      {isAnswered && opt.id === quizQueue[currentIndex].id && (
+                        <i data-lucide="check-circle" className="w-5 h-5 text-emerald-400"></i>
+                      )}
+                      {isAnswered && selectedAnswer && selectedAnswer.id === opt.id && opt.id !== quizQueue[currentIndex].id && (
+                        <i data-lucide="x-circle" className="w-5 h-5 text-rose-400"></i>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* VIEW 4: RESULTS & REVIEW */}
+          {view === 'result' && (
+            <div className="max-w-2xl mx-auto w-full space-y-6 animate-fadeIn">
+              <div className="bg-[#1E1E1E] border border-gray-800 rounded-2xl p-8 text-center shadow-xl">
+                <div className="w-16 h-16 bg-rose-500/10 text-rose-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i data-lucide="trophy" className="w-8 h-8"></i>
+                </div>
+                
+                <h2 className="text-2xl font-bold text-white mb-1">測驗完成！</h2>
+                <p className="text-gray-400 text-sm mb-6">家族單字練習成果統計</p>
+
+                <div className="flex justify-center items-baseline gap-2 mb-6">
+                  <span className="text-5xl font-extrabold text-rose-400">
+                    {Math.round((score / quizQueue.length) * 100)}%
+                  </span>
+                  <span className="text-gray-400 text-sm">
+                    ({score} / {quizQueue.length} 題正確)
+                  </span>
+                </div>
+
+                <div className="flex gap-3 justify-center">
+                  <button
+                    onClick={() => startQuiz(quizConfig.count)}
+                    className="py-3 px-6 bg-rose-600 hover:bg-rose-500 text-white font-semibold rounded-xl transition-colors shadow-lg flex items-center gap-2 text-sm"
+                  >
+                    <i data-lucide="rotate-ccw" className="w-4 h-4"></i> 再試一次
+                  </button>
+                  <button
+                    onClick={() => setView('menu')}
+                    className="py-3 px-6 bg-neutral-800 hover:bg-neutral-700 text-gray-200 font-semibold rounded-xl transition-colors border border-gray-700 text-sm"
+                  >
+                    返回主選單
+                  </button>
+                </div>
+              </div>
+
+              {/* Weakness Review / Incorrect List */}
+              <div className="bg-[#1E1E1E] border border-gray-800 rounded-2xl p-6 shadow-xl">
+                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <i data-lucide="list-checks" className="w-5 h-5 text-rose-400"></i> 答題明細與弱點檢視
+                </h3>
+
+                <div className="space-y-3">
+                  {answersHistory.map((item, idx) => (
+                    <div 
+                      key={idx}
+                      className={`p-4 rounded-xl border flex items-center justify-between ${
+                        item.isCorrect ? 'bg-neutral-900/50 border-gray-800' : 'bg-rose-950/20 border-rose-900/50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => playAudio(item.question.kanji)}
+                          className="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition-colors"
+                        >
+                          <i data-lucide="volume-2" className="w-4 h-4"></i>
+                        </button>
+                        <div>
+                          <div className="flex items-baseline gap-2">
+                            <span className="font-bold text-white text-base">{item.question.kanji}</span>
+                            <span className="text-xs text-rose-300">{item.question.kana}</span>
+                          </div>
+                          <p className="text-xs text-gray-400 mt-0.5">
+                            正確答案：<span className="text-gray-200">{item.question.zh}</span>
+                          </p>
+                          {!item.isCorrect && (
+                            <p className="text-xs text-rose-400 mt-0.5">
+                              您的回答：{item.selected.zh}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center">
+                        {item.isCorrect ? (
+                          <span className="px-2.5 py-1 bg-emerald-950/60 text-emerald-400 border border-emerald-800 rounded-md text-xs font-medium flex items-center gap-1">
+                            <i data-lucide="check" className="w-3 h-3"></i> 正確
+                          </span>
+                        ) : (
+                          <span className="px-2.5 py-1 bg-rose-950/60 text-rose-400 border border-rose-800 rounded-md text-xs font-medium flex items-center gap-1">
+                            <i data-lucide="x" className="w-3 h-3"></i> 錯誤
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>N5日文單字 - 家族（稱呼對方或地位高者）</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React 18 & ReactDOM UMD -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <!-- Babel for JSX transformation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background-color: #121212;
+      color: #E0E0E0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #1e1e1e;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+  <div id="root" class="flex-grow flex flex-col"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useCallback, useRef } = React;
+
+    // Vocabulary Dataset: Family terms when referring to others or social superiors
+    const VOCAB_DATA = [
+      { id: 1, kanji: "ご家族", kana: "ごかぞく", pitch: "[2]", pitchNum: 2, meaning: "對方家人 / 您的家人" },
+      { id: 2, kanji: "お父さん", kana: "おとうさん", pitch: "[2]", pitchNum: 2, meaning: "父親 / 您的父親" },
+      { id: 3, kanji: "お母さん", kana: "おかあさん", pitch: "[2]", pitchNum: 2, meaning: "母親 / 您的母親" },
+      { id: 4, kanji: "お兄さん", kana: "おにいさん", pitch: "[2]", pitchNum: 2, meaning: "哥哥 / 您的哥哥" },
+      { id: 5, kanji: "お姉さん", kana: "おねえさん", pitch: "[2]", pitchNum: 2, meaning: "姐姐 / 您的姐姐" },
+      { id: 6, kanji: "弟さん", kana: "おとうとさん", pitch: "[4]", pitchNum: 4, meaning: "弟弟 / 您的弟弟" },
+      { id: 7, kanji: "妹さん", kana: "いもうとさん", pitch: "[4]", pitchNum: 4, meaning: "妹妹 / 您的妹妹" },
+      { id: 8, kanji: "ご主人", kana: "ごしゅじん", pitch: "[2]", pitchNum: 2, meaning: "丈夫 / 您的先生" },
+      { id: 9, kanji: "奥さん", kana: "おくさん", pitch: "[1]", pitchNum: 1, meaning: "妻子 / 您的太太" },
+      { id: 10, kanji: "お子さん", kana: "おこさん", pitch: "[2]", pitchNum: 2, meaning: "孩子 / 您的小孩" },
+      { id: 11, kanji: "おじいさん", kana: "おじいさん", pitch: "[2]", pitchNum: 2, meaning: "爺爺、外公 / 老爺爺" },
+      { id: 12, kanji: "おばあさん", kana: "おばあさん", pitch: "[2]", pitchNum: 2, meaning: "奶奶、外婆 / 老奶奶" },
+      { id: 13, kanji: "叔父さん / 伯父さん", kana: "おじさん", pitch: "[0]", pitchNum: 0, meaning: "叔叔、伯伯、舅舅" },
+      { id: 14, kanji: "叔母さん / 伯母さん", kana: "おばさん", pitch: "[0]", pitchNum: 0, meaning: "阿姨、姑姑、嬸嬸" }
+    ];
+
+    // Helper: TTS Pronunciation
+    const playAudio = (text) => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // Stop current speech
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ja-JP';
+        utterance.rate = 0.85; // Slightly slower for language learning
+        window.speechSynthesis.speak(utterance);
+      }
+    };
+
+    function App() {
+      const [view, setView] = useState('menu'); // 'menu', 'study', 'quiz', 'result'
+      const [questionCount, setQuestionCount] = useState(5);
+      const [quizQuestions, setQuizQuestions] = useState([]);
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [selectedAnswer, setSelectedAnswer] = useState(null);
+      const [isAnswered, setIsAnswered] = useState(false);
+      const [score, setScore] = useState(0);
+      const [incorrectItems, setIncorrectItems] = useState([]);
+      const timerRef = useRef(null);
+
+      // Clean up timer on unmount
+      useEffect(() => {
+        return () => clearTimeout(timerRef.current);
+      }, []);
+
+      // Generate Randomized Quiz
+      const startQuiz = (count) => {
+        const targetCount = Math.min(count, VOCAB_DATA.length);
+        const shuffledVocab = [...VOCAB_DATA].sort(() => 0.5 - Math.random());
+        const selected = shuffledVocab.slice(0, targetCount);
+
+        const generatedQuestions = selected.map((item) => {
+          // Generate 3 distractors
+          const distractors = VOCAB_DATA
+            .filter((v) => v.id !== item.id)
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 3)
+            .map((v) => v.meaning);
+
+          const options = [...distractors, item.meaning].sort(() => 0.5 - Math.random());
+
+          return {
+            ...item,
+            options,
+            correctMeaning: item.meaning
+          };
+        });
+
+        setQuizQuestions(generatedQuestions);
+        setCurrentIndex(0);
+        setScore(0);
+        setIncorrectItems([]);
+        setSelectedAnswer(null);
+        setIsAnswered(false);
+        setQuestionCount(targetCount);
+        setView('quiz');
+      };
+
+      // Handle Option Selection in Quiz
+      const handleSelectOption = (option) => {
+        if (isAnswered) return;
+
+        setSelectedAnswer(option);
+        setIsAnswered(true);
+
+        const currentQuestion = quizQuestions[currentIndex];
+        const isCorrect = option === currentQuestion.correctMeaning;
+
+        // Automatically play TTS on selection
+        playAudio(currentQuestion.kanji);
+
+        if (isCorrect) {
+          setScore((prev) => prev + 1);
+        } else {
+          setIncorrectItems((prev) => [...prev, { ...currentQuestion, userAnswer: option }]);
+        }
+
+        // Auto progression delay
+        timerRef.current = setTimeout(() => {
+          if (currentIndex + 1 < quizQuestions.length) {
+            setCurrentIndex((prev) => prev + 1);
+            setSelectedAnswer(null);
+            setIsAnswered(false);
+          } else {
+            setView('result');
+          }
+        }, 1600);
+      };
+
+      return (
+        <div className="max-w-4xl mx-auto w-full p-4 flex-grow flex flex-col">
+          {/* Header */}
+          <header className="flex justify-between items-center py-4 mb-6 border-b border-gray-800">
+            <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setView('menu')}>
+              <div className="w-10 h-10 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-emerald-900/30">
+                尊
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-emerald-400">N5 日文單字庫</h1>
+                <p className="text-xs text-gray-400">家族 稱呼對方或地位高者</p>
+              </div>
+            </div>
+            {view !== 'menu' && (
+              <button
+                onClick={() => setView('menu')}
+                className="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm transition flex items-center space-x-2 border border-gray-700"
+              >
+                <i className="fa-solid fa-house"></i>
+                <span className="hidden sm:inline">主選單</span>
+              </button>
+            )}
+          </header>
+
+          {/* Body Views */}
+          <main className="flex-grow flex flex-col justify-center">
+            {/* 1. Main Menu View */}
+            {view === 'menu' && (
+              <div className="space-y-6 max-w-xl mx-auto w-full py-8">
+                <div className="bg-gradient-to-r from-emerald-900/40 to-teal-900/30 p-6 rounded-2xl border border-emerald-500/20 shadow-xl">
+                  <span className="px-2.5 py-1 text-xs font-semibold rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    N5 必考文法
+                  </span>
+                  <h2 className="text-2xl font-bold mt-3 text-white">對方家人的尊敬稱呼</h2>
+                  <p className="text-sm text-gray-300 mt-2 leading-relaxed">
+                    在日文中，稱呼他人或長輩的家人時，通常會在詞頭加上「お」或「ご」，或在詞尾加上「さん」，以表達禮貌與尊敬。
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <button
+                    onClick={() => setView('study')}
+                    className="p-5 rounded-xl bg-gray-800/80 hover:bg-gray-800 border border-gray-700 text-left transition hover:border-emerald-500/50 group flex flex-col justify-between h-36"
+                  >
+                    <div className="flex justify-between items-start">
+                      <span className="text-lg font-bold text-gray-200 group-hover:text-emerald-400 transition">
+                        單字學習清單
+                      </span>
+                      <i className="fa-solid fa-book-open text-xl text-emerald-500"></i>
+                    </div>
+                    <p className="text-xs text-gray-400">系統化瀏覽所有單字、假名、重音與發音練習。</p>
+                  </button>
+
+                  <div className="p-5 rounded-xl bg-gray-800/80 border border-gray-700 flex flex-col justify-between h-36">
+                    <div className="flex justify-between items-start">
+                      <span className="text-lg font-bold text-gray-200">測驗模式</span>
+                      <i className="fa-solid fa-[#10B981] fa-vial text-xl text-emerald-500"></i>
+                    </div>
+                    <div className="flex space-x-2 mt-2">
+                      {[5, 10, 14].map((count) => (
+                        <button
+                          key={count}
+                          onClick={() => startQuiz(count)}
+                          className="flex-1 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/40 text-xs font-bold transition"
+                        >
+                          {count === 14 ? '全部' : `${count} 題`}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 2. Reference / Study Table View */}
+            {view === 'study' && (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h2 className="text-xl font-bold text-emerald-400 flex items-center gap-2">
+                    <i className="fa-solid fa-list-check"></i> 家族稱呼總覽 (共 {VOCAB_DATA.length} 字)
+                  </h2>
+                </div>
+
+                <div className="bg-gray-800/50 rounded-xl border border-gray-700 overflow-hidden shadow-xl">
+                  <div className="overflow-x-auto custom-scrollbar">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-gray-800 border-b border-gray-700 text-gray-400 text-xs uppercase tracking-wider">
+                          <th className="p-4">日文 (漢字)</th>
+                          <th className="p-4">假名</th>
+                          <th className="p-4">重音</th>
+                          <th className="p-4">中文釋義</th>
+                          <th className="p-4 text-center">發音</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-700/60 text-sm">
+                        {VOCAB_DATA.map((item) => (
+                          <tr key={item.id} className="hover:bg-gray-700/30 transition">
+                            <td className="p-4 font-semibold text-white text-base">{item.kanji}</td>
+                            <td className="p-4 text-emerald-300 font-mono">{item.kana}</td>
+                            <td className="p-4 text-gray-400">
+                              <span className="px-2 py-0.5 rounded bg-gray-700 text-xs font-mono">{item.pitch}</span>
+                            </td>
+                            <td className="p-4 text-gray-200">{item.meaning}</td>
+                            <td className="p-4 text-center">
+                              <button
+                                onClick={() => playAudio(item.kanji)}
+                                className="w-8 h-8 rounded-full bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 transition flex items-center justify-center mx-auto"
+                                title="播放發音"
+                              >
+                                <i className="fa-solid fa-volume-high text-xs"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 3. Quiz Engine View */}
+            {view === 'quiz' && quizQuestions.length > 0 && (
+              <div className="max-w-xl mx-auto w-full space-y-6">
+                {/* Progress bar */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs text-gray-400">
+                    <span>進度: {currentIndex + 1} / {quizQuestions.length}</span>
+                    <span>得分: {score}</span>
+                  </div>
+                  <div className="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                    <div
+                      className="bg-emerald-500 h-full transition-all duration-300"
+                      style={{ width: `${((currentIndex + 1) / quizQuestions.length) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Question Card */}
+                <div className="bg-gray-800 p-8 rounded-2xl border border-gray-700 text-center space-y-4 shadow-2xl relative">
+                  <button
+                    onClick={() => playAudio(quizQuestions[currentIndex].kanji)}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-emerald-400 transition"
+                  >
+                    <i className="fa-solid fa-volume-high text-lg"></i>
+                  </button>
+                  <span className="text-xs text-emerald-400 font-mono tracking-widest uppercase">
+                    音調: {quizQuestions[currentIndex].pitch}
+                  </span>
+                  <div className="text-4xl font-extrabold text-white tracking-wide">
+                    {quizQuestions[currentIndex].kanji}
+                  </div>
+                  <div className="text-lg text-emerald-300 font-medium">
+                    {quizQuestions[currentIndex].kana}
+                  </div>
+                </div>
+
+                {/* Options List */}
+                <div className="grid grid-cols-1 gap-3">
+                  {quizQuestions[currentIndex].options.map((option, idx) => {
+                    let btnStyle = "bg-gray-800 hover:bg-gray-700 text-gray-200 border-gray-700";
+
+                    if (isAnswered) {
+                      if (option === quizQuestions[currentIndex].correctMeaning) {
+                        btnStyle = "bg-emerald-600 text-white border-emerald-500 font-bold";
+                      } else if (option === selectedAnswer) {
+                        btnStyle = "bg-rose-600 text-white border-rose-500 font-bold";
+                      } else {
+                        btnStyle = "bg-gray-800/40 text-gray-500 border-gray-800";
+                      }
+                    }
+
+                    return (
+                      <button
+                        key={idx}
+                        disabled={isAnswered}
+                        onClick={() => handleSelectOption(option)}
+                        className={`p-4 rounded-xl border text-left text-base transition flex items-center justify-between ${btnStyle}`}
+                      >
+                        <span>{option}</span>
+                        {isAnswered && option === quizQuestions[currentIndex].correctMeaning && (
+                          <i className="fa-solid fa-circle-check text-white"></i>
+                        )}
+                        {isAnswered && option === selectedAnswer && option !== quizQuestions[currentIndex].correctMeaning && (
+                          <i className="fa-solid fa-circle-xmark text-white"></i>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 4. Result & Weakness Review Loop */}
+            {view === 'result' && (
+              <div className="max-w-xl mx-auto w-full space-y-6 text-center">
+                <div className="bg-gray-800 p-8 rounded-2xl border border-gray-700 shadow-2xl space-y-4">
+                  <i className="fa-solid fa-trophy text-5xl text-amber-400 animate-bounce"></i>
+                  <h2 className="text-2xl font-bold text-white">測驗完成！</h2>
+                  <div className="text-5xl font-black text-emerald-400 my-2">
+                    {Math.round((score / questionCount) * 100)}%
+                  </div>
+                  <p className="text-gray-300 text-sm">
+                    答對 <span className="text-emerald-400 font-bold">{score}</span> / {questionCount} 題
+                  </p>
+
+                  <div className="pt-4 flex justify-center gap-3">
+                    <button
+                      onClick={() => startQuiz(questionCount)}
+                      className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition flex items-center gap-2 text-sm"
+                    >
+                      <i className="fa-solid fa-rotate-right"></i> 重新測驗
+                    </button>
+                    <button
+                      onClick={() => setView('menu')}
+                      className="px-5 py-2.5 rounded-xl bg-gray-700 hover:bg-gray-600 text-gray-200 font-semibold transition text-sm"
+                    >
+                      返回選單
+                    </button>
+                  </div>
+                </div>
+
+                {/* Incorrect Answers Review List */}
+                {incorrectItems.length > 0 ? (
+                  <div className="bg-gray-800/60 p-6 rounded-2xl border border-rose-900/30 text-left space-y-4">
+                    <h3 className="text-lg font-bold text-rose-400 flex items-center gap-2">
+                      <i className="fa-solid fa-triangle-exclamation"></i> 需要加強的單字 (弱點複習)
+                    </h3>
+                    <div className="divide-y divide-gray-700/50">
+                      {incorrectItems.map((item, idx) => (
+                        <div key={idx} className="py-3 flex justify-between items-center">
+                          <div>
+                            <div className="flex items-baseline space-x-2">
+                              <span className="font-bold text-white text-base">{item.kanji}</span>
+                              <span className="text-xs text-emerald-400 font-mono">{item.kana}</span>
+                              <span className="text-xs text-gray-500">{item.pitch}</span>
+                            </div>
+                            <div className="text-xs text-gray-300 mt-1">
+                              正確解答：<span className="text-emerald-400">{item.correctMeaning}</span>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => playAudio(item.kanji)}
+                            className="w-8 h-8 rounded-full bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 transition flex items-center justify-center shrink-0"
+                          >
+                            <i className="fa-solid fa-volume-high text-xs"></i>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-emerald-950/30 border border-emerald-800/40 p-4 rounded-xl text-emerald-300 text-sm">
+                    <i className="fa-solid fa-star mr-2"></i> 太棒了！本次測驗全對，完全掌握了對方家人的稱呼！
+                  </div>
+                )}
+              </div>
+            )}
+          </main>
+
+          {/* Footer */}
+          <footer className="text-center py-4 text-xs text-gray-600 border-t border-gray-800/60 mt-6">
+            N5 日語檢定專用學習工具 • 家族稱呼篇
+          </footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
