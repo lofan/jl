@@ -1,0 +1,31 @@
+You are an expert web developer and Japanese language teacher.
+Create a single-file, responsive web application using React (loaded via CDN with Tailwind CSS for styling) that functions as an interactive learning and quiz tool for [INSERT_TOPIC_HERE, e.g., 身の回りのもの（身邊物品）].
+
+### Core Requirements:
+
+1. **Single-File Architecture:** 
+   - Must be a standalone `.html` file containing Tailwind CSS CDN, React 18 UMD, ReactDOM, and Babel for JSX transformation so it runs directly in any browser without a build step.
+
+2. **Design & Theme:**
+   - Modern dark mode aesthetic (e.g., background `#121212`, cards `#1E1E1E`, text `#E0E0E0`).
+   - Distinct accent color theme appropriate for the topic (e.g., Emerald `#10B981` or similar).
+   - Clean, mobile-friendly flexbox/grid layout with customized scrollbar styling (`::-webkit-scrollbar`).
+
+3. **Data Structure:**
+   - Include a robust, built-in JavaScript dataset containing detailed items (Kanji, Kana, Romaji, Traditional Chinese translation, and category attributes).
+
+4. **Interactive Features & App Flow:**
+   - **Main Menu / Dashboard:** Clear options to start quizzes with variable question counts (e.g., 10, 15, 25) or switch to study mode.
+   - **Reference / Study Table View:**
+     - **Visual Guide Diagram:** Integrate an image container (`<img src="[INSERT_IMAGE_FILENAME]" />`) with a toggle switch to show/hide the reference image above the study list.
+     - **Independent Scrolling Container:** The vocabulary grid/table must sit inside a fixed-height, independently scrollable container (e.g., `max-h-[50vh] overflow-y-auto` with a custom scrollbar) so users can scroll through all cards without displacing the top controls, page title, or visual guide diagram.
+     - **Live Filtering & Search:** Instant filtering by text search (Kanji/Kana/Romaji/ZH) and category selection.
+   - **Quiz Engine:** Multiple-choice questions presenting problem statements clearly with randomized distractor options. Includes audio playback, instant visual feedback (success/error states), and timed auto-progression.
+   - **Audio Integration:** Native Web Speech API (`speechSynthesis`) configured for Japanese (`ja-JP`) pronunciation on card clicks, audio buttons, and quiz options.
+   - **Result & Review Loop:** Score breakdown screen with percentage calculation and an independent scrollable "Weakness Review / Incorrect Answers List" allowing users to review and re-listen to missed items.
+
+5. **Technical Stability:**
+   - Prevent state locking bugs between quiz retries. Ensure clean state resets when restarting quizzes or switching views.
+   - Use modular functional components with React hooks (`useState`, `useEffect`, `useCallback`).
+
+Please generate the complete, production-ready HTML code block.
