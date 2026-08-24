@@ -11,7 +11,7 @@ Create a single-file, responsive web application using React (loaded via CDN wit
 3. **Data Structure:**
    - Include a robust, built-in dataset containing detailed examples, definitions, categories, and attributes relevant to the topic.
 4. **Interactive Features & App Flow:**
-   - **Main Menu / Dashboard:** Clear options to start quizzes (with variable question counts like 5, 10, 15) or view comprehensive reference tables.
+   - **Main Menu / Dashboard:** Clear options to start quizzes (with variable question counts like 15, 20, 25) or view comprehensive reference tables.
    - **Reference / Study Table:** A dedicated view where users can browse all items systematically.
    - **Quiz Engine:** Multiple-choice questions presenting the problem clearly with randomized distractor options. Include instant visual feedback (success/error states) and timed auto-progression.
    - **Audio Integration (if applicable):** Utilize the browser's native Web Speech API (`speechSynthesis`) to pronounce words/phrases dynamically.
