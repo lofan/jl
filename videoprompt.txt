@@ -32,7 +32,7 @@ URL / Song: [https://www.youtube.com/watch?v=p0JFc5giu9U]
 
 - Tab 1: Song Vocabulary Guide (詞の語彙)
 
-- Display 8 to 10 key vocabulary words extracted from the song's lyrics.
+- Display 25 to 35 key vocabulary words extracted from the song's lyrics.
 
 - Each card must display: Kanji, Kana (furigana), Romaji, English meaning, Part of Speech, brief explanation, and the specific Lyric Context line in Japanese.
 
@@ -40,7 +40,7 @@ URL / Song: [https://www.youtube.com/watch?v=p0JFc5giu9U]
 
 - Tab 2: Interactive Quiz (クイズ)
 
-- A 8 to 10 question multiple-choice quiz testing comprehension of the song's vocabulary.
+- A 25 to 35 question multiple-choice quiz testing comprehension of the song's vocabulary.
 
 - Each question displays: Progress bar, current score, song lyric context line, audio trigger button, 4 answer options (A, B, C, D), and immediate visual + audio feedback upon answering.
 
