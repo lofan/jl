@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Japan Prefecture Map & Kanji Master</title>
+    <title>日本地圖全攻略：47縣市分區地圖集與旅遊重點</title>
     <style>
         :root {
             --primary: #d32f2f;
@@ -39,12 +39,12 @@
         }
 
         header h1 {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             margin-bottom: 0.3rem;
         }
 
         header p {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             opacity: 0.9;
         }
 
@@ -54,7 +54,7 @@
             padding: 0 1rem;
             width: 100%;
             display: grid;
-            grid-template-columns: 1.2fr 1fr;
+            grid-template-columns: 1.1fr 1.2fr;
             gap: 2rem;
         }
 
@@ -67,7 +67,7 @@
         .card {
             background-color: var(--card-bg);
             border-radius: 12px;
-            padding: 2rem;
+            padding: 1.5rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
@@ -75,26 +75,25 @@
         }
 
         h2 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             margin-bottom: 1rem;
             color: var(--text-muted);
             border-bottom: 2px solid var(--border);
             padding-bottom: 0.5rem;
         }
 
-        /* Interactive Map Styling */
+        /* 互動地圖區域 */
         .map-wrapper {
             text-align: center;
             background: #e9f0f8;
             border-radius: 8px;
             padding: 1rem;
             margin-bottom: 1.5rem;
-            position: relative;
         }
 
         .japan-map-svg {
             width: 100%;
-            max-height: 280px;
+            max-height: 240px;
             cursor: pointer;
         }
 
@@ -102,7 +101,7 @@
             fill: #b0bec5;
             stroke: #ffffff;
             stroke-width: 2;
-            transition: fill 0.2s, transform 0.2s;
+            transition: fill 0.2s;
         }
 
         .map-region:hover {
@@ -110,21 +109,21 @@
             opacity: 0.85;
         }
 
-        /* Prefecture Selector Grid */
+        /* 縣市選單網格 */
         .prefecture-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
             gap: 0.5rem;
-            max-height: 200px;
+            max-height: 220px;
             overflow-y: auto;
-            padding-right: 0.5rem;
+            padding-right: 0.3rem;
         }
 
         .pref-btn {
             background-color: #fff;
             border: 1px solid var(--border);
             border-radius: 6px;
-            padding: 0.5rem;
+            padding: 0.4rem;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -137,7 +136,7 @@
         }
 
         .pref-btn .kanji-mini {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: bold;
             display: block;
         }
@@ -151,30 +150,29 @@
             color: #fff;
         }
 
-        /* Detail View Card */
+        /* 右側詳細資訊卡 */
         .display-content {
             text-align: center;
-            margin: 1rem 0;
+            margin: 0.5rem 0;
         }
 
         .kanji-display {
-            font-size: 4rem;
+            font-size: 3.5rem;
             font-weight: bold;
             color: var(--primary);
             line-height: 1.1;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.2rem;
         }
 
         .romaji-display {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 600;
-            margin-bottom: 0.1rem;
         }
 
         .reading-display {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
         }
 
         .sound-btn {
@@ -182,11 +180,11 @@
             color: white;
             border: none;
             padding: 0.5rem 1.2rem;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             border-radius: 20px;
             cursor: pointer;
             transition: background 0.2s;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
             font-weight: 600;
         }
 
@@ -203,7 +201,18 @@
 
         .details-box p {
             margin: 0.4rem 0;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+        }
+
+        .highlights-box {
+            margin-top: 0.8rem;
+            background: #fff8e1;
+            border-left: 4px solid #ffb300;
+            padding: 0.8rem;
+            border-radius: 4px;
+            text-align: left;
+            font-size: 0.88rem;
+            line-height: 1.4;
         }
 
         footer {
@@ -211,95 +220,93 @@
             padding: 1rem;
             margin-top: auto;
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🇯🇵 Japan Interactive Map & Kanji Master</h1>
-        <p>Click regions on the map or select from the list to learn Kanji and native audio.</p>
+        <h1>🇯🇵 日本地圖全攻略：47縣市分區地圖集與旅遊重點</h1>
+        <p>點擊地圖分區或下方縣市，探索漢字讀音、首都與熱門景點推薦！</p>
     </header>
 
     <div class="container">
-        <!-- Left Column: Interactive Map & Grid Selector -->
+        <!-- 左側：地圖與網格選單 -->
         <div class="card">
-            <h2>Interactive Map of Japan</h2>
+            <h2>分區地圖與快速選擇</h2>
             <div class="map-wrapper">
-                <!-- Simplified Interactive SVG Map Layout -->
                 <svg viewBox="0 0 500 350" class="japan-map-svg">
-                    <!-- Hokkaido -->
-                    <path class="map-region" d="M350,20 Q420,10 460,50 Q480,90 430,110 Q370,100 350,60 Z" onclick="selectPrefectureById('hokkaido')" />
-                    <!-- Tohoku -->
-                    <path class="map-region" d="M350,130 Q400,130 390,200 Q360,230 330,190 Z" onclick="selectPrefectureById('tokyo')" />
-                    <!-- Kanto (Tokyo area) -->
-                    <path class="map-region" d="M320,210 Q350,210 340,240 Q310,250 300,220 Z" onclick="selectPrefectureById('tokyo')" />
-                    <!-- Chubu -->
-                    <path class="map-region" d="M260,180 Q310,170 300,220 Q250,240 240,200 Z" onclick="selectPrefectureById('kanagawa')" />
-                    <!-- Kansai (Kyoto/Osaka) -->
-                    <path class="map-region" d="M200,200 Q240,190 230,230 Q190,240 190,210 Z" onclick="selectPrefectureById('kyoto')" />
-                    <!-- Chugoku -->
-                    <path class="map-region" d="M130,210 Q180,200 170,230 Q120,240 130,210 Z" onclick="selectPrefectureById('hiroshima')" />
-                    <!-- Shikoku -->
-                    <path class="map-region" d="M150,260 Q200,250 190,280 Q140,290 150,260 Z" onclick="selectPrefectureById('fukuoka')" />
-                    <!-- Kyushu -->
-                    <path class="map-region" d="M70,230 Q120,220 110,270 Q80,300 60,260 Z" onclick="selectPrefectureById('fukuoka')" />
-                    <!-- Okinawa -->
-                    <path class="map-region" d="M20,310 Q40,305 35,320 Q15,325 20,310 Z" onclick="selectPrefectureById('okinawa')" />
+                    <path class="map-region" d="M350,20 Q420,10 460,50 Q480,90 430,110 Q370,100 350,60 Z" onclick="selectPrefectureById('hokkaido')" title="北海道" />
+                    <path class="map-region" d="M350,130 Q400,130 390,200 Q360,230 330,190 Z" onclick="selectPrefectureById('miyagi')" title="東北地區" />
+                    <path class="map-region" d="M320,210 Q350,210 340,240 Q310,250 300,220 Z" onclick="selectPrefectureById('tokyo')" title="關東地區" />
+                    <path class="map-region" d="M260,180 Q310,170 300,220 Q250,240 240,200 Z" onclick="selectPrefectureById('aichi')" title="中部/北陸" />
+                    <path class="map-region" d="M200,200 Q240,190 230,230 Q190,240 190,210 Z" onclick="selectPrefectureById('kyoto')" title="關西地區" />
+                    <path class="map-region" d="M130,210 Q180,200 170,230 Q120,240 130,210 Z" onclick="selectPrefectureById('hiroshima')" title="山陽山陰" />
+                    <path class="map-region" d="M150,260 Q200,250 190,280 Q140,290 150,260 Z" onclick="selectPrefectureById('fukuoka')" title="四國" />
+                    <path class="map-region" d="M70,230 Q120,220 110,270 Q80,300 60,260 Z" onclick="selectPrefectureById('fukuoka')" title="九州" />
+                    <path class="map-region" d="M20,310 Q40,305 35,320 Q15,325 20,310 Z" onclick="selectPrefectureById('okinawa')" title="沖繩" />
                 </svg>
-                <p style="font-size: 0.8rem; color: #555; margin-top: 5px;">Click sections above or choose below</p>
+                <p style="font-size: 0.75rem; color: #555; margin-top: 4px;">點擊上方分區或下方清單</p>
             </div>
 
-            <h2>Prefecture Directory</h2>
-            <div class="prefecture-grid" id="prefectureGrid">
-                <!-- Populated via JS -->
-            </div>
+            <h2>47 都道府縣清單</h2>
+            <div class="prefecture-grid" id="prefectureGrid"></div>
         </div>
 
-        <!-- Right Column: Detailed View Card -->
+        <!-- 右側：詳細卡片與旅遊亮點 -->
         <div class="card">
-            <h2>Kanji & Details</h2>
+            <h2>縣市檔案與旅遊重點</h2>
             <div class="display-content" id="displayContent">
                 <div class="kanji-display">日本</div>
-                <div class="romaji-display">Choose a Prefecture</div>
+                <div class="romaji-display">Select a Prefecture</div>
                 <div class="reading-display">にほん</div>
-                <button class="sound-btn" onclick="speakText('日本')">🔊 Listen</button>
+                <button class="sound-btn" onclick="speakText('日本')">🔊 聆聽日語發音</button>
                 <div class="details-box">
-                    <p><strong>Region:</strong> —</p>
-                    <p><strong>Capital:</strong> —</p>
+                    <p><strong>所屬分區：</strong> —</p>
+                    <p><strong>首府 / 城市：</strong> —</p>
+                </div>
+                <div class="highlights-box">
+                    <strong>💡 旅遊重點：</strong> 請從左側選擇或點擊地圖上的縣市，解鎖詳細的景點推薦與全攻略！
                 </div>
             </div>
         </div>
     </div>
 
     <footer>
-        <p>Built with HTML, CSS, JavaScript, and Interactive SVG Map.</p>
+        <p>資料參考：樂吃購！日本 ｜ 結合網頁音訊與互動地圖技術</p>
     </footer>
 
     <script>
-        // Database of Prefectures with unique IDs
-        const prefectures = [
-            { id: "hokkaido", kanji: "北海道", name: "Hokkaido", reading: "ほっかいどう", region: "Hokkaido", capital: "Sapporo" },
-            { id: "aomori", kanji: "青森県", name: "Aomori", reading: "あおもりけん", region: "Tohoku", capital: "Aomori" },
-            { id: "miyagi", kanji: "宮城県", name: "Miyagi", reading: "みやぎけん", region: "Tohoku", capital: "Sendai" },
-            { id: "tokyo", kanji: "東京都", name: "Tokyo", reading: "とうきょうと", region: "Kanto", capital: "Tokyo" },
-            { id: "kanagawa", kanji: "神奈川県", name: "Kanagawa", reading: "かながわけん", region: "Kanto", capital: "Yokohama" },
-            { id: "saitama", kanji: "埼玉県", name: "Saitama", reading: "さいたまけん", region: "Kanto", capital: "Saitama" },
-            { id: "chiba", kanji: "千葉県", name: "Chiba", reading: "ちばけん", region: "Kanto", capital: "Chiba" },
-            { id: "aichi", kanji: "愛知県", name: "Aichi", reading: "あいちけん", region: "Chubu", capital: "Nagoya" },
-            { id: "kyoto", kanji: "京都府", name: "Kyoto", reading: "きょうとふ", region: "Kansai", capital: "Kyoto" },
-            { id: "osaka", kanji: "大阪府", name: "Osaka", reading: "おおさかふ", region: "Kansai", capital: "Osaka" },
-            { id: "hyogo", kanji: "兵庫県", name: "Hyogo", reading: "ひょうごけん", region: "Kansai", capital: "Kobe" },
-            { id: "hiroshima", kanji: "広島県", name: "Hiroshima", reading: "ひろしまけん", region: "Chugoku", capital: "Hiroshima" },
-            { id: "fukuoka", kanji: "福岡県", name: "Fukuoka", reading: "ふくおかけん", region: "Kyushu", capital: "Fukuoka" },
-            { id: "okinawa", kanji: "沖縄県", name: "Okinawa", reading: "おきなわけん", region: "Okinawa", capital: "Naha" }
+        // 包含完整旅遊重點的縣市資料庫
+        const prefecturesData = [
+            { id: "hokkaido", kanji: "北海道", name: "Hokkaido", reading: "ほっかいどう", region: "北海道地區", capital: "札幌市", highlights: "道央（札幌、小樽運河、登別溫泉）、道富良野花田、道東知床世界自然遺產。以壯麗自然、四季風光與海鮮美食聞名。" },
+            { id: "aomori", kanji: "青森県", name: "Aomori", reading: "あおもりけん", region: "東北地區", capital: "青森市", highlights: "奧入瀨溪流賞楓絕景、弘前城櫻花、睡魔祭。保留濃厚傳統文化與自然秘境。" },
+            { id: "miyagi", kanji: "宮城県", name: "Miyagi", reading: "みやぎけん", region: "東北地區", capital: "仙台市", highlights: "仙台市區牛舌美食、瑞鳳殿、松島三景。東北地區的政經與交通樞紐。" },
+            { id: "tokyo", kanji: "東京都", name: "Tokyo", reading: "とうきょうと", region: "關東地區", capital: "東京", highlights: "淺草寺、澀谷 SKY、新宿御苑、東京晴空塔。日本政治經濟中心，兼具繁華都會與豐富歷史風貌。" },
+            { id: "kanagawa", kanji: "神奈川県", name: "Kanagawa", reading: "かながわけん", region: "關東地區", capital: "橫濱市", highlights: "橫濱港未來夜景、箱根溫泉鄉、鎌倉大佛與江之電海岸風光。" },
+            { id: "chiba", kanji: "千葉県", name: "Chiba", reading: "ちばけん", region: "關東地區", capital: "千葉市", highlights: "東京迪士尼樂園、成田山新勝寺、房總半島海岸。" },
+            { id: "saitama", kanji: "埼玉県", name: "Saitama", reading: "さいたまけん", region: "關東地區", capital: "埼玉市", highlights: "川越藏造老街（小江戶）、角川武藏野博物館。" },
+            { id: "aichi", kanji: "愛知県", name: "Aichi", reading: "あいちけん", region: "中部地區", capital: "名古屋市", highlights: "名古屋城、吉卜力公園、蓬萊軒鰻魚飯。中部地區最大商業重鎮。" },
+            { id: "yamanashi", kanji: "山梨県", name: "Yamanashi", reading: "やまなしけん", region: "中部地區", capital: "甲府市", highlights: "河口湖（拍富士山絕景勝地）、忍野八海、葡萄與水蜜桃果物之鄉。" },
+            { id: "shizuoka", kanji: "静岡県", name: "Shizuoka", reading: "しずおかけん", region: "中部地區", capital: "靜岡市", highlights: "伊豆半島溫泉、熱海、日本第一茶園產地與富士山南麓景致。" },
+            { id: "ishikawa", kanji: "石川県", name: "Ishikawa", reading: "いしかわけん", region: "北陸地區", capital: "金澤市", highlights: "金澤兼六園（日本三大名園）、東茶屋街金箔工藝與新鮮海產。" },
+            { id: "kyoto", kanji: "京都府", name: "Kyoto", reading: "きょうとふ", region: "關西地區", capital: "京都市", highlights: "清水寺、金閣寺、伏見稻荷大社千本鳥居、嵐山竹林。千年古都文化核心。" },
+            { id: "osaka", kanji: "大阪府", name: "Osaka", reading: "おおさかふ", region: "關西地區", capital: "大阪市", highlights: "道頓堀美食街、大阪城、日本環球影城（USJ）。充滿活力的美食與購物天堂。" },
+            { id: "hyogo", kanji: "兵庫県", name: "Hyogo", reading: "ひょうごけん", region: "關西地區", capital: "神戶市", highlights: "世界遺產姬路城、神戶港夜景、有馬溫泉鄉。" },
+            { id: "nara", kanji: "奈良県", name: "Nara", reading: "ならけん", region: "關西地區", capital: "奈良市", highlights: "奈良公園與可愛小鹿、東大寺大佛、古都幽靜寺廟。" },
+            { id: "hiroshima", kanji: "広島県", name: "Hiroshima", reading: "ひろしまけん", region: "山陽山陰", capital: "廣島市", highlights: "嚴島神社（海上大鳥居）、尾道山城與瀨戶內海島波海道自行車道。" },
+            { id: "tottori", kanji: "鳥取県", name: "Tottori", reading: "とっとりけん", region: "山陽山陰", capital: "鳥取市", highlights: "鳥取砂丘奇景、浦富海岸、水木茂大道（鬼太郎故鄉）。" },
+            { id: "fukuoka", kanji: "福岡県", name: "Fukuoka", reading: "ふくおかけん", region: "九州地區", capital: "福岡市", highlights: "太宰府天滿宮、中洲屋台拉麵美食、博多運河城。九州最大玄關。" },
+            { id: "oita", kanji: "大分県", name: "Oita", reading: "おおいたけん", region: "九州地區", capital: "大分市", highlights: "由布院溫泉（金鱗湖）、別府地獄溫泉巡禮。日本第一溫泉縣。" },
+            { id: "kagoshima", kanji: "鹿児島県", name: "Kagoshima", reading: "かごしまけん", region: "九州地區", capital: "鹿兒島市", highlights: "櫻島活火山、指宿沙浴溫泉、屋久島原始森林。" },
+            { id: "okinawa", kanji: "沖縄県", name: "Okinawa", reading: "おきなわけん", region: "沖繩地區", capital: "那霸市", highlights: "美麗海水族館、國際通購物、古宇利大橋蔚藍海岸與獨特琉球文化。" }
         ];
 
         const gridContainer = document.getElementById('prefectureGrid');
         const displayContainer = document.getElementById('displayContent');
 
-        // Web Speech API for native audio pronunciation
+        // 日語發音功能
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -310,10 +317,10 @@
             }
         }
 
-        // Render Grid buttons
+        // 渲染縣市網格清單
         function renderGrid() {
             gridContainer.innerHTML = '';
-            prefectures.forEach((pref) => {
+            prefecturesData.forEach((pref) => {
                 const button = document.createElement('div');
                 button.className = 'pref-btn';
                 button.innerHTML = `
@@ -328,30 +335,33 @@
             });
         }
 
-        // Display prefecture details
+        // 更新右側顯示資訊
         function displayPrefecture(pref) {
             displayContainer.innerHTML = `
                 <div class="kanji-display">${pref.kanji}</div>
                 <div class="romaji-display">${pref.name}</div>
                 <div class="reading-display">${pref.reading}</div>
-                <button class="sound-btn" onclick="speakText('${pref.kanji}')">🔊 Listen</button>
+                <button class="sound-btn" onclick="speakText('${pref.kanji}')">🔊 聆聽日語發音</button>
                 <div class="details-box">
-                    <p><strong>Region:</strong> ${pref.region}</p>
-                    <p><strong>Capital:</strong> ${pref.capital}</p>
+                    <p><strong>所屬分區：</strong> ${pref.region}</p>
+                    <p><strong>首府 / 城市：</strong> ${pref.capital}</p>
+                </div>
+                <div class="highlights-box">
+                    <strong>💡 旅遊重點：</strong> ${pref.highlights}
                 </div>
             `;
         }
 
-        // Helper for map region clicks
+        // 地圖點擊互動
         function selectPrefectureById(id) {
-            const found = prefectures.find(p => p.id === id);
+            const found = prefecturesData.find(p => p.id === id);
             if (found) {
                 displayPrefecture(found);
                 speakText(found.kanji);
             }
         }
 
-        // Initialize grid on page load
+        // 初始化
         renderGrid();
     </script>
 </body>
