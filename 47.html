@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japan Prefecture & Kanji Learner</title>
+    <style>
+        :root {
+            --primary: #d32f2f;
+            --primary-hover: #b71c1c;
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Prefecture Selector List */
+        .selector-section h2, .display-section h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .prefecture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 0.5rem;
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .pref-btn {
+            background-color: #fff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.6rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pref-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pref-btn .kanji-mini {
+            font-size: 1.1rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .pref-btn .name-mini {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .pref-btn:hover .name-mini {
+            color: #fff;
+        }
+
+        /* Detail View Card */
+        .display-content {
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .kanji-display {
+            font-size: 4.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+
+        .romaji-display {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .reading-display {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .details-box {
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .details-box p {
+            margin: 0.4rem 0;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🇯🇵 Japan Prefecture & Kanji Master</h1>
+        <p>Click any prefecture to learn its name, Kanji structure, reading, and capital.</p>
+    </header>
+
+    <div class="container">
+        <div class="card selector-section">
+            <h2>Select a Prefecture</h2>
+            <div class="prefecture-grid" id="prefectureGrid">
+                </div>
+        </div>
+
+        <div class="card display-section">
+            <h2>Kanji & Details</h2>
+            <div class="display-content" id="displayContent">
+                <div class="kanji-display">日本</div>
+                <div class="romaji-display">Choose a Prefecture</div>
+                <div class="reading-display">にほん</div>
+                <div class="details-box">
+                    <p><strong>Region:</strong> —</p>
+                    <p><strong>Capital:</strong> —</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Built with HTML, CSS, and Vanilla JavaScript.</p>
+    </footer>
+
+    <script>
+        // Database of Prefectures (Sample data covering key regions)
+        const prefectures = [
+            { id: "hokkaido", kanji: "北海道", name: "Hokkaido", reading: "ほっかいどう", region: "Hokkaido", capital: "Sapporo" },
+            { id: "tokyo", kanji: "東京都", name: "Tokyo", reading: "とうきょうと", region: "Kanto", capital: "Tokyo" },
+            { id: "kyoto", kanji: "京都府", name: "Kyoto", reading: "きょうとふ", region: "Kansai", capital: "Kyoto" },
+            { id: "osaka", kanji: "大阪府", name: "Osaka", reading: "おおさかふ", region: "Kansai", capital: "Osaka" },
+            { id: "kanagawa", kanji: "神奈川県", name: "Kanagawa", reading: "かながわけん", region: "Kanto", capital: "Yokohama" },
+            { id: "aichi", kanji: "愛知県", name: "Aichi", reading: "あいちけん", region: "Chubu", capital: "Nagoya" },
+            { id: "fukuoka", kanji: "福岡県", name: "Fukuoka", reading: "ふくおかけん", region: "Kyushu", capital: "Fukuoka" },
+            { id: "hokkaido_2", kanji: "沖縄県", name: "Okinawa", reading: "おきなわけん", region: "Kyushu/Okinawa", capital: "Naha" },
+            { id: "miyagi", kanji: "宮城県", name: "Miyagi", reading: "みやぎけん", region: "Tohoku", capital: "Sendai" },
+            { id: "hiroshima", kanji: "広島県", name: "Hiroshima", reading: "ひろしまけん", region: "Chugoku", capital: "Hiroshima" },
+            { id: "hokkaido_3", kanji: "北海道", name: "Hokkaido", reading: "ほっかいどう", region: "Hokkaido", capital: "Sapporo" },
+            { id: "hokkaido_4", kanji: "北海道", name: "Hokkaido", reading: "ほっかいどう", region: "Hokkaido", capital: "Sapporo" }
+        ];
+
+        // Unique full dataset sample for demonstration
+        const fullPrefectures = [
+            { kanji: "北海道", name: "Hokkaido", reading: "ほっかいどう", region: "Hokkaido", capital: "Sapporo" },
+            { kanji: "青森県", name: "Aomori", reading: "あおもりけん", region: "Tohoku", capital: "Aomori" },
+            { kanji: "岩手県", name: "Iwate", reading: "いわてけん", region: "Tohoku", capital: "Morioka" },
+            { kanji: "宮城県", name: "Miyagi", reading: "みやぎけん", region: "Tohoku", capital: "Sendai" },
+            { kanji: "秋田県", name: "Akita", reading: "あきたけん", region: "Tohoku", capital: "Akita" },
+            { kanji: "山形県", name: "Yamagata", reading: "やまがたけん", region: "Tohoku", capital: "Yamagata" },
+            { kanji: "福島県", name: "Fukushima", reading: "ふくしまけん", region: "Tohoku", capital: "Fukushima" },
+            { kanji: "東京都", name: "Tokyo", reading: "とうきょうと", region: "Kanto", capital: "Tokyo" },
+            { kanji: "神奈川県", name: "Kanagawa", reading: "かながわけん", region: "Kanto", capital: "Yokohama" },
+            { kanji: "埼玉県", name: "Saitama", reading: "さいたまけん", region: "Kanto", capital: "Saitama" },
+            { kanji: "千葉県", name: "Chiba", reading: "ちばけん", region: "Kanto", capital: "Chiba" },
+            { kanji: "茨城県", name: "Ibaraki", reading: "いばらきけん", region: "Kanto", capital: "Mito" },
+            { kanji: "栃木県", name: "Tochigi", reading: "とちぎけん", region: "Kanto", capital: "Utsunomiya" },
+            { kanji: "群馬県", name: "Gunma", reading: "ぐんまけん", region: "Kanto", capital: "Maebashi" },
+            { kanji: "京都府", name: "Kyoto", reading: "きょうとふ", region: "Kansai", capital: "Kyoto" },
+            { kanji: "大阪府", name: "Osaka", reading: "おおさかふ", region: "Kansai", capital: "Osaka" },
+            { kanji: "兵庫県", name: "Hyogo", reading: "ひょうごけん", region: "Kansai", capital: "Kobe" },
+            { kanji: "奈良県", name: "Nara", reading: "ならけん", region: "Kansai", capital: "Nara" },
+            { kanji: "愛知県", name: "Aichi", reading: "あいちけん", region: "Chubu", capital: "Nagoya" },
+            { kanji: "福岡県", name: "Fukuoka", reading: "ふくおかけん", region: "Kyushu", capital: "Fukuoka" },
+            { kanji: "沖縄県", name: "Okinawa", reading: "おきなわけん", region: "Okinawa", capital: "Naha" }
+        ];
+
+        const gridContainer = document.getElementById('prefectureGrid');
+        const displayContainer = document.getElementById('displayContent');
+
+        // Render buttons dynamically
+        function renderGrid() {
+            gridContainer.innerHTML = '';
+            fullPrefectures.forEach((pref) => {
+                const button = document.createElement('div');
+                button.className = 'pref-btn';
+                button.innerHTML = `
+                    <span class="kanji-mini">${pref.kanji}</span>
+                    <span class="name-mini">${pref.name}</span>
+                `;
+                button.addEventListener('click', () => displayPrefecture(pref));
+                gridContainer.appendChild(button);
+            });
+        }
+
+        // Update display card content
+        function displayPrefecture(pref) {
+            displayContainer.innerHTML = `
+                <div class="kanji-display">${pref.kanji}</div>
+                <div class="romaji-display">${pref.name}</div>
+                <div class="reading-display">${pref.reading}</div>
+                <div class="details-box">
+                    <p><strong>Region:</strong> ${pref.region}</p>
+                    <p><strong>Capital:</strong> ${pref.capital}</p>
+                </div>
+            `;
+        }
+
+        // Initialize app on load
+        renderGrid();
+    </script>
+</body>
+</html>
