@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japan Prefecture Map & Kanji Master</title>
+    <style>
+        :root {
+            --primary: #d32f2f;
+            --primary-hover: #b71c1c;
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Interactive Map Styling */
+        .map-wrapper {
+            text-align: center;
+            background: #e9f0f8;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .japan-map-svg {
+            width: 100%;
+            max-height: 280px;
+            cursor: pointer;
+        }
+
+        .map-region {
+            fill: #b0bec5;
+            stroke: #ffffff;
+            stroke-width: 2;
+            transition: fill 0.2s, transform 0.2s;
+        }
+
+        .map-region:hover {
+            fill: var(--primary);
+            opacity: 0.85;
+        }
+
+        /* Prefecture Selector Grid */
+        .prefecture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .pref-btn {
+            background-color: #fff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pref-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pref-btn .kanji-mini {
+            font-size: 1rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .pref-btn .name-mini {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .pref-btn:hover .name-mini {
+            color: #fff;
+        }
+
+        /* Detail View Card */
+        .display-content {
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .kanji-display {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--primary);
+            line-height: 1.1;
+            margin-bottom: 0.3rem;
+        }
+
+        .romaji-display {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.1rem;
+        }
+
+        .reading-display {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .sound-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            font-size: 0.9rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 1.2rem;
+            font-weight: 600;
+        }
+
+        .sound-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .details-box {
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .details-box p {
+            margin: 0.4rem 0;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🇯🇵 Japan Interactive Map & Kanji Master</h1>
+        <p>Click regions on the map or select from the list to learn Kanji and native audio.</p>
+    </header>
+
+    <div class="container">
+        <!-- Left Column: Interactive Map & Grid Selector -->
+        <div class="card">
+            <h2>Interactive Map of Japan</h2>
+            <div class="map-wrapper">
+                <!-- Simplified Interactive SVG Map Layout -->
+                <svg viewBox="0 0 500 350" class="japan-map-svg">
+                    <!-- Hokkaido -->
+                    <path class="map-region" d="M350,20 Q420,10 460,50 Q480,90 430,110 Q370,100 350,60 Z" onclick="selectPrefectureById('hokkaido')" />
+                    <!-- Tohoku -->
+                    <path class="map-region" d="M350,130 Q400,130 390,200 Q360,230 330,190 Z" onclick="selectPrefectureById('tokyo')" />
+                    <!-- Kanto (Tokyo area) -->
+                    <path class="map-region" d="M320,210 Q350,210 340,240 Q310,250 300,220 Z" onclick="selectPrefectureById('tokyo')" />
+                    <!-- Chubu -->
+                    <path class="map-region" d="M260,180 Q310,170 300,220 Q250,240 240,200 Z" onclick="selectPrefectureById('kanagawa')" />
+                    <!-- Kansai (Kyoto/Osaka) -->
+                    <path class="map-region" d="M200,200 Q240,190 230,230 Q190,240 190,210 Z" onclick="selectPrefectureById('kyoto')" />
+                    <!-- Chugoku -->
+                    <path class="map-region" d="M130,210 Q180,200 170,230 Q120,240 130,210 Z" onclick="selectPrefectureById('hiroshima')" />
+                    <!-- Shikoku -->
+                    <path class="map-region" d="M150,260 Q200,250 190,280 Q140,290 150,260 Z" onclick="selectPrefectureById('fukuoka')" />
+                    <!-- Kyushu -->
+                    <path class="map-region" d="M70,230 Q120,220 110,270 Q80,300 60,260 Z" onclick="selectPrefectureById('fukuoka')" />
+                    <!-- Okinawa -->
+                    <path class="map-region" d="M20,310 Q40,305 35,320 Q15,325 20,310 Z" onclick="selectPrefectureById('okinawa')" />
+                </svg>
+                <p style="font-size: 0.8rem; color: #555; margin-top: 5px;">Click sections above or choose below</p>
+            </div>
+
+            <h2>Prefecture Directory</h2>
+            <div class="prefecture-grid" id="prefectureGrid">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+
+        <!-- Right Column: Detailed View Card -->
+        <div class="card">
+            <h2>Kanji & Details</h2>
+            <div class="display-content" id="displayContent">
+                <div class="kanji-display">日本</div>
+                <div class="romaji-display">Choose a Prefecture</div>
+                <div class="reading-display">にほん</div>
+                <button class="sound-btn" onclick="speakText('日本')">🔊 Listen</button>
+                <div class="details-box">
+                    <p><strong>Region:</strong> —</p>
+                    <p><strong>Capital:</strong> —</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Built with HTML, CSS, JavaScript, and Interactive SVG Map.</p>
+    </footer>
+
+    <script>
+        // Database of Prefectures with unique IDs
+        const prefectures = [
+            { id: "hokkaido", kanji: "北海道", name: "Hokkaido", reading: "ほっかいどう", region: "Hokkaido", capital: "Sapporo" },
+            { id: "aomori", kanji: "青森県", name: "Aomori", reading: "あおもりけん", region: "Tohoku", capital: "Aomori" },
+            { id: "miyagi", kanji: "宮城県", name: "Miyagi", reading: "みやぎけん", region: "Tohoku", capital: "Sendai" },
+            { id: "tokyo", kanji: "東京都", name: "Tokyo", reading: "とうきょうと", region: "Kanto", capital: "Tokyo" },
+            { id: "kanagawa", kanji: "神奈川県", name: "Kanagawa", reading: "かながわけん", region: "Kanto", capital: "Yokohama" },
+            { id: "saitama", kanji: "埼玉県", name: "Saitama", reading: "さいたまけん", region: "Kanto", capital: "Saitama" },
+            { id: "chiba", kanji: "千葉県", name: "Chiba", reading: "ちばけん", region: "Kanto", capital: "Chiba" },
+            { id: "aichi", kanji: "愛知県", name: "Aichi", reading: "あいちけん", region: "Chubu", capital: "Nagoya" },
+            { id: "kyoto", kanji: "京都府", name: "Kyoto", reading: "きょうとふ", region: "Kansai", capital: "Kyoto" },
+            { id: "osaka", kanji: "大阪府", name: "Osaka", reading: "おおさかふ", region: "Kansai", capital: "Osaka" },
+            { id: "hyogo", kanji: "兵庫県", name: "Hyogo", reading: "ひょうごけん", region: "Kansai", capital: "Kobe" },
+            { id: "hiroshima", kanji: "広島県", name: "Hiroshima", reading: "ひろしまけん", region: "Chugoku", capital: "Hiroshima" },
+            { id: "fukuoka", kanji: "福岡県", name: "Fukuoka", reading: "ふくおかけん", region: "Kyushu", capital: "Fukuoka" },
+            { id: "okinawa", kanji: "沖縄県", name: "Okinawa", reading: "おきなわけん", region: "Okinawa", capital: "Naha" }
+        ];
+
+        const gridContainer = document.getElementById('prefectureGrid');
+        const displayContainer = document.getElementById('displayContent');
+
+        // Web Speech API for native audio pronunciation
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Render Grid buttons
+        function renderGrid() {
+            gridContainer.innerHTML = '';
+            prefectures.forEach((pref) => {
+                const button = document.createElement('div');
+                button.className = 'pref-btn';
+                button.innerHTML = `
+                    <span class="kanji-mini">${pref.kanji}</span>
+                    <span class="name-mini">${pref.name}</span>
+                `;
+                button.addEventListener('click', () => {
+                    displayPrefecture(pref);
+                    speakText(pref.kanji);
+                });
+                gridContainer.appendChild(button);
+            });
+        }
+
+        // Display prefecture details
+        function displayPrefecture(pref) {
+            displayContainer.innerHTML = `
+                <div class="kanji-display">${pref.kanji}</div>
+                <div class="romaji-display">${pref.name}</div>
+                <div class="reading-display">${pref.reading}</div>
+                <button class="sound-btn" onclick="speakText('${pref.kanji}')">🔊 Listen</button>
+                <div class="details-box">
+                    <p><strong>Region:</strong> ${pref.region}</p>
+                    <p><strong>Capital:</strong> ${pref.capital}</p>
+                </div>
+            `;
+        }
+
+        // Helper for map region clicks
+        function selectPrefectureById(id) {
+            const found = prefectures.find(p => p.id === id);
+            if (found) {
+                displayPrefecture(found);
+                speakText(found.kanji);
+            }
+        }
+
+        // Initialize grid on page load
+        renderGrid();
+    </script>
+</body>
+</html>
