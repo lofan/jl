@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>日本地圖全攻略：47縣市分區地圖集與旅遊重點</title>
+    <title>日本地圖全攻略：47縣市互動地圖集</title>
     <style>
         :root {
             --primary: #d32f2f;
@@ -33,29 +33,29 @@
         header {
             background-color: var(--primary);
             color: white;
-            padding: 1.5rem;
+            padding: 1.2rem;
             text-align: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         header h1 {
-            font-size: 1.6rem;
-            margin-bottom: 0.3rem;
+            font-size: 1.5rem;
+            margin-bottom: 0.2rem;
         }
 
         header p {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             opacity: 0.9;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 2rem auto;
+            max-width: 1250px;
+            margin: 1.5rem auto;
             padding: 0 1rem;
             width: 100%;
             display: grid;
-            grid-template-columns: 1.1fr 1.2fr;
-            gap: 2rem;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 1.5rem;
         }
 
         @media (max-width: 900px) {
@@ -76,45 +76,58 @@
 
         h2 {
             font-size: 1.1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
             color: var(--text-muted);
             border-bottom: 2px solid var(--border);
-            padding-bottom: 0.5rem;
+            padding-bottom: 0.4rem;
         }
 
-        /* 互動地圖區域 */
-        .map-wrapper {
-            text-align: center;
-            background: #e9f0f8;
+        /* 參考地圖外觀的排版區塊 */
+        .map-preview-box {
+            background: #fff;
+            border: 2px dashed var(--border);
             border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
+            padding: 0.8rem;
+            text-align: center;
+            margin-bottom: 1rem;
         }
 
-        .japan-map-svg {
-            width: 100%;
-            max-height: 240px;
+        .map-preview-box img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+        }
+
+        /* 分區按鈕列 */
+        .region-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .region-tag {
+            background: #e0e0e0;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.75rem;
+            border-radius: 12px;
             cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
         }
 
-        .map-region {
-            fill: #b0bec5;
-            stroke: #ffffff;
-            stroke-width: 2;
-            transition: fill 0.2s;
+        .region-tag:hover, .region-tag.active {
+            background: var(--primary);
+            color: white;
         }
 
-        .map-region:hover {
-            fill: var(--primary);
-            opacity: 0.85;
-        }
-
-        /* 縣市選單網格 */
+        /* 縣市網格清單 */
         .prefecture-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
-            gap: 0.5rem;
-            max-height: 220px;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 0.4rem;
+            max-height: 250px;
             overflow-y: auto;
             padding-right: 0.3rem;
         }
@@ -136,13 +149,13 @@
         }
 
         .pref-btn .kanji-mini {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: bold;
             display: block;
         }
 
         .pref-btn .name-mini {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
         }
 
@@ -157,7 +170,7 @@
         }
 
         .kanji-display {
-            font-size: 3.5rem;
+            font-size: 3.2rem;
             font-weight: bold;
             color: var(--primary);
             line-height: 1.1;
@@ -165,7 +178,7 @@
         }
 
         .romaji-display {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 600;
         }
 
@@ -179,7 +192,7 @@
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 0.5rem 1.2rem;
+            padding: 0.4rem 1rem;
             font-size: 0.85rem;
             border-radius: 20px;
             cursor: pointer;
@@ -195,13 +208,13 @@
         .details-box {
             background-color: var(--bg-color);
             border-radius: 8px;
-            padding: 1rem;
+            padding: 0.8rem;
             text-align: left;
         }
 
         .details-box p {
-            margin: 0.4rem 0;
-            font-size: 0.9rem;
+            margin: 0.3rem 0;
+            font-size: 0.88rem;
         }
 
         .highlights-box {
@@ -211,46 +224,52 @@
             padding: 0.8rem;
             border-radius: 4px;
             text-align: left;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             line-height: 1.4;
         }
 
         footer {
             text-align: center;
-            padding: 1rem;
+            padding: 0.8rem;
             margin-top: auto;
             color: var(--text-muted);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🇯🇵 日本地圖全攻略：47縣市分區地圖集與旅遊重點</h1>
-        <p>點擊地圖分區或下方縣市，探索漢字讀音、首都與熱門景點推薦！</p>
+        <h1>🇯🇵 日本地圖全攻略：47縣市分區地圖集</h1>
+        <p>依據官方標準9大分區對應，點擊篩選或選擇縣市探索漢字讀音與旅遊重點！</p>
     </header>
 
     <div class="container">
-        <!-- 左側：地圖與網格選單 -->
+        <!-- 左側：地圖預覽與分區快速篩選 -->
         <div class="card">
-            <h2>分區地圖與快速選擇</h2>
-            <div class="map-wrapper">
-                <svg viewBox="0 0 500 350" class="japan-map-svg">
-                    <path class="map-region" d="M350,20 Q420,10 460,50 Q480,90 430,110 Q370,100 350,60 Z" onclick="selectPrefectureById('hokkaido')" title="北海道" />
-                    <path class="map-region" d="M350,130 Q400,130 390,200 Q360,230 330,190 Z" onclick="selectPrefectureById('miyagi')" title="東北地區" />
-                    <path class="map-region" d="M320,210 Q350,210 340,240 Q310,250 300,220 Z" onclick="selectPrefectureById('tokyo')" title="關東地區" />
-                    <path class="map-region" d="M260,180 Q310,170 300,220 Q250,240 240,200 Z" onclick="selectPrefectureById('aichi')" title="中部/北陸" />
-                    <path class="map-region" d="M200,200 Q240,190 230,230 Q190,240 190,210 Z" onclick="selectPrefectureById('kyoto')" title="關西地區" />
-                    <path class="map-region" d="M130,210 Q180,200 170,230 Q120,240 130,210 Z" onclick="selectPrefectureById('hiroshima')" title="山陽山陰" />
-                    <path class="map-region" d="M150,260 Q200,250 190,280 Q140,290 150,260 Z" onclick="selectPrefectureById('fukuoka')" title="四國" />
-                    <path class="map-region" d="M70,230 Q120,220 110,270 Q80,300 60,260 Z" onclick="selectPrefectureById('fukuoka')" title="九州" />
-                    <path class="map-region" d="M20,310 Q40,305 35,320 Q15,325 20,310 Z" onclick="selectPrefectureById('okinawa')" title="沖繩" />
-                </svg>
-                <p style="font-size: 0.75rem; color: #555; margin-top: 4px;">點擊上方分區或下方清單</p>
+            <h2>官方地圖對應與分區導覽</h2>
+            <div class="map-preview-box">
+                <!-- 嵌入您上傳的標準分區地圖 -->
+                <img src="japan47p.webp" alt="日本地圖全圖 47縣市分區">
+                <p style="font-size: 0.7rem; color: #666; margin-top: 4px;">資料來源：樂吃購！日本</p>
             </div>
 
-            <h2>47 都道府縣清單</h2>
+            <!-- 分區過濾按鈕 -->
+            <div class="region-filter" id="regionFilter">
+                <button class="region-tag active" onclick="filterRegion('全部')">全部</button>
+                <button class="region-tag" onclick="filterRegion('北海道')">北海道</button>
+                <button class="region-tag" onclick="filterRegion('東北')">東北</button>
+                <button class="region-tag" onclick="filterRegion('關東')">關東</button>
+                <button class="region-tag" onclick="filterRegion('北陸')">北陸</button>
+                <button class="region-tag" onclick="filterRegion('中部')">中部</button>
+                <button class="region-tag" onclick="filterRegion('關西')">關西</button>
+                <button class="region-tag" onclick="filterRegion('山陽山陰')">山陽山陰</button>
+                <button class="region-tag" onclick="filterRegion('四國')">四國</button>
+                <button class="region-tag" onclick="filterRegion('九州')">九州</button>
+                <button class="region-tag" onclick="filterRegion('沖繩')">沖繩</button>
+            </div>
+
+            <h2>縣市清單</h2>
             <div class="prefecture-grid" id="prefectureGrid"></div>
         </div>
 
@@ -264,49 +283,86 @@
                 <button class="sound-btn" onclick="speakText('日本')">🔊 聆聽日語發音</button>
                 <div class="details-box">
                     <p><strong>所屬分區：</strong> —</p>
-                    <p><strong>首府 / 城市：</strong> —</p>
+                    <p><strong>代表行政區：</strong> —</p>
                 </div>
                 <div class="highlights-box">
-                    <strong>💡 旅遊重點：</strong> 請從左側選擇或點擊地圖上的縣市，解鎖詳細的景點推薦與全攻略！
+                    <strong>💡 旅遊重點：</strong> 請點擊左側地圖下方的分區標籤或縣市按鈕，解鎖對應的旅遊攻略！
                 </div>
             </div>
         </div>
     </div>
 
     <footer>
-        <p>資料參考：樂吃購！日本 ｜ 結合網頁音訊與互動地圖技術</p>
+        <p>基於上傳之官方地圖精確建構 ｜ 結合網頁語音與分區檢索</p>
     </footer>
 
     <script>
-        // 包含完整旅遊重點的縣市資料庫
+        // 完全對應地圖圖片中的 47 縣市與正確分區資料
         const prefecturesData = [
-            { id: "hokkaido", kanji: "北海道", name: "Hokkaido", reading: "ほっかいどう", region: "北海道地區", capital: "札幌市", highlights: "道央（札幌、小樽運河、登別溫泉）、道富良野花田、道東知床世界自然遺產。以壯麗自然、四季風光與海鮮美食聞名。" },
-            { id: "aomori", kanji: "青森県", name: "Aomori", reading: "あおもりけん", region: "東北地區", capital: "青森市", highlights: "奧入瀨溪流賞楓絕景、弘前城櫻花、睡魔祭。保留濃厚傳統文化與自然秘境。" },
-            { id: "miyagi", kanji: "宮城県", name: "Miyagi", reading: "みやぎけん", region: "東北地區", capital: "仙台市", highlights: "仙台市區牛舌美食、瑞鳳殿、松島三景。東北地區的政經與交通樞紐。" },
-            { id: "tokyo", kanji: "東京都", name: "Tokyo", reading: "とうきょうと", region: "關東地區", capital: "東京", highlights: "淺草寺、澀谷 SKY、新宿御苑、東京晴空塔。日本政治經濟中心，兼具繁華都會與豐富歷史風貌。" },
-            { id: "kanagawa", kanji: "神奈川県", name: "Kanagawa", reading: "かながわけん", region: "關東地區", capital: "橫濱市", highlights: "橫濱港未來夜景、箱根溫泉鄉、鎌倉大佛與江之電海岸風光。" },
-            { id: "chiba", kanji: "千葉県", name: "Chiba", reading: "ちばけん", region: "關東地區", capital: "千葉市", highlights: "東京迪士尼樂園、成田山新勝寺、房總半島海岸。" },
-            { id: "saitama", kanji: "埼玉県", name: "Saitama", reading: "さいたまけん", region: "關東地區", capital: "埼玉市", highlights: "川越藏造老街（小江戶）、角川武藏野博物館。" },
-            { id: "aichi", kanji: "愛知県", name: "Aichi", reading: "あいちけん", region: "中部地區", capital: "名古屋市", highlights: "名古屋城、吉卜力公園、蓬萊軒鰻魚飯。中部地區最大商業重鎮。" },
-            { id: "yamanashi", kanji: "山梨県", name: "Yamanashi", reading: "やまなしけん", region: "中部地區", capital: "甲府市", highlights: "河口湖（拍富士山絕景勝地）、忍野八海、葡萄與水蜜桃果物之鄉。" },
-            { id: "shizuoka", kanji: "静岡県", name: "Shizuoka", reading: "しずおかけん", region: "中部地區", capital: "靜岡市", highlights: "伊豆半島溫泉、熱海、日本第一茶園產地與富士山南麓景致。" },
-            { id: "ishikawa", kanji: "石川県", name: "Ishikawa", reading: "いしかわけん", region: "北陸地區", capital: "金澤市", highlights: "金澤兼六園（日本三大名園）、東茶屋街金箔工藝與新鮮海產。" },
-            { id: "kyoto", kanji: "京都府", name: "Kyoto", reading: "きょうとふ", region: "關西地區", capital: "京都市", highlights: "清水寺、金閣寺、伏見稻荷大社千本鳥居、嵐山竹林。千年古都文化核心。" },
-            { id: "osaka", kanji: "大阪府", name: "Osaka", reading: "おおさかふ", region: "關西地區", capital: "大阪市", highlights: "道頓堀美食街、大阪城、日本環球影城（USJ）。充滿活力的美食與購物天堂。" },
-            { id: "hyogo", kanji: "兵庫県", name: "Hyogo", reading: "ひょうごけん", region: "關西地區", capital: "神戶市", highlights: "世界遺產姬路城、神戶港夜景、有馬溫泉鄉。" },
-            { id: "nara", kanji: "奈良県", name: "Nara", reading: "ならけん", region: "關西地區", capital: "奈良市", highlights: "奈良公園與可愛小鹿、東大寺大佛、古都幽靜寺廟。" },
-            { id: "hiroshima", kanji: "広島県", name: "Hiroshima", reading: "ひろしまけん", region: "山陽山陰", capital: "廣島市", highlights: "嚴島神社（海上大鳥居）、尾道山城與瀨戶內海島波海道自行車道。" },
-            { id: "tottori", kanji: "鳥取県", name: "Tottori", reading: "とっとりけん", region: "山陽山陰", capital: "鳥取市", highlights: "鳥取砂丘奇景、浦富海岸、水木茂大道（鬼太郎故鄉）。" },
-            { id: "fukuoka", kanji: "福岡県", name: "Fukuoka", reading: "ふくおかけん", region: "九州地區", capital: "福岡市", highlights: "太宰府天滿宮、中洲屋台拉麵美食、博多運河城。九州最大玄關。" },
-            { id: "oita", kanji: "大分県", name: "Oita", reading: "おおいたけん", region: "九州地區", capital: "大分市", highlights: "由布院溫泉（金鱗湖）、別府地獄溫泉巡禮。日本第一溫泉縣。" },
-            { id: "kagoshima", kanji: "鹿児島県", name: "Kagoshima", reading: "かごしまけん", region: "九州地區", capital: "鹿兒島市", highlights: "櫻島活火山、指宿沙浴溫泉、屋久島原始森林。" },
-            { id: "okinawa", kanji: "沖縄県", name: "Okinawa", reading: "おきなわけん", region: "沖繩地區", capital: "那霸市", highlights: "美麗海水族館、國際通購物、古宇利大橋蔚藍海岸與獨特琉球文化。" }
+            // 北海道
+            { kanji: "北海道", name: "Hokkaido", reading: "ほっかいどう", region: "北海道", capital: "札幌市", highlights: "道央（札幌、小樽運河、登別溫泉）、富良野花田、知床世界自然遺產。" },
+            // 東北
+            { kanji: "青森縣", name: "Aomori", reading: "あおもりけん", region: "東北", capital: "青森市", highlights: "奧入瀨溪流、弘前城賞櫻、睡魔祭。" },
+            { kanji: "岩手縣", name: "Iwate", reading: "いわてけん", region: "東北", capital: "盛岡市", highlights: "中尊寺金色堂、猊鼻溪遊船。" },
+            { kanji: "宮城縣", name: "Miyagi", reading: "みやぎけん", region: "東北", capital: "仙台市", highlights: "仙台牛舌、松島三景、瑞鳳殿。" },
+            { kanji: "秋田縣", name: "Akita", reading: "あきたけん", region: "東北", capital: "秋田市", highlights: "田澤湖、角館武家屋敷、乳頭溫泉鄉。" },
+            { kanji: "山形縣", name: "Yamagata", reading: "やまがたけん", region: "東北", capital: "山形市", highlights: "銀山溫泉、藏王樹冰、山寺。" },
+            { kanji: "福島縣", name: "Fukushima", reading: "ふくしまけん", region: "東北", capital: "福島市", highlights: "大內宿合掌村、會津若松城、豬苗代湖。" },
+            // 關東
+            { kanji: "東京都", name: "Tokyo", reading: "とうきょうと", region: "關東", capital: "東京", highlights: "淺草寺、澀谷 SKY、新宿御苑、東京晴空塔。" },
+            { kanji: "神奈川縣", name: "Kanagawa", reading: "かながわけん", region: "關東", capital: "橫濱市", highlights: "橫濱港未來、箱根溫泉、鎌倉大佛。" },
+            { kanji: "千葉縣", name: "Chiba", reading: "ちばけん", region: "關東", capital: "千葉市", highlights: "東京迪士尼樂園、成田山新勝寺。" },
+            { kanji: "埼玉縣", name: "Saitama", reading: "さいたまけん", region: "關東", capital: "埼玉市", highlights: "川越小江戶老街、角川武藏野博物館。" },
+            { kanji: "茨城縣", name: "Ibaraki", reading: "いばらきけん", region: "關東", capital: "水戶市", highlights: "國營常陸海濱公園掃帚草、偕樂園。" },
+            { kanji: "栃木縣", name: "Tochigi", reading: "とちぎけん", region: "關東", capital: "宇都宮市", highlights: "日光東照宮世界遺產、足利花卉公園。" },
+            { kanji: "群馬縣", name: "Gunma", reading: "ぐんまけん", region: "關東", capital: "前橋市", highlights: "草津溫泉、伊香保溫泉。" },
+            // 北陸
+            { kanji: "新潟縣", name: "Niigata", reading: "にいがたけん", region: "北陸", capital: "新潟市", highlights: "越後湯澤滑雪場、佐渡島、日本第一米鄉。" },
+            { kanji: "富山縣", name: "Toyama", reading: "とやまけん", region: "北陸", capital: "富山市", highlights: "立山黑部阿爾卑斯山脈路線（雪之大谷）、黑部峽谷。" },
+            { kanji: "石川縣", name: "Ishikawa", reading: "いしかわけん", region: "北陸", capital: "金澤市", highlights: "金澤兼六園、東茶屋街金箔工藝、近江町市場。" },
+            { kanji: "福井縣", name: "Fukui", reading: "ふくいけん", region: "北陸", capital: "福井市", highlights: "東尋坊懸崖峭壁、恐龍博物館、永平寺。" },
+            // 中部
+            { kanji: "愛知縣", name: "Aichi", reading: "あいちけん", region: "中部", capital: "名古屋市", highlights: "名古屋城、吉卜力公園、蓬萊軒鰻魚飯。" },
+            { kanji: "岐阜縣", name: "Gifu", reading: "ぎふけん", region: "中部", capital: "岐阜市", highlights: "白川鄉合掌村、高山老街、下呂溫泉。" },
+            { kanji: "長野縣", name: "Nagano", reading: "ながのけん", region: "中部", capital: "長野市", highlights: "輕井澤度假區、上高地、善光寺、白馬村滑雪。" },
+            { kanji: "山梨縣", name: "Yamanashi", reading: "やまなしけん", region: "中部", capital: "甲府市", highlights: "河口湖拍富士山、忍野八海、葡萄果園。" },
+            { kanji: "靜岡縣", name: "Shizuoka", reading: "しずおかけん", region: "中部", capital: "靜岡市", highlights: "伊豆半島溫泉、熱海、茶園與富士山美景。" },
+            { kanji: "三重縣", name: "Mie", reading: "みえけん", region: "中部", capital: "津市", highlights: "伊勢神宮、志摩西班牙村、夫婦岩。" },
+            // 關西
+            { kanji: "大阪府", name: "Osaka", reading: "おおさかふ", region: "關西", capital: "大阪市", highlights: "道頓堀美食街、大阪城、日本環球影城。" },
+            { kanji: "京都府", name: "Kyoto", reading: "きょうとふ", region: "關西", capital: "京都市", highlights: "清水寺、金閣寺、伏見稻荷大社、嵐山竹林。" },
+            { kanji: "兵庫縣", name: "Hyogo", reading: "ひょうごけん", region: "關西", capital: "神戶市", highlights: "姬路城、神戶港夜景、有馬溫泉。" },
+            { kanji: "奈良縣", name: "Nara", reading: "ならけん", region: "關西", capital: "奈良市", highlights: "奈良公園小鹿、東大寺大佛。" },
+            { kanji: "滋賀縣", name: "Shiga", reading: "しがけん", region: "關西", capital: "大津市", highlights: "琵琶湖、彥根城、白髭神社。" },
+            { kanji: "和歌山縣", name: "Wakayama", reading: "わかやまけん", region: "關西", capital: "和歌山市", highlights: "高野山聖地、熊野古道、白濱溫泉。" },
+            // 山陽山陰
+            { kanji: "鳥取縣", name: "Tottori", reading: "とっとりけん", region: "山陽山陰", capital: "鳥取市", highlights: "鳥取砂丘、水木茂大道（鬼太郎）。" },
+            { kanji: "島根縣", name: "Shimane", reading: "しまねけん", region: "山陽山陰", capital: "松江市", highlights: "出雲大社、足立美術館、松江城。" },
+            { kanji: "岡山縣", name: "Okayama", reading: "おかやまけん", region: "山陽山陰", capital: "岡山市", highlights: "岡山後樂園、倉敷美觀地區。" },
+            { kanji: "廣島縣", name: "Hiroshima", reading: "ひろしまけん", region: "山陽山陰", capital: "廣島市", highlights: "嚴島神社海上大鳥居、尾道、廣島平和記念公園。" },
+            { kanji: "山口縣", name: "Yamaguchi", reading: "やまぐちけん", region: "山陽山陰", capital: "山口市", highlights: "錦帶橋、元乃隅神社、秋吉台。" },
+            // 四國
+            { kanji: "香川縣", name: "Kagawa", reading: "かがわけん", region: "四國", capital: "高松市", highlights: "金刀比羅宮、栗林公園、讚岐烏龍麵。" },
+            { kanji: "德島縣", name: "Tokushima", reading: "とくしまけん", region: "四國", capital: "德島市", highlights: "鳴門漩渦、祖谷藤蔓橋、阿波舞。" },
+            { kanji: "愛媛縣", name: "Ehime", reading: "えひめけん", region: "四國", capital: "松山市", highlights: "道後溫泉、松山城、下灘車站。" },
+            { kanji: "高知縣", name: "Kochi", reading: "こうちけん", region: "四國", capital: "高知市", highlights: "桂濱、高知城、四萬十川清流。" },
+            // 九州
+            { kanji: "福岡縣", name: "Fukuoka", reading: "ふくおかけん", region: "九州", capital: "福岡市", highlights: "太宰府天滿宮、中洲屋台美食、博多運河城。" },
+            { kanji: "佐賀縣", name: "Saga", reading: "さがけん", region: "九州", capital: "佐賀市", highlights: "嬉野溫泉、有田燒陶磁器之鄉。" },
+            { kanji: "長崎縣", name: "Nagasaki", reading: "ながさきけん", region: "九州", capital: "長崎市", highlights: "長崎稻佐山夜景、豪斯登堡、平和公園。" },
+            { kanji: "熊本縣", name: "Kumamoto", reading: "くまもとけん", region: "九州", capital: "熊本市", highlights: "熊本城、阿蘇山火山高原。" },
+            { kanji: "大分縣", name: "Oita", reading: "おおいたけん", region: "九州", capital: "大分市", highlights: "由布院溫泉、別府地獄溫泉巡禮。" },
+            { kanji: "宮崎縣", name: "Miyazaki", reading: "みやざきけん", region: "九州", capital: "宮崎市", highlights: "高千穗峽谷、青島神社。" },
+            { kanji: "鹿兒島縣", name: "Kagoshima", reading: "かごしまけん", region: "九州", capital: "鹿兒島市", highlights: "櫻島火山、指宿沙浴溫泉、屋久島。" },
+            // 沖繩
+            { kanji: "沖繩縣", name: "Okinawa", reading: "おきなわけん", region: "沖繩", capital: "那霸市", highlights: "美麗海水族館、國際通、古宇利大橋蔚藍海岸。" }
         ];
 
         const gridContainer = document.getElementById('prefectureGrid');
         const displayContainer = document.getElementById('displayContent');
+        let currentFilter = '全部';
 
-        // 日語發音功能
+        // 語音播放
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -317,10 +373,27 @@
             }
         }
 
-        // 渲染縣市網格清單
+        // 篩選分區
+        function filterRegion(regionName) {
+            currentFilter = regionName;
+            document.querySelectorAll('.region-tag').forEach(btn => {
+                if (btn.textContent === regionName) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            renderGrid();
+        }
+
+        // 渲染清單
         function renderGrid() {
             gridContainer.innerHTML = '';
-            prefecturesData.forEach((pref) => {
+            const filteredData = currentFilter === '全部' 
+                ? prefecturesData 
+                : prefecturesData.filter(p => p.region === currentFilter);
+
+            filteredData.forEach((pref) => {
                 const button = document.createElement('div');
                 button.className = 'pref-btn';
                 button.innerHTML = `
@@ -335,7 +408,7 @@
             });
         }
 
-        // 更新右側顯示資訊
+        // 顯示詳情
         function displayPrefecture(pref) {
             displayContainer.innerHTML = `
                 <div class="kanji-display">${pref.kanji}</div>
@@ -344,21 +417,12 @@
                 <button class="sound-btn" onclick="speakText('${pref.kanji}')">🔊 聆聽日語發音</button>
                 <div class="details-box">
                     <p><strong>所屬分區：</strong> ${pref.region}</p>
-                    <p><strong>首府 / 城市：</strong> ${pref.capital}</p>
+                    <p><strong>代表行政區：</strong> ${pref.capital}</p>
                 </div>
                 <div class="highlights-box">
                     <strong>💡 旅遊重點：</strong> ${pref.highlights}
                 </div>
             `;
-        }
-
-        // 地圖點擊互動
-        function selectPrefectureById(id) {
-            const found = prefecturesData.find(p => p.id === id);
-            if (found) {
-                displayPrefecture(found);
-                speakText(found.kanji);
-            }
         }
 
         // 初始化
