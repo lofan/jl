@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9/28 教師節特別篇 - 日本常見的「教師」姓氏</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sakura: {
+                            50: '#fff5f7',
+                            100: '#ffe6ec',
+                            200: '#fcc2d0',
+                            400: '#f783ac',
+                            500: '#e64980',
+                            600: '#d6336c',
+                        },
+                        jp: {
+                            dark: '#121216',
+                            card: '#1a1a24',
+                            gold: '#dfb15b',
+                            crimson: '#bd1320'
+                        }
+                    },
+                    fontFamily: {
+                        mincho: ['"Shippori Mincho"', 'serif'],
+                        gothic: ['"Zen Kaku Gothic New"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0d0d12;
+            color: #f3f4f6;
+            font-family: 'Zen Kaku Gothic New', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* Sakura petal falling animation */
+        .petal {
+            position: absolute;
+            background: linear-gradient(135deg, #fcc2d0, #f783ac);
+            border-radius: 150% 0 150% 0;
+            opacity: 0.7;
+            pointer-events: none;
+            animation: fall linear infinite, sway ease-in-out infinite alternate;
+        }
+
+        @keyframes fall {
+            0% { top: -10%; }
+            100% { top: 110%; }
+        }
+
+        @keyframes sway {
+            0% { transform: translateX(0) rotate(0deg); }
+            100% { transform: translateX(50px) rotate(360deg); }
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(26, 26, 36, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(247, 131, 172, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(247, 131, 172, 0.2);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d0d12;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a38;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e64980;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-sakura-500 selection:text-white">
+
+    <div id="sakura-container" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+
+    <!-- MAIN HEADER -->
+    <header class="relative z-10 pt-12 pb-8 px-4 text-center overflow-hidden border-b border-white/10">
+        <div class="max-w-4xl mx-auto">
+            <!-- Subtitle badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sakura-500/10 border border-sakura-500/30 text-sakura-400 text-sm tracking-wider font-medium mb-6 animate-pulse">
+                <i class="fa-solid font-award text-sakura-400"></i> 9/28 教師節特別篇・感謝恩師
+            </div>
+
+            <!-- Main Title -->
+            <h1 class="font-mincho text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4 leading-tight">
+                いつも だれかの 未来のために。
+            </h1>
+
+            <p class="font-mincho text-xl md:text-2xl text-sakura-200 mb-6 font-semibold">
+                日本常見的「教師」姓氏
+            </p>
+
+            <!-- Tagline stream -->
+            <div class="flex items-center justify-center gap-4 text-gray-400 text-sm md:text-base tracking-widest font-light">
+                <span>伝える</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-sakura-500"></span>
+                <span>教える</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-sakura-500"></span>
+                <span>未来をつくる</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENT WRAPPER -->
+    <main class="relative z-10 max-w-7xl mx-auto px-4 py-8 w-full flex-grow">
+
+        <div class="glass-panel rounded-2xl p-4 md:p-6 mb-8 shadow-xl">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                
+                <!-- View Mode Selector -->
+                <div class="flex bg-black/40 p-1 rounded-xl border border-white/10 w-full md:w-auto">
+                    <button id="tab-cards" onclick="switchTab('cards')" class="flex-1 md:flex-none px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 bg-sakura-600 text-white shadow">
+                        <i class="fa-solid fa-address-card"></i> 姓氏圖鑑 (Cards)
+                    </button>
+                    <button id="tab-quiz" onclick="switchTab('quiz')" class="flex-1 md:flex-none px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 text-gray-400 hover:text-white">
+                        <i class="fa-solid fa-circle-question"></i> 恩師測驗 (Quiz)
+                    </button>
+                    <button id="tab-tribute" onclick="switchTab('tribute')" class="flex-1 md:flex-none px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 text-gray-400 hover:text-white">
+                        <i class="fa-solid fa-heart text-sakura-400"></i> 致敬獻詞 (Tribute)
+                    </button>
+                </div>
+
+                <!-- Search & Filters (Visible in Cards mode) -->
+                <div id="filter-controls" class="flex flex-wrap md:flex-nowrap items-center gap-3 w-full md:w-auto">
+                    <div class="relative flex-1 md:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <input type="text" id="search-input" placeholder="搜尋 漢字 / 讀音 / Romaji..." 
+                               class="w-full bg-black/50 text-sm rounded-xl pl-9 pr-4 py-2 text-white placeholder-gray-500 border border-white/10 focus:outline-none focus:border-sakura-500 transition-colors">
+                    </div>
+
+                    <select id="sort-select" class="bg-black/50 text-sm rounded-xl px-3 py-2 text-white border border-white/10 focus:outline-none focus:border-sakura-500 transition-colors">
+                        <option value="default">預設排序</option>
+                        <option value="kana">按假名順序 (あいうえお)</option>
+                        <option value="strokes">按字元長度</option>
+                    </select>
+
+                    <button onclick="flipAllCards()" title="全部翻牌" class="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs text-gray-300 flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-rotate"></i> 翻轉全部
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <section id="section-cards" class="transition-opacity duration-300">
+            <div id="surnames-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Surname cards populated via JavaScript -->
+            </div>
+            
+            <!-- Empty state -->
+            <div id="no-results" class="hidden text-center py-16">
+                <i class="fa-solid fa-magnifying-glass text-4xl text-gray-600 mb-3"></i>
+                <p class="text-gray-400 text-lg">沒有找到符合條件的「老師」姓氏</p>
+                <button onclick="resetSearch()" class="mt-4 px-4 py-2 bg-sakura-600 text-white rounded-lg text-sm font-medium hover:bg-sakura-500 transition">重設搜尋</button>
+            </div>
+        </section>
+
+        <section id="section-quiz" class="hidden transition-opacity duration-300">
+            <div class="max-w-2xl mx-auto glass-panel p-6 md:p-8 rounded-3xl border border-white/10 relative overflow-hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <span class="text-xs uppercase tracking-wider text-sakura-400 font-bold">Sensei Challenge</span>
+                        <h2 class="text-2xl font-bold font-mincho text-white">恩師大考驗：姓氏讀音測驗</h2>
+                    </div>
+                    <div class="bg-sakura-500/20 text-sakura-300 border border-sakura-500/40 px-4 py-1.5 rounded-full font-mono font-bold text-sm">
+                        得分: <span id="quiz-score">0</span> / <span id="quiz-total">0</span>
+                    </div>
+                </div>
+
+                <!-- Quiz Card Box -->
+                <div id="quiz-card-box" class="bg-black/40 rounded-2xl p-8 border border-white/10 text-center relative mb-6">
+                    <div class="text-xs text-gray-400 mb-2">請問下列姓氏正確的 Hiragana (平假名) 讀音是？</div>
+                    <div id="quiz-kanji" class="text-6xl font-bold font-mincho text-white tracking-widest my-4 text-sakura-200">
+                        波多野
+                    </div>
+                    <div id="quiz-hint" class="text-xs text-gray-500 italic">代表性名師：波多野 結衣</div>
+                </div>
+
+                <!-- Answer Options -->
+                <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <!-- Options injected dynamically -->
+                </div>
+
+                <div class="flex justify-between items-center text-sm">
+                    <span id="quiz-feedback" class="font-medium text-sakura-400"></span>
+                    <button id="next-quiz-btn" onclick="nextQuestion()" class="hidden px-6 py-2.5 bg-sakura-600 hover:bg-sakura-500 text-white font-medium rounded-xl transition shadow-lg flex items-center gap-2">
+                        下一題 <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-tribute" class="hidden transition-opacity duration-300">
+            <div class="max-w-4xl mx-auto space-y-8">
+                <!-- Quote Banner -->
+                <div class="glass-panel p-8 md:p-12 rounded-3xl text-center relative overflow-hidden border border-sakura-500/20">
+                    <div class="absolute -right-10 -bottom-10 text-sakura-500/5 text-9xl font-mincho font-bold select-none">
+                        感謝
+                    </div>
+                    <i class="fa-solid fa-quote-left text-3xl text-sakura-400/40 mb-4 block"></i>
+                    <p class="font-mincho text-xl md:text-2xl text-gray-200 leading-relaxed max-w-2xl mx-auto mb-6">
+                        「十年樹木，百年樹人。在無數個孤單寂寞的深夜裡，是這些『老師』們無私的奉獻，人用愛與汗水，陪伴我們渡過了懵懂的青春。」
+                    </p>
+                    <div class="text-sakura-400 font-medium text-sm">—— 9/28 全體暗夜學生敬上</div>
+                </div>
+
+                <!-- Special Teacher's Day Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glass-card p-6 rounded-2xl text-center">
+                        <div class="text-3xl text-sakura-400 font-bold mb-1 font-mono">16 位</div>
+                        <div class="text-gray-400 text-sm">名錄收錄殿堂級姓氏</div>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl text-center">
+                        <div class="text-3xl text-sakura-400 font-bold mb-1 font-mono">∞ 點</div>
+                        <div class="text-gray-400 text-sm">獲得的啟蒙與心靈撫慰</div>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl text-center">
+                        <div class="text-3xl text-sakura-400 font-bold mb-1 font-mono">365 天</div>
+                        <div class="text-gray-400 text-sm">全年無休傳授知識 (解壓)</div>
+                    </div>
+                </div>
+
+                <!-- Tribute Comments Board -->
+                <div class="glass-panel p-6 rounded-2xl">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-comments text-sakura-400"></i> 學子感謝留言板
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 text-sm flex justify-between items-start">
+                            <div>
+                                <span class="text-sakura-300 font-semibold">熱心網友 A君：</span>
+                                <span class="text-gray-300">「波多野老師是我的日語啟蒙導師，感謝老師陪伴我度過大考夜！」</span>
+                            </div>
+                            <span class="text-xs text-gray-500 whitespace-nowrap ml-2">9/28 00:01</span>
+                        </div>
+                        <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 text-sm flex justify-between items-start">
+                            <div>
+                                <span class="text-sakura-300 font-semibold">深夜研究員：</span>
+                                <span class="text-gray-300">「三上老師的退役雖然令人惋惜，但她留下的教學範本將永垂不朽！」</span>
+                            </div>
+                            <span class="text-xs text-gray-500 whitespace-nowrap ml-2">9/28 01:15</span>
+                        </div>
+                        <div class="bg-black/30 p-3.5 rounded-xl border border-white/5 text-sm flex justify-between items-start">
+                            <div>
+                                <span class="text-sakura-300 font-semibold">紳士聯盟會長：</span>
+                                <span class="text-gray-300">「祝全天下偉大的『教師』們，教師節快樂！祝身體健康，繼續發光發熱！」</span>
+                            </div>
+                            <span class="text-xs text-gray-500 whitespace-nowrap ml-2">9/28 02:40</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="relative z-10 border-t border-white/10 py-6 text-center text-xs text-gray-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                © 2026 9/28 教師節特別企劃 | 僅供娛樂與文化交流 (Humorous Fan Tribute)
+            </div>
+            <div class="flex gap-4">
+                <span class="hover:text-sakura-400 cursor-pointer transition" onclick="switchTab('cards')">姓氏目錄</span>
+                <span class="hover:text-sakura-400 cursor-pointer transition" onclick="switchTab('quiz')">恩師測驗</span>
+                <span class="hover:text-sakura-400 cursor-pointer transition" onclick="switchTab('tribute')">致敬特輯</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Surname Database based on prompt
+        const surnameData = [
+            { id: 1, kanji: "波多野", hiragana: "はたの", romaji: "Hatano", representative: "波多野 結衣 (Yui Hatano)", desc: "暗黑界常青樹，華人圈知名度極高的「暗黑林志玲」。", rank: "殿堂級", tag: "經典名師" },
+            { id: 2, kanji: "三上", hiragana: "みかみ", romaji: "Mikami", representative: "三上 悠亞 (Yua Mikami)", desc: "偶像轉型傳奇，席捲全亞洲的流行潮流標籤與頂級女神。", rank: "現象級", tag: "頂級偶像" },
+            { id: 3, kanji: "上原", hiragana: "うえはら", romaji: "Uehara", representative: "上原 亞衣 (Ai Uehara)", desc: "極致敬業的代名詞，引退後依然擁有超高人氣的傳奇名師。", rank: "殿堂級", tag: "勞模代表" },
+            { id: 4, kanji: "高橋", hiragana: "たかはし", romaji: "Takahashi", representative: "高橋 聖子 (Shoko Takahashi)", desc: "寫真界跨界傳奇，神級身材與極具感染力的演出魅力。", rank: "天后級", tag: "音樂寫真" },
+            { id: 5, kanji: "河北", hiragana: "かわきた", romaji: "Kawakita", representative: "河北 彩花 (Saika Kawakita)", desc: "清純氣質與無瑕顏值的完美結合，新一代的至尊天后。", rank: "天下第一", tag: "當紅頂流" },
+            { id: 6, kanji: "深田", hiragana: "ふかだ", romaji: "Fukada", representative: "深田 詠美 (Eimi Fukada)", desc: "自律與企劃之鬼，社交平台訂閱數極高的全能型名師。", rank: "現象級", tag: "發信型網紅" },
+            { id: 7, kanji: "桃乃木", hiragana: "もものぎ", romaji: "Momonogi", representative: "桃乃木 香奈 (Kana Momonogi)", desc: "甜美大胃王反差萌，精緻顏值與親和力極佳的大人氣導師。", rank: "天后級", tag: "精緻甜心" },
+            { id: 8, kanji: "天使", hiragana: "あまつか", romaji: "Amatsuka", representative: "天使 萌 (Moe Amatsuka)", desc: "透明感滿載的精靈系名師，擁有無數死忠擁護者的清秀代表。", rank: "殿堂級", tag: "透明感" },
+            { id: 9, kanji: "葵", hiragana: "あおい", romaji: "Aoi", representative: "葵 司 (Tsukasa Aoi)", desc: "長青高質感女神，氣質優雅且演技極佳的資深名師。", rank: "殿堂級", tag: "氣質女神" },
+            { id: 10, kanji: "飯島", hiragana: "いいじま", romaji: "Iijima", representative: "飯島 愛 (Ai Iijima)", desc: "平成時代的時代記憶，開啟現代AV文化熱潮的始祖級先驅。", rank: "傳奇始祖", tag: "時代記憶" },
+            { id: 11, kanji: "美谷", hiragana: "みたに", romaji: "Mitani", representative: "美谷 朱里 (Akari Mitani)", desc: "演技精湛且具備無敵渲染力的超實力派名師。", rank: "實力派", tag: "演技派" },
+            { id: 12, kanji: "桜空", hiragana: "さくら", romaji: "Sakura", representative: "桜空 桃 (Momo Sakura)", desc: "通透歌聲與完美曲線，夢幻般的極品美少女名師。", rank: "天后級", tag: "治癒系" },
+            { id: 13, kanji: "小島", hiragana: "こじま", romaji: "Kojima", representative: "小島 南 (Minami Kojima)", desc: "標誌性的甜美奶音與萌系風格，深受粉絲喜愛的長壽導師。", rank: "資深名師", tag: "萌系教主" },
+            { id: 14, kanji: "吉沢", hiragana: "よしざわ", romaji: "Yoshizawa", representative: "吉沢 明步 (Akiho Yoshizawa)", desc: "黃金時代的代表標籤，無數人暗夜歲月裡的啟蒙導師。", rank: "殿堂始祖", tag: "黃金時代" },
+            { id: 15, kanji: "本庄", hiragana: "ほんじょう", romaji: "Honjo", representative: "本庄 鈴 (Suzu Honjo)", desc: "冷艷高嶺之花氣質，清冽眼神與身材比例極佳的模特系名師。", rank: "高級感", tag: "高嶺之花" },
+            { id: 16, kanji: "風間", hiragana: "かざま", romaji: "Kazama", representative: "風間 由美 (Yumi Kazama)", desc: "熟女界的不朽神話，優雅從容且風情萬種的超級資深恩師。", rank: "不朽傳奇", tag: "熟女御姐" }
+        ];
+
+        let currentDisplayData = [...surnameData];
+        let quizCurrentIndex = 0;
+        let quizScore = 0;
+        let quizTotal = 0;
+
+        // Initialize Sakura Animation
+        function initSakura() {
+            const container = document.getElementById('sakura-container');
+            const petalCount = 20;
+            
+            for (let i = 0; i < petalCount; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                
+                const size = Math.random() * 12 + 8;
+                petal.style.width = `${size}px`;
+                petal.style.height = `${size * 1.2}px`;
+                
+                petal.style.left = `${Math.random() * 100}%`;
+                petal.style.animationDuration = `${Math.random() * 8 + 6}s, ${Math.random() * 4 + 2}s`;
+                petal.style.animationDelay = `${Math.random() * 5}s, ${Math.random() * 2}s`;
+                
+                container.appendChild(petal);
+            }
+        }
+
+        // Render Cards Grid
+        function renderCards(data) {
+            const grid = document.getElementById('surnames-grid');
+            const noResults = document.getElementById('no-results');
+            grid.innerHTML = '';
+
+            if (data.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'perspective-1000 h-64 w-full cursor-pointer group';
+                card.onclick = (e) => {
+                    // Don't flip if audio button is clicked
+                    if (e.target.closest('.audio-btn')) return;
+                    card.querySelector('.card-inner').classList.toggle('rotate-y-180');
+                };
+
+                card.innerHTML = `
+                    <div class="card-inner transform-style-3d relative w-full h-full duration-500">
+                        <!-- Front Face -->
+                        <div class="backface-hidden absolute inset-0 glass-card rounded-2xl p-6 flex flex-col justify-between border border-white/10 group-hover:border-sakura-400/50 transition-all">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <span class="text-xs px-2.5 py-1 bg-sakura-500/10 text-sakura-300 border border-sakura-500/20 rounded-full font-medium">${item.tag}</span>
+                                    <button onclick="speakText('${item.kanji}')" class="audio-btn text-gray-400 hover:text-sakura-400 transition p-1" title="發音">
+                                        <i class="fa-solid fa-volume-high text-sm"></i>
+                                    </button>
+                                </div>
+                                <div class="mt-2 text-center">
+                                    <span class="text-xs text-sakura-400 tracking-widest font-mono block mb-1">${item.hiragana}</span>
+                                    <h3 class="font-mincho text-4xl font-bold text-white tracking-widest my-1">${item.kanji}</h3>
+                                    <span class="text-xs text-gray-400 font-mono tracking-wider">${item.romaji}</span>
+                                </div>
+                            </div>
+                            <div class="text-center pt-2 border-t border-white/5 flex justify-between items-center text-xs text-gray-400">
+                                <span>名師代表: ${item.representative.split(' ')[0]}</span>
+                                <span class="text-sakura-400/70 group-hover:translate-x-1 transition-transform">詳情 <i class="fa-solid fa-rotate-left text-[10px]"></i></span>
+                            </div>
+                        </div>
+
+                        <!-- Back Face -->
+                        <div class="backface-hidden rotate-y-180 absolute inset-0 glass-card bg-jp-card/95 rounded-2xl p-6 flex flex-col justify-between border border-sakura-500/30">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs text-sakura-400 font-bold font-mono">${item.rank}</span>
+                                    <span class="text-xs text-gray-400 font-mono">${item.romaji}</span>
+                                </div>
+                                <h4 class="font-mincho text-lg font-bold text-sakura-200 mb-2">${item.representative}</h4>
+                                <p class="text-xs text-gray-300 leading-relaxed">${item.desc}</p>
+                            </div>
+                            <div class="text-center pt-3 border-t border-white/10 flex justify-between items-center">
+                                <button onclick="speakText('${item.representative}')" class="audio-btn text-xs text-sakura-400 hover:text-sakura-300 flex items-center gap-1">
+                                    <i class="fa-solid fa-volume-high"></i> 全名語音
+                                </button>
+                                <span class="text-[10px] text-gray-500">點擊點翻回正面</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Text Speech Synthesis
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.log('Speech synthesis not supported');
+            }
+        }
+
+        // Filter & Search Handling
+        function filterData() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const sortBy = document.getElementById('sort-select').value;
+
+            let filtered = surnameData.filter(item => 
+                item.kanji.includes(query) || 
+                item.hiragana.includes(query) || 
+                item.romaji.toLowerCase().includes(query) ||
+                item.representative.toLowerCase().includes(query)
+            );
+
+            if (sortBy === 'kana') {
+                filtered.sort((a, b) => a.hiragana.localeCompare(b.hiragana, 'ja'));
+            } else if (sortBy === 'strokes') {
+                filtered.sort((a, b) => a.kanji.length - b.kanji.length);
+            }
+
+            currentDisplayData = filtered;
+            renderCards(currentDisplayData);
+        }
+
+        function resetSearch() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('sort-select').value = 'default';
+            filterData();
+        }
+
+        function flipAllCards() {
+            const inners = document.querySelectorAll('.card-inner');
+            const anyFlipped = Array.from(inners).some(el => el.classList.contains('rotate-y-180'));
+            
+            inners.forEach(el => {
+                if (anyFlipped) {
+                    el.classList.remove('rotate-y-180');
+                } else {
+                    el.classList.add('rotate-y-180');
+                }
+            });
+        }
+
+        // Switch View Tabs
+        function switchTab(tabName) {
+            const tabs = ['cards', 'quiz', 'tribute'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                const sec = document.getElementById(`section-${t}`);
+                if (t === tabName) {
+                    btn.className = "flex-1 md:flex-none px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 bg-sakura-600 text-white shadow";
+                    sec.classList.remove('hidden');
+                } else {
+                    btn.className = "flex-1 md:flex-none px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 text-gray-400 hover:text-white";
+                    sec.classList.add('hidden');
+                }
+            });
+
+            if (tabName === 'quiz' && quizTotal === 0) {
+                startQuiz();
+            }
+        }
+
+        // Quiz Logic
+        function startQuiz() {
+            quizScore = 0;
+            quizTotal = 0;
+            document.getElementById('quiz-score').innerText = quizScore;
+            document.getElementById('quiz-total').innerText = quizTotal;
+            loadQuizQuestion();
+        }
+
+        function loadQuizQuestion() {
+            const target = surnameData[Math.floor(Math.random() * surnameData.length)];
+            document.getElementById('quiz-kanji').innerText = target.kanji;
+            document.getElementById('quiz-hint').innerText = `代表名師：${target.representative}`;
+            document.getElementById('quiz-feedback').innerText = '';
+            document.getElementById('next-quiz-btn').classList.add('hidden');
+
+            // Generate options (1 correct, 3 distractors)
+            let distractors = surnameData.filter(d => d.id !== target.id);
+            distractors = distractors.sort(() => 0.5 - Math.random()).slice(0, 3);
+            
+            let options = [target, ...distractors].sort(() => 0.5 - Math.random());
+
+            const optionsBox = document.getElementById('quiz-options');
+            optionsBox.innerHTML = '';
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-opt-btn bg-white/5 hover:bg-sakura-500/20 border border-white/10 hover:border-sakura-500/50 p-4 rounded-xl text-center text-white transition-all font-medium flex flex-col items-center justify-center gap-1";
+                btn.onclick = () => checkQuizAnswer(opt, target, btn);
+                btn.innerHTML = `
+                    <span class="text-lg font-bold">${opt.hiragana}</span>
+                    <span class="text-xs text-gray-400 font-mono">${opt.romaji}</span>
+                `;
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        function checkQuizAnswer(selected, correct, buttonEl) {
+            quizTotal++;
+            document.getElementById('quiz-total').innerText = quizTotal;
+
+            // Disable all options
+            const allBtns = document.querySelectorAll('.quiz-opt-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            const feedback = document.getElementById('quiz-feedback');
+
+            if (selected.id === correct.id) {
+                quizScore++;
+                document.getElementById('quiz-score').innerText = quizScore;
+                buttonEl.classList.remove('bg-white/5');
+                buttonEl.classList.add('bg-emerald-600/40', 'border-emerald-500', 'text-emerald-200');
+                feedback.className = "font-medium text-emerald-400 flex items-center gap-1";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check"></i> 太棒了！答對了 (${correct.kanji} = ${correct.hiragana})`;
+                speakText(correct.kanji);
+            } else {
+                buttonEl.classList.remove('bg-white/5');
+                buttonEl.classList.add('bg-rose-600/40', 'border-rose-500', 'text-rose-200');
+                feedback.className = "font-medium text-rose-400 flex items-center gap-1";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> 答錯囉！正確答案是：${correct.hiragana} (${correct.romaji})`;
+            }
+
+            document.getElementById('next-quiz-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            loadQuizQuestion();
+        }
+
+        // Initialize App
+        window.onload = function() {
+            initSakura();
+            renderCards(surnameData);
+
+            document.getElementById('search-input').addEventListener('input', filterData);
+            document.getElementById('sort-select').addEventListener('change', filterData);
+        };
+    </script>
+</body>
+</html>
