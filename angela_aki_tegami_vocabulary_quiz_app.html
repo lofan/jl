@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手紙 ～拝啓 十五の君へ～ - Japanese Vocabulary & Quiz App</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#131e32',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom scrollbar for better visual appeal */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased">
+
+    <!-- Header Section -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400">
+                    <i data-lucide="music" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight text-slate-100">手紙 ～拝啓 十五の君へ～</h1>
+                    <p class="text-xs text-slate-400">Angela Aki • Vocabulary & Quiz Learning Companion</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <!-- Audio Toggle Button -->
+                <button id="audioToggleBtn" onclick="toggleAudio()" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg border border-slate-700 transition flex items-center space-x-2 text-sm" title="Toggle Sound">
+                    <i id="audioIcon" data-lucide="volume-2" class="w-4 h-4 text-sky-400"></i>
+                    <span id="audioText" class="hidden sm:inline">Audio On</span>
+                </button>
+
+                <!-- External YouTube Link -->
+                <a href="https://www.youtube.com/watch?v=0yCahMxrsz4" target="_blank" rel="noopener noreferrer" class="p-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 hover:text-rose-200 border border-rose-500/30 rounded-lg transition flex items-center space-x-2 text-sm">
+                    <i data-lucide="youtube" class="w-4 h-4 text-rose-400"></i>
+                    <span class="hidden sm:inline">Watch on YouTube</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
+
+        <!-- Embedded Video & Overview Section -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Video Player -->
+            <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+                <div class="aspect-video w-full">
+                    <iframe 
+                        class="w-full h-full"
+                        src="https://www.youtube.com/embed/0yCahMxrsz4" 
+                        title="Angela Aki - Tegami ~Haikei Jugo no Kimi e~" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- Song Summary & Info -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-sky-400 mb-2">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                        <span>Song Background & Overview</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-slate-100 mb-2">Letter to My 15-Year-Old Self</h2>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                        <em>"Tegami ~Haikei Jugo no Kimi e~"</em> is a celebrated Japanese ballad structured as a poignant dialogue between a troubled 15-year-old writing to their future self, and the adult self offering encouragement, resilience, and hope across time.
+                    </p>
+                    <blockquote class="text-xs italic text-rose-300/90 border-l-2 border-rose-500/50 pl-3 py-1 mb-4 bg-rose-500/5 rounded-r">
+                        "拝啓 この手紙読んでいるあなたは どこで何をしているのだろう"<br>
+                        <span class="text-slate-400 non-italic text-[11px] block mt-1">— Angela Aki</span>
+                    </blockquote>
+                </div>
+                <div class="pt-4 border-t border-slate-800/80 text-xs text-slate-400 flex justify-between items-center">
+                    <span>40 Essential Japanese Terms</span>
+                    <span>N3 / N2 Grammar Level</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-slate-800 space-x-2">
+            <button id="tabVocab" onclick="switchTab('vocab')" class="py-3 px-5 font-semibold text-sm flex items-center space-x-2 border-b-2 border-rose-500 text-rose-400 transition">
+                <i data-lucide="book-open" class="w-4 h-4"></i>
+                <span>Song Vocabulary Guide (詞の語彙)</span>
+                <span class="bg-slate-800 text-slate-300 text-xs px-2 py-0.5 rounded-full border border-slate-700">40</span>
+            </button>
+            <button id="tabQuiz" onclick="switchTab('quiz')" class="py-3 px-5 font-semibold text-sm flex items-center space-x-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition">
+                <i data-lucide="help-circle" class="w-4 h-4"></i>
+                <span>Interactive Quiz (クイズ)</span>
+                <span class="bg-slate-800 text-slate-300 text-xs px-2 py-0.5 rounded-full border border-slate-700">40 Qs</span>
+            </button>
+        </div>
+
+        <!-- TAB 1: VOCABULARY GUIDE -->
+        <section id="vocabContent" class="space-y-6">
+            <!-- Search & Controls -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-between items-center">
+                <div class="relative w-full sm:w-80">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="vocabSearch" oninput="filterVocab()" placeholder="Search terms, kana, or English..." class="w-full bg-slate-900 border border-slate-800 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-rose-500 transition placeholder-slate-500">
+                </div>
+                <div class="text-xs text-slate-400 flex items-center space-x-2">
+                    <i data-lucide="volume-2" class="w-3.5 h-3.5 text-sky-400"></i>
+                    <span>Click speaker icon to listen to Japanese pronunciation</span>
+                </div>
+            </div>
+
+            <!-- Vocabulary Cards Grid -->
+            <div id="vocabGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </section>
+
+        <!-- TAB 2: INTERACTIVE QUIZ -->
+        <section id="quizContent" class="hidden space-y-6">
+            <!-- Quiz Container -->
+            <div id="quizBox" class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative">
+                
+                <!-- Progress Header -->
+                <div class="flex justify-between items-center mb-4">
+                    <span id="quizProgressText" class="text-xs font-semibold text-sky-400 uppercase tracking-wider">Question 1 of 40</span>
+                    <span id="quizScoreText" class="text-xs font-semibold bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">Score: 0</span>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-800 h-2 rounded-full mb-6 overflow-hidden">
+                    <div id="quizProgressBar" class="bg-gradient-to-r from-rose-500 to-sky-400 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- Question Prompt -->
+                <div class="mb-6 bg-slate-950/60 p-4 rounded-xl border border-slate-800/80">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-xs text-slate-400 font-medium">Song Context Snippet:</span>
+                        <button id="quizAudioBtn" onclick="playQuizAudio()" class="p-1.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded-lg border border-sky-500/20 transition flex items-center space-x-1 text-xs">
+                            <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
+                            <span>Listen</span>
+                        </button>
+                    </div>
+                    <div id="quizLyricContext" class="text-lg font-medium text-slate-200 mb-2"></div>
+                    <div id="quizQuestionPrompt" class="text-sm font-semibold text-rose-300"></div>
+                </div>
+
+                <!-- Multiple Choice Options -->
+                <div id="quizOptions" class="grid grid-cols-1 gap-3 mb-6">
+                    <!-- Dynamically populated options -->
+                </div>
+
+                <!-- Feedback Message -->
+                <div id="quizFeedback" class="hidden p-4 rounded-xl mb-4 text-sm font-medium flex items-center space-x-2"></div>
+
+                <!-- Next Question Button -->
+                <div class="flex justify-end">
+                    <button id="nextBtn" onclick="nextQuestion()" class="hidden px-6 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-medium rounded-xl shadow-lg transition flex items-center space-x-2 text-sm">
+                        <span>Next Question</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz End Summary Screen -->
+            <div id="quizSummary" class="hidden max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center shadow-2xl space-y-6">
+                <div class="inline-flex p-4 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 mb-2">
+                    <i data-lucide="award" class="w-12 h-12"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-100">Quiz Completed!</h3>
+                
+                <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 space-y-2">
+                    <p class="text-sm text-slate-400">Final Score</p>
+                    <p id="finalScoreDisplay" class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-sky-400">0 / 40 (0%)</p>
+                    <p id="performanceBadge" class="text-sm font-semibold text-sky-400 pt-2"></p>
+                </div>
+
+                <p id="performanceFeedback" class="text-slate-300 text-sm leading-relaxed px-4"></p>
+
+                <button onclick="restartQuiz()" class="px-8 py-3 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-semibold rounded-xl shadow-lg transition transform hover:-translate-y-0.5 inline-flex items-center space-x-2">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    <span>Try Again</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-900 py-6 mt-auto text-xs text-slate-400 text-center">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p>Japanese Vocabulary Learning App • Based on Angela Aki's "手紙 ～拝啓 十五の君へ～"</p>
+            <div class="flex items-center space-x-4">
+                <a href="https://www.youtube.com/watch?v=0yCahMxrsz4" target="_blank" rel="noopener noreferrer" class="hover:text-rose-400 transition flex items-center space-x-1">
+                    <i data-lucide="external-link" class="w-3 h-3"></i>
+                    <span>Official Video</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Application Logic Script -->
+    <script>
+        // Global State
+        let audioEnabled = true;
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let selectedOption = null;
+
+        // Vocabulary Data Array (40 key items)
+        const vocabularyData = [
+            { id: 1, kanji: "手紙", kana: "てがみ", romaji: "tegami", pos: "Noun", english: "Letter", note: "Central theme of the song, writing to past/future self.", context: "拝啓 この手紙読んでいるあなたは" },
+            { id: 2, kanji: "拝啓", kana: "はいけい", romaji: "haikei", pos: "Expression", english: "Dear... / Sincerely", note: "Formal opening salutation in traditional Japanese letters.", context: "拝啓 十五の君へ" },
+            { id: 3, kanji: "十五", kana: "じゅうご", romaji: "jūgo", pos: "Noun", english: "Fifteen (15)", note: "Refers to age 15, a crucial pivotal transition phase.", context: "十五の君へ" },
+            { id: 4, kanji: "君", kana: "きみ", romaji: "kimi", pos: "Noun/Pronoun", english: "You (casual/intimate)", note: "Used here to address one's own younger self.", context: "十五の君へ 伝達したいことがある" },
+            { id: 5, kanji: "打ち明ける", kana: "うちあける", romaji: "uchiakeru", pos: "Verb (Ru)", english: "To confess / open up", note: "Expresses sharing secret or deep personal feelings.", context: "誰にも話せない悩みの種を打ち明ける" },
+            { id: 6, kanji: "悩み", kana: "なやみ", romaji: "nayami", pos: "Noun", english: "Trouble / Worry / Distress", note: "Describes emotional inner struggle of adolescence.", context: "誰にも話せない悩みの種" },
+            { id: 7, kanji: "負ける", kana: "まける", romaji: "makeru", pos: "Verb (Ichidan)", english: "To lose / be defeated", note: "Expresses feeling overwhelmed by life struggles.", context: "負けそうにして 泣きそうにして" },
+            { id: 8, kanji: "消える", kana: "きえる", romaji: "kieru", pos: "Verb (Ichidan)", english: "To vanish / disappear", note: "Refers to feeling like one might fade away.", context: "消えてしまいそうな僕" },
+            { id: 9, kanji: "信じる", kana: "しんじる", romaji: "shinjiru", pos: "Verb (Ichidan)", english: "To believe / trust", note: "Core message about keeping trust in oneself.", context: "自分の声を信じ進めばいい" },
+            { id: 10, kanji: "言葉", kana: "ことば", romaji: "kotoba", pos: "Noun", english: "Words / Language", note: "Means of expressing inner thoughts and messages.", context: "誰の言葉を信じ歩めばいいの？" },
+            { id: 11, kanji: "海", kana: "うみ", romaji: "umi", pos: "Noun", english: "Sea / Ocean", note: "Metaphor for vastness of life's journey.", context: "荒海を渡る船のように" },
+            { id: 12, kanji: "進む", kana: "すすむ", romaji: "susumu", pos: "Verb (Godan)", english: "To advance / move forward", note: "Encouragement to keep moving forward despite fear.", context: "今を生きている 進んでいる" },
+            { id: 13, kanji: "大人", kana: "おとな", romaji: "otona", pos: "Noun", english: "Adult / Grown-up", note: "Represents the future self replying back.", context: "大人になった僕より" },
+            { id: 14, kanji: "苦しい", kana: "くるしい", romaji: "kurushii", pos: "i-Adj", english: "Painful / Difficult", note: "Describes the emotional turmoil of youth.", context: "苦しくて 苦しくて たまらない" },
+            { id: 15, kanji: "未来", kana: "みらい", romaji: "mirai", pos: "Noun", english: "Future", note: "Refers to the life ahead beyond current pain.", context: "未来の自分に聞きたい" },
+            { id: 16, kanji: "涙", kana: "なみだ", romaji: "namida", pos: "Noun", english: "Tears", note: "Symbol of hardship leading to personal growth.", context: "涙のあとに 笑顔が見える" },
+            { id: 17, kanji: "笑顔", kana: "えがお", romaji: "egao", pos: "Noun", english: "Smiling face / Smile", note: "Symbol of joy after overcoming hardship.", context: "涙のあとに 笑顔が見える" },
+            { id: 18, kanji: "歩む", kana: "あゆむ", romaji: "ayumu", pos: "Verb (Godan)", english: "To walk / tread path", note: "Poetic verb for walking through life's path.", context: "自分の道を歩み続けて" },
+            { id: 19, kanji: "心", kana: "こころ", romaji: "kokoro", pos: "Noun", english: "Heart / Mind / Spirit", note: "Refers to emotional resilience and spirit.", context: "心の声を聴いてみて" },
+            { id: 20, kanji: "光", kana: "ひかり", romaji: "hikari", pos: "Noun", english: "Light / Hope", note: "Metaphor for hope guiding one out of darkness.", context: "暗闇の中に 光を探して" },
+            { id: 21, kanji: "夢", kana: "ゆめ", romaji: "yume", pos: "Noun", english: "Dream", note: "Aspirations that keep one moving forward.", context: "夢を追いかけて 突き進め" },
+            { id: 22, kanji: "迷う", kana: "まよう", romaji: "mayou", pos: "Verb (Godan)", english: "To be lost / hesitate", note: "Uncertainty experienced during youth.", context: "迷う時は立ち止まってみて" },
+            { id: 23, kanji: "答", kana: "こたえ", romaji: "kotae", pos: "Noun", english: "Answer / Solution", note: "The understanding that comes with age and time.", context: "人生の答を探して" },
+            { id: 24, kanji: "時代", kana: "じだい", romaji: "jidai", pos: "Noun", english: "Era / Time period", note: "Refers to the era/phase of life being lived.", context: "激しい時代を生き抜く" },
+            { id: 25, kanji: "青春", kana: "せいしゅん", romaji: "seishun", pos: "Noun", english: "Youth / Adolescence", note: "The period of life highlighted in the song.", context: "青春の真っ只中にいる" },
+            { id: 26, kanji: "今", kana: "いま", romaji: "ima", pos: "Noun / Adverb", english: "Now / Present moment", note: "Emphasizes focusing on the present moment.", context: "今を生きる大切さ" },
+            { id: 27, kanji: "自分", kana: "じぶん", romaji: "jibun", pos: "Noun", english: "Oneself / Self", note: "Key subject of self-discovery.", context: "自分を信じること" },
+            { id: 28, kanji: "約束", kana: "やくそく", romaji: "yakusoku", pos: "Noun / Verb", english: "Promise", note: "Commitment made between past and future selves.", context: "自分自身との約束" },
+            { id: 29, kanji: "生きる", kana: "いきる", romaji: "ikiru", pos: "Verb (Ichidan)", english: "To live / exist", note: "Central theme of enduring and living life.", context: "今を生きている" },
+            { id: 30, kanji: "大丈夫", kana: "だいじょうぶ", romaji: "daijōbu", pos: "na-Adj", english: "Okay / All right", note: "Reassuring message from adult to youth.", context: "すべて大丈夫だから" },
+            { id: 31, kanji: "意味", kana: "いみ", romaji: "imi", pos: "Noun", english: "Meaning / Significance", note: "Understanding the purpose of past trials.", context: "すべての事に意味がある" },
+            { id: 32, kanji: "遠く", kana: "とおく", romaji: "tōku", pos: "Adverb / Noun", english: "Far away / Distant", note: "Looking forward to distant horizons.", context: "遠くを見つめる瞳" },
+            { id: 33, kanji: "勇気", kana: "ゆうき", romaji: "yūki", pos: "Noun", english: "Courage / Bravery", note: "Strength required to face hardship.", context: "勇気を出して一歩踏み出す" },
+            { id: 34, kanji: "悲しみ", kana: "かなしみ", romaji: "kanashimi", pos: "Noun", english: "Sadness / Sorrow", note: "Emotions that shape character.", context: "悲しみを乗り越えて" },
+            { id: 35, kanji: "愛する", kana: "あいする", romaji: "aisuru", pos: "Verb", english: "To love", note: "Learning to love oneself and life.", context: "自分を愛すること" },
+            { id: 36, kanji: "手さぐり", kana: "てさぐり", romaji: "tesaguri", pos: "Noun", english: "Groping in dark / Fumbling", note: "Navigating youth blindly without experience.", context: "手さぐりの道を進む" },
+            { id: 37, kanji: "荒海", kana: "あらうみ", romaji: "araumi", pos: "Noun", english: "Rough sea / Stormy waters", note: "Metaphor for life's turbulent challenges.", context: "荒海を渡っていく" },
+            { id: 38, kanji: "人生", kana: "じんせい", romaji: "jinsei", pos: "Noun", english: "Human life", note: "The overall journey explored in the lyrics.", context: "人生のすべてに意味がある" },
+            { id: 39, kanji: "届く", kana: "とどく", romaji: "todoku", pos: "Verb (Godan)", english: "To reach / arrive", note: "The letter reaching its intended recipient.", context: "この思いが届くように" },
+            { id: 40, kanji: "感謝", kana: "かんしゃ", romaji: "kansha", pos: "Noun / Verb", english: "Gratitude / Thanks", note: "Gratitude for lessons learned through struggle.", context: "すべての出会いに感謝して" }
+        ];
+
+        // Web Audio API Beeps for Quiz Feedback
+        function playTone(freq, type, duration) {
+            if (!audioEnabled) return;
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                console.log("Audio play failed", e);
+            }
+        }
+
+        function playCorrectSound() {
+            playTone(587.33, 'sine', 0.15); // D5
+            setTimeout(() => playTone(880, 'sine', 0.25), 120); // A5
+        }
+
+        function playIncorrectSound() {
+            playTone(220, 'sawtooth', 0.2); // A3
+            setTimeout(() => playTone(174.61, 'sawtooth', 0.3), 150); // F3
+        }
+
+        // Native Speech Synthesis (TTS)
+        function speakJapanese(text) {
+            if (!audioEnabled) return;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // stop current speech
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Audio Toggle
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const icon = document.getElementById('audioIcon');
+            const text = document.getElementById('audioText');
+            if (audioEnabled) {
+                icon.setAttribute('data-lucide', 'volume-2');
+                icon.className = "w-4 h-4 text-sky-400";
+                text.textContent = "Audio On";
+            } else {
+                icon.setAttribute('data-lucide', 'volume-x');
+                icon.className = "w-4 h-4 text-slate-500";
+                text.textContent = "Muted";
+                window.speechSynthesis.cancel();
+            }
+            lucide.createIcons();
+        }
+
+        // Render Vocabulary Cards Grid
+        function renderVocab(cards) {
+            const grid = document.getElementById('vocabGrid');
+            grid.innerHTML = '';
+
+            cards.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition shadow-md flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <div>
+                                <span class="text-xs font-semibold px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">${item.pos}</span>
+                                <h3 class="text-xl font-bold text-slate-100 mt-1">${item.kanji}</h3>
+                                <p class="text-xs text-sky-400 font-medium">${item.kana} • <span class="text-slate-400">${item.romaji}</span></p>
+                            </div>
+                            <button onclick="speakJapanese('${item.kanji}')" class="p-2 bg-slate-800 hover:bg-slate-700 text-sky-400 rounded-lg border border-slate-700 transition" title="Listen">
+                                <i data-lucide="volume-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-200 mt-2">${item.english}</p>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">${item.note}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800/80">
+                        <span class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block mb-1">Lyric Context</span>
+                        <p class="text-xs italic text-rose-300/90 font-serif">"${item.context}"</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // Search Filter
+        function filterVocab() {
+            const query = document.getElementById('vocabSearch').value.toLowerCase();
+            const filtered = vocabularyData.filter(item => 
+                item.kanji.toLowerCase().includes(query) ||
+                item.kana.toLowerCase().includes(query) ||
+                item.romaji.toLowerCase().includes(query) ||
+                item.english.toLowerCase().includes(query)
+            );
+            renderVocab(filtered);
+        }
+
+        // Tab Navigation
+        function switchTab(tab) {
+            const vocabBtn = document.getElementById('tabVocab');
+            const quizBtn = document.getElementById('tabQuiz');
+            const vocabSec = document.getElementById('vocabContent');
+            const quizSec = document.getElementById('quizContent');
+
+            if (tab === 'vocab') {
+                vocabBtn.className = "py-3 px-5 font-semibold text-sm flex items-center space-x-2 border-b-2 border-rose-500 text-rose-400 transition";
+                quizBtn.className = "py-3 px-5 font-semibold text-sm flex items-center space-x-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition";
+                vocabSec.classList.remove('hidden');
+                quizSec.classList.add('hidden');
+            } else {
+                quizBtn.className = "py-3 px-5 font-semibold text-sm flex items-center space-x-2 border-b-2 border-rose-500 text-rose-400 transition";
+                vocabBtn.className = "py-3 px-5 font-semibold text-sm flex items-center space-x-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition";
+                quizSec.classList.remove('hidden');
+                vocabSec.classList.add('hidden');
+            }
+        }
+
+        // Quiz State Management
+        let quizQuestions = [];
+
+        function generateQuizQuestions() {
+            // Create a quiz question for each vocabulary item
+            quizQuestions = vocabularyData.map(item => {
+                // Get 3 wrong distractors
+                const distractors = vocabularyData
+                    .filter(v => v.id !== item.id)
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 3)
+                    .map(v => v.english);
+
+                const options = [item.english, ...distractors].sort(() => 0.5 - Math.random());
+
+                return {
+                    id: item.id,
+                    kanji: item.kanji,
+                    kana: item.kana,
+                    lyricContext: item.context,
+                    correctAnswer: item.english,
+                    options: options
+                };
+            });
+        }
+
+        function loadQuizQuestion() {
+            const q = quizQuestions[currentQuizIndex];
+            
+            // Update Header & Progress
+            document.getElementById('quizProgressText').textContent = `Question ${currentQuizIndex + 1} of ${quizQuestions.length}`;
+            document.getElementById('quizScoreText').textContent = `Score: ${quizScore}`;
+            document.getElementById('quizProgressBar').style.width = `${((currentQuizIndex) / quizQuestions.length) * 100}%`;
+
+            // Display Question Info
+            document.getElementById('quizLyricContext').innerHTML = `"${q.lyricContext}"`;
+            document.getElementById('quizQuestionPrompt').textContent = `What is the meaning of "${q.kanji}" (${q.kana})?`;
+
+            // Clear feedback & hide next button
+            const feedback = document.getElementById('quizFeedback');
+            feedback.className = "hidden p-4 rounded-xl mb-4 text-sm font-medium flex items-center space-x-2";
+            document.getElementById('nextBtn').classList.add('hidden');
+
+            // Render Options
+            const optionsContainer = document.getElementById('quizOptions');
+            optionsContainer.innerHTML = '';
+
+            selectedOption = null;
+
+            q.options.forEach((opt, index) => {
+                const letter = String.fromCharCode(65 + index); // A, B, C, D
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/50 transition flex items-center space-x-3 text-slate-200 group";
+                btn.onclick = () => selectQuizAnswer(index, opt, q.correctAnswer);
+                btn.id = `option-${index}`;
+
+                btn.innerHTML = `
+                    <span class="flex-shrink-0 w-8 h-8 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400 group-hover:text-rose-400 group-hover:border-rose-500/50 transition">${letter}</span>
+                    <span class="text-sm font-medium">${opt}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Play audio for Japanese prompt
+            speakJapanese(q.kanji);
+        }
+
+        function playQuizAudio() {
+            const q = quizQuestions[currentQuizIndex];
+            speakJapanese(q.kanji);
+        }
+
+        function selectQuizAnswer(selectedIndex, chosenAnswer, correctAnswer) {
+            if (selectedOption !== null) return; // Prevent double clicking
+            selectedOption = selectedIndex;
+
+            const q = quizQuestions[currentQuizIndex];
+            const isCorrect = chosenAnswer === correctAnswer;
+
+            // Highlight Options
+            q.options.forEach((opt, idx) => {
+                const btn = document.getElementById(`option-${idx}`);
+                btn.disabled = true;
+
+                if (opt === correctAnswer) {
+                    btn.className = "w-full text-left p-4 rounded-xl bg-emerald-950/40 border-2 border-emerald-500/80 text-emerald-200 flex items-center space-x-3";
+                } else if (idx === selectedIndex && !isCorrect) {
+                    btn.className = "w-full text-left p-4 rounded-xl bg-rose-950/40 border-2 border-rose-500/80 text-rose-200 flex items-center space-x-3";
+                } else {
+                    btn.className = "w-full text-left p-4 rounded-xl bg-slate-950/40 border border-slate-800 text-slate-500 opacity-50 flex items-center space-x-3";
+                }
+            });
+
+            // Feedback Display & Audio
+            const feedback = document.getElementById('quizFeedback');
+            feedback.classList.remove('hidden');
+
+            if (isCorrect) {
+                quizScore++;
+                playCorrectSound();
+                feedback.className = "p-4 rounded-xl mb-4 text-sm font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-center space-x-2";
+                feedback.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i><span>Correct! Excellent job!</span>`;
+            } else {
+                playIncorrectSound();
+                feedback.className = "p-4 rounded-xl mb-4 text-sm font-medium bg-rose-500/10 border border-rose-500/30 text-rose-300 flex items-center space-x-2";
+                feedback.innerHTML = `<i data-lucide="x-circle" class="w-5 h-5 text-rose-400"></i><span>Incorrect. Correct answer: <strong>${correctAnswer}</strong></span>`;
+            }
+            lucide.createIcons();
+
+            // Update Header Score immediately
+            document.getElementById('quizScoreText').textContent = `Score: ${quizScore}`;
+
+            // Show Next Button
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuizIndex++;
+
+            if (currentQuizIndex < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                showQuizSummary();
+            }
+        }
+
+        function showQuizSummary() {
+            document.getElementById('quizBox').classList.add('hidden');
+            const summary = document.getElementById('quizSummary');
+            summary.classList.remove('hidden');
+
+            const percentage = Math.round((quizScore / quizQuestions.length) * 100);
+            document.getElementById('finalScoreDisplay').textContent = `${quizScore} / ${quizQuestions.length} (${percentage}%)`;
+
+            let badge = "";
+            let feedback = "";
+
+            if (percentage === 100) {
+                badge = " Master Level (完璧!)";
+                feedback = "Outstanding effort! You have mastered all 40 vocabulary terms from Angela Aki's song. You are fully prepared to understand the lyric nuance completely!";
+            } else if (percentage >= 80) {
+                badge = " Advanced Listener (素晴らしい!)";
+                feedback = "Great job! You have a solid grasp of the song's key vocabulary and deep thematic expressions.";
+            } else if (percentage >= 60) {
+                badge = " Intermediate Listener (よくできました)";
+                feedback = "Good progress! Review the Vocabulary Guide tab to solidify terms you missed, then try again.";
+            } else {
+                badge = " Beginner (がんばって!)";
+                feedback = "Keep going! Revisit the Song Vocabulary Guide to familiarize yourself with the vocabulary and lyric contexts before taking another attempt.";
+            }
+
+            document.getElementById('performanceBadge').textContent = badge;
+            document.getElementById('performanceFeedback').textContent = feedback;
+        }
+
+        function restartQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            generateQuizQuestions();
+            document.getElementById('quizSummary').classList.add('hidden');
+            document.getElementById('quizBox').classList.remove('hidden');
+            loadQuizQuestion();
+        }
+
+        // Application Initialization
+        window.onload = function () {
+            renderVocab(vocabularyData);
+            generateQuizQuestions();
+            loadQuizQuestion();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>
