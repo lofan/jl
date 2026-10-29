@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Half Moon Serenade (ハーフムーン・セレナーデ) - Japanese Learning App</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#131e32',
+                            900: '#0f172a',
+                            950: '#080d1a',
+                        },
+                        rose: {
+                            450: '#f43f5e',
+                            550: '#e11d48',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        jp: ['"Noto Serif JP"', '"Hiragino Mincho ProN"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glow-effect {
+            box-shadow: 0 0 25px -5px rgba(225, 29, 72, 0.25);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-rose-500 selection:text-white">
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-gradient-to-tr from-rose-600 to-sky-500 rounded-xl text-white shadow-lg shadow-rose-950/50">
+                    <i data-lucide="moon" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-rose-200 via-sky-200 to-slate-100 bg-clip-text text-transparent font-jp">
+                        ハーフムーン・セレナーデ
+                    </h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">Naoko Kawai • Japanese Song Vocabulary & Quiz</p>
+                </div>
+            </div>
+
+            <!-- Controls & External Link -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <button id="ttsToggleBtn" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 transition border border-slate-700/60">
+                    <i id="ttsIcon" data-lucide="volume-2" class="w-4 h-4 text-sky-400"></i>
+                    <span id="ttsStatus" class="hidden sm:inline">Audio: On</span>
+                </button>
+                <a href="https://www.youtube.com/watch?v=uyQ5RtiVDKc" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 transition">
+                    <i data-lucide="youtube" class="w-4 h-4 text-rose-400"></i>
+                    <span class="hidden sm:inline">Watch on YouTube</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+
+        <!-- MEDIA HERO SECTION -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <!-- Embedded YouTube Player -->
+            <div class="lg:col-span-7 glass-panel rounded-2xl p-3 sm:p-4 glow-effect">
+                <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
+                    <iframe 
+                        class="absolute top-0 left-0 w-full h-full"
+                        src="https://www.youtube.com/embed/uyQ5RtiVDKc" 
+                        title="Naoko Kawai - Half Moon Serenade" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- Song Overview & Theme Breakdown -->
+            <div class="lg:col-span-5 glass-panel rounded-2xl p-5 space-y-4 flex flex-col justify-between h-full border border-slate-800">
+                <div>
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+                        <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-rose-950/80 text-rose-300 border border-rose-800/50">1986 J-Pop Classic</span>
+                        <span class="text-xs text-sky-400 font-mono">Composer: Naoko Kawai</span>
+                    </div>
+                    <h2 class="text-xl font-bold font-jp text-slate-100 mb-1">Half Moon Serenade</h2>
+                    <p class="text-xs text-slate-400 font-mono mb-3">ハーフムーン・セレナーデ (河合奈保子)</p>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        A hauntingly romantic ballad exploring themes of autumn leaves, moonlit waters, unspoken longing, and transient love. This application extracts essential poetic vocabulary directly from the song's key imagery to elevate your Japanese literary & musical fluency.
+                    </p>
+                </div>
+
+                <div class="bg-slate-900/80 rounded-xl p-3.5 border border-slate-800/80 space-y-2 text-xs">
+                    <div class="flex justify-between text-slate-400">
+                        <span>Total Target Words:</span>
+                        <span class="text-sky-300 font-bold">35 Vocabulary Items</span>
+                    </div>
+                    <div class="flex justify-between text-slate-400">
+                        <span>Main Themes:</span>
+                        <span class="text-rose-300 font-medium">Autumn, Night, Loneliness, Emotion</span>
+                    </div>
+                    <div class="flex justify-between text-slate-400">
+                        <span>JLPT Range:</span>
+                        <span class="text-amber-300 font-medium">N3 - N1 Poetic Expressions</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NAVIGATION TABS -->
+        <section class="border-b border-slate-800">
+            <div class="flex space-x-4">
+                <button id="tabVocabBtn" onclick="switchTab('vocab')" class="flex items-center space-x-2 py-3 px-4 border-b-2 font-medium text-sm transition border-rose-500 text-rose-400">
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                    <span>Vocabulary Guide (詞の語彙)</span>
+                    <span id="vocabBadge" class="bg-rose-950 text-rose-300 text-xs px-2 py-0.5 rounded-full border border-rose-800/50">35</span>
+                </button>
+                <button id="tabQuizBtn" onclick="switchTab('quiz')" class="flex items-center space-x-2 py-3 px-4 border-b-2 font-medium text-sm transition border-transparent text-slate-400 hover:text-slate-200">
+                    <i data-lucide="help-circle" class="w-4 h-4"></i>
+                    <span>Interactive Quiz (クイズ)</span>
+                    <span class="bg-sky-950 text-sky-300 text-xs px-2 py-0.5 rounded-full border border-sky-800/50">35 Qs</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- TAB 1: VOCABULARY GUIDE -->
+        <section id="tabVocab" class="space-y-6">
+            <!-- Search & Filters -->
+            <div class="glass-panel p-4 rounded-xl flex flex-col md:flex-row gap-4 items-center justify-between">
+                <!-- Search Bar -->
+                <div class="relative w-full md:w-80">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="vocabSearch" oninput="filterVocab()" placeholder="Search Kanji, Kana, English..." class="w-full bg-slate-900 border border-slate-700/80 rounded-lg pl-9 pr-4 py-2 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-rose-500 transition">
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                    <button onclick="setCategoryFilter('all')" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border bg-rose-600/20 text-rose-300 border-rose-500/40" data-cat="all">All (35)</button>
+                    <button onclick="setCategoryFilter('Noun')" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800" data-cat="Noun">Nouns</button>
+                    <button onclick="setCategoryFilter('Verb')" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800" data-cat="Verb">Verbs</button>
+                    <button onclick="setCategoryFilter('Adjective')" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800" data-cat="Adjective">Adjectives</button>
+                    <button onclick="setCategoryFilter('Expression')" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800" data-cat="Expression">Expressions</button>
+                </div>
+            </div>
+
+            <!-- Vocabulary Cards Grid -->
+            <div id="vocabGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </section>
+
+        <!-- TAB 2: INTERACTIVE QUIZ -->
+        <section id="tabQuiz" class="hidden space-y-6">
+            <!-- Quiz Container -->
+            <div id="quizActiveCard" class="glass-panel p-6 sm:p-8 rounded-2xl max-w-3xl mx-auto space-y-6 relative border border-slate-800">
+                <!-- Progress Header -->
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded bg-slate-800 text-slate-300 font-mono">Question <span id="quizCurrentIndex">1</span>/35</span>
+                        <span id="quizPosTag" class="text-xs font-semibold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800/50">Noun</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-xs text-slate-400 font-mono">Score: <span id="quizScore" class="text-rose-400 font-bold text-sm">0</span></div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
+                    <div id="quizProgressBar" class="bg-gradient-to-r from-rose-500 to-sky-400 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- Lyric Context & Prompt -->
+                <div class="bg-slate-900/90 rounded-xl p-5 border border-slate-800/90 space-y-3 relative">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Song Lyric Context</span>
+                        <button onclick="playCurrentQuizAudio()" class="p-2 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 transition border border-rose-500/30 flex items-center space-x-1 text-xs">
+                            <i data-lucide="volume-2" class="w-4 h-4"></i>
+                            <span>Listen</span>
+                        </button>
+                    </div>
+                    <p id="quizLyricSnippet" class="text-lg sm:text-xl font-jp text-slate-100 font-semibold leading-relaxed">
+                        <!-- Lyric line populated by JS -->
+                    </p>
+                    <p class="text-xs text-slate-400 pt-1 border-t border-slate-800/60">
+                        Target Keyword: <span id="quizTargetKana" class="text-sky-300 font-jp font-bold"></span> (<span id="quizTargetRomaji" class="text-slate-300 italic"></span>)
+                    </p>
+                </div>
+
+                <!-- Question Prompt -->
+                <div class="text-slate-200 text-sm font-medium">
+                    Select the correct English translation for the highlighted keyword:
+                </div>
+
+                <!-- Multiple Choice Options -->
+                <div id="quizOptionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Option buttons populated by JS -->
+                </div>
+
+                <!-- Instant Feedback Banner -->
+                <div id="quizFeedback" class="hidden p-4 rounded-xl text-xs sm:text-sm font-medium transition flex items-start space-x-3">
+                    <i id="quizFeedbackIcon" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                    <div id="quizFeedbackText" class="space-y-1"></div>
+                </div>
+
+                <!-- Next Button -->
+                <div class="flex justify-end pt-2">
+                    <button id="quizNextBtn" onclick="nextQuestion()" disabled class="px-6 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-slate-800 text-slate-500 cursor-not-allowed transition flex items-center space-x-2">
+                        <span>Next Question</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz End Results View -->
+            <div id="quizEndCard" class="hidden glass-panel p-6 sm:p-10 rounded-2xl max-w-2xl mx-auto space-y-6 text-center border border-slate-800">
+                <div class="inline-flex p-4 bg-rose-600/20 rounded-full text-rose-400 border border-rose-500/30 mb-2">
+                    <i data-lucide="award" class="w-12 h-12"></i>
+                </div>
+                
+                <h3 class="text-2xl sm:text-3xl font-bold font-jp text-slate-100">Quiz Completed!</h3>
+                <p class="text-xs sm:text-sm text-slate-400">You've finished evaluating your Japanese vocabulary from "Half Moon Serenade".</p>
+
+                <!-- Score Dashboard -->
+                <div class="grid grid-cols-3 gap-3 bg-slate-900/80 p-4 rounded-xl border border-slate-800">
+                    <div>
+                        <div class="text-xs text-slate-400">Score</div>
+                        <div id="finalScoreVal" class="text-2xl font-bold text-rose-400">0/35</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400">Accuracy</div>
+                        <div id="finalAccuracyVal" class="text-2xl font-bold text-sky-400">0%</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400">Grade</div>
+                        <div id="finalGradeVal" class="text-2xl font-bold text-amber-400">S</div>
+                    </div>
+                </div>
+
+                <!-- Performance Commentary -->
+                <div id="finalCommentary" class="text-xs sm:text-sm text-slate-300 bg-slate-900/50 p-4 rounded-xl border border-slate-800/60 leading-relaxed text-left">
+                    <!-- Text JS populated -->
+                </div>
+
+                <!-- Action Controls -->
+                <div class="flex justify-center space-x-4 pt-4">
+                    <button onclick="restartQuiz()" class="px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white shadow-lg shadow-rose-950/50 transition flex items-center space-x-2">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <span>Try Again</span>
+                    </button>
+                    <button onclick="switchTab('vocab')" class="px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center space-x-2">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <span>Review Vocabulary</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="glass-panel border-t border-slate-800/80 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 space-y-3 sm:space-y-0">
+            <div>
+                <p>© Naoko Kawai - Half Moon Serenade (ハーフムーン・セレナーデ) Learning Companion</p>
+                <p class="text-slate-500 mt-0.5">Educational tool created for Japanese language learners.</p>
+            </div>
+            <div class="flex space-x-4">
+                <a href="https://www.youtube.com/watch?v=uyQ5RtiVDKc" target="_blank" rel="noopener noreferrer" class="hover:text-rose-300 transition flex items-center space-x-1">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    <span>YouTube Video</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- 35 CORE VOCABULARY DATASET ---
+        const VOCABULARY_DATA = [
+            {
+                id: 1,
+                kanji: "水面",
+                kana: "みなも",
+                romaji: "minamo",
+                english: "Water surface",
+                pos: "Noun",
+                explanation: "Refers poetically to the surface of water reflecting moonlight or leaves.",
+                lyric: "水面に揺れる月",
+                lyricFull: "水面 (みなも) に揺れる月",
+                options: ["Water surface", "Deep ocean", "Mountain peak", "Raindrop"]
+            },
+            {
+                id: 2,
+                kanji: "枯葉",
+                kana: "かれは",
+                romaji: "kareha",
+                english: "Dry / Fallen autumn leaves",
+                pos: "Noun",
+                explanation: "Symbol of late autumn and the passage of time or lost warmth.",
+                lyric: "舞い落ちる枯葉のように",
+                lyricFull: "舞い落ちる枯葉 (かれは) のように",
+                options: ["Dry / Fallen autumn leaves", "Fresh green spring buds", "Wild roses", "Morning mist"]
+            },
+            {
+                id: 3,
+                kanji: "奏でる",
+                kana: "かなでる",
+                romaji: "kanaderu",
+                english: "To play music (string/instrument)",
+                pos: "Verb",
+                explanation: "Used for playing musical instruments, melodies, or romantic serenades.",
+                lyric: "愛を奏でる夜風",
+                lyricFull: "愛を奏でる (かなでる) 夜風",
+                options: ["To play music", "To sing loudly", "To dance gracefully", "To write a letter"]
+            },
+            {
+                id: 4,
+                kanji: "雫",
+                kana: "しずく",
+                romaji: "shizuku",
+                english: "Drop (of water/tears)",
+                pos: "Noun",
+                explanation: "A delicate droplet, often associated with tears or morning dew in ballads.",
+                lyric: "瞳にあふれる雫",
+                lyricFull: "瞳にあふれる雫 (しずく)",
+                options: ["Drop (of water/tears)", "Sparkling star", "Whispered secret", "Shadow"]
+            },
+            {
+                id: 5,
+                kanji: "結ぶ",
+                kana: "むすぶ",
+                romaji: "musubu",
+                english: "To tie / To bind together",
+                pos: "Verb",
+                explanation: "Connecting hearts, promises, or emotional ties.",
+                lyric: "心と心を結ぶ糸",
+                lyricFull: "心と心を結ぶ (むすぶ) 糸",
+                options: ["To tie / To bind together", "To break apart", "To forget slowly", "To search for"]
+            },
+            {
+                id: 6,
+                kanji: "抱きしめる",
+                kana: "だきしめる",
+                romaji: "dakishimeru",
+                english: "To embrace / Hold tightly",
+                pos: "Verb",
+                explanation: "Holding someone closely to protect or comfort them.",
+                lyric: "優しく抱きしめて",
+                lyricFull: "優しく抱きしめて (だきしめて)",
+                options: ["To embrace / Hold tightly", "To push away", "To call out name", "To glance at"]
+            },
+            {
+                id: 7,
+                kanji: "寂しさ",
+                kana: "さびしさ",
+                romaji: "sabishisa",
+                english: "Loneliness / Solitude",
+                pos: "Noun",
+                explanation: "The quiet sadness of being alone under the half moon.",
+                lyric: "夜の寂しさに耐えかねて",
+                lyricFull: "夜の寂しさ (さびしさ) に耐えかねて",
+                options: ["Loneliness / Solitude", "Overwhelming joy", "Anger", "Warm nostalgia"]
+            },
+            {
+                id: 8,
+                kanji: "瞳",
+                kana: "ひとみ",
+                romaji: "hitomi",
+                english: "Eyes / Pupils",
+                pos: "Noun",
+                explanation: "Poetic word for eyes, often reflecting emotions or light.",
+                lyric: "あなたの瞳に映る月",
+                lyricFull: "あなたの瞳 (ひとみ) に映る月",
+                options: ["Eyes / Pupils", "Lips / Smile", "Hands / Touch", "Voice / Echo"]
+            },
+            {
+                id: 9,
+                kanji: "永遠",
+                kana: "えいえん",
+                romaji: "eien",
+                english: "Eternity / Forever",
+                pos: "Noun",
+                explanation: "Endless time, a common desire in romantic lyrics.",
+                lyric: "永遠の愛を誓う",
+                lyricFull: "永遠 (えいえん) の愛を誓う",
+                options: ["Eternity / Forever", "A fleeting moment", "Yesterday", "Tomorrow morning"]
+            },
+            {
+                id: 10,
+                kanji: "響き",
+                kana: "ひびき",
+                romaji: "hibiki",
+                english: "Reverberation / Echo / Sound",
+                pos: "Noun",
+                explanation: "The lingering resonance of music or a loved one's voice.",
+                lyric: "切ない旋律の響き",
+                lyricFull: "切ない旋律の響き (ひびき)",
+                options: ["Reverberation / Echo", "Complete silence", "Bright color", "Scent of flowers"]
+            },
+            {
+                id: 11,
+                kanji: "満ちる",
+                kana: "みちる",
+                romaji: "michiru",
+                english: "To become full / Wax (moon)",
+                pos: "Verb",
+                explanation: "Refers to the moon growing full or heart filling with emotion.",
+                lyric: "月が満ちてゆくように",
+                lyricFull: "月が満ちて (みちて) ゆくように",
+                options: ["To become full / Wax", "To fade away", "To dry up", "To fall down"]
+            },
+            {
+                id: 12,
+                kanji: "傷つける",
+                kana: "きずつける",
+                romaji: "kizutsukeru",
+                english: "To hurt / Wound someone",
+                pos: "Verb",
+                explanation: "Causing emotional pain or regret in a relationship.",
+                lyric: "誰かを傷つける言葉",
+                lyricFull: "誰かを傷つける (きずつける) 言葉",
+                options: ["To hurt / Wound", "To heal / Comfort", "To praise", "To guide"]
+            },
+            {
+                id: 13,
+                kanji: "面影",
+                kana: "おもかげ",
+                romaji: "omokage",
+                english: "Traces / Memory of a face",
+                pos: "Noun",
+                explanation: "The visual memory or lingering image of someone loved.",
+                lyric: "面影を探してしまう",
+                lyricFull: "面影 (おもかげ) を探してしまう",
+                options: ["Traces / Memory of a face", "Future prediction", "Unfamiliar person", "Old photograph"]
+            },
+            {
+                id: 14,
+                kanji: "吐息",
+                kana: "といき",
+                romaji: "toiki",
+                english: "Sigh / Soft breath",
+                pos: "Noun",
+                explanation: "A soft, emotional breath or sigh in quiet romantic moments.",
+                lyric: "白く染まる吐息",
+                lyricFull: "白く染まる吐息 (といき)",
+                options: ["Sigh / Soft breath", "Loud shout", "Heartbeat", "Laughter"]
+            },
+            {
+                id: 15,
+                kanji: "惑う",
+                kana: "まどう",
+                romaji: "madou",
+                english: "To be bewildered / Hesitate",
+                pos: "Verb",
+                explanation: "Losing one's way emotionally or feeling uncertain.",
+                lyric: "迷い惑う心",
+                lyricFull: "迷い惑う (まどう) 心",
+                options: ["To be bewildered / Hesitate", "To understand clearly", "To decide firmly", "To run fast"]
+            },
+            {
+                id: 16,
+                kanji: "切ない",
+                kana: "せつない",
+                romaji: "setsunai",
+                english: "Bittersweet / Heartrending",
+                pos: "Adjective",
+                explanation: "A poignant, aching emotion mixing sadness and love.",
+                lyric: "切ないメロディー",
+                lyricFull: "切ない (せつない) メロディー",
+                options: ["Bittersweet / Heartrending", "Joyful / Cheerful", "Boring / Dull", "Scary"]
+            },
+            {
+                id: 17,
+                kanji: "黄昏",
+                kana: "たそがれ",
+                romaji: "tasogare",
+                english: "Twilight / Dusk",
+                pos: "Noun",
+                explanation: "The melancholy time between sunset and nightfall.",
+                lyric: "黄昏の街角で",
+                lyricFull: "黄昏 (たそがれ) の街角で",
+                options: ["Twilight / Dusk", "High noon", "Dawn / Sunrise", "Midnight"]
+            },
+            {
+                id: 18,
+                kanji: "言葉にならない",
+                kana: "ことばにならない",
+                romaji: "kotoba ni naranai",
+                english: "Beyond words / Speechless",
+                pos: "Expression",
+                explanation: "Feelings too deep to express in simple speech.",
+                lyric: "想いが言葉にならない",
+                lyricFull: "想いが言葉にならない (ことばにならない)",
+                options: ["Beyond words / Speechless", "Easy to speak", "Loud noise", "Foreign language"]
+            },
+            {
+                id: 19,
+                kanji: "三日月",
+                kana: "みかづき",
+                romaji: "mikazuki",
+                english: "Crescent moon",
+                pos: "Noun",
+                explanation: "The partial moon, symbolizing incomplete longing or 'Half Moon'.",
+                lyric: "空に浮かぶ三日月",
+                lyricFull: "空に浮かぶ三日月 (みかづき)",
+                options: ["Crescent moon", "Full harvest moon", "Solar eclipse", "Bright star"]
+            },
+            {
+                id: 20,
+                kanji: "揺れる",
+                kana: "ゆれる",
+                romaji: "yureru",
+                english: "To sway / Waver",
+                pos: "Verb",
+                explanation: "Physical swaying like leaves/water or emotional wavering.",
+                lyric: "風に揺れる影",
+                lyricFull: "風に揺れる (ゆれる) 影",
+                options: ["To sway / Waver", "To stand still", "To break", "To shine brightly"]
+            },
+            {
+                id: 21,
+                kanji: "巡り合う",
+                kana: "めぐりあう",
+                romaji: "meguriau",
+                english: "To meet by chance / Fate",
+                pos: "Verb",
+                explanation: "Fated reunion or meeting someone after time passes.",
+                lyric: "再び巡り合う日まで",
+                lyricFull: "再び巡り合う (めぐりあう) 日まで",
+                options: ["To meet by fate", "To part ways forever", "To argue", "To pass by quietly"]
+            },
+            {
+                id: 22,
+                kanji: "微睡み",
+                kana: "まどろみ",
+                romaji: "madoromi",
+                english: "Slumber / Dozing softly",
+                pos: "Noun",
+                explanation: "A light, peaceful state between waking and sleeping.",
+                lyric: "静かな微睡みの中で",
+                lyricFull: "静かな微睡み (まどろみ) の中で",
+                options: ["Slumber / Dozing softly", "Deep nightmare", "Sudden awakening", "Daydreaming"]
+            },
+            {
+                id: 23,
+                kanji: "儚い",
+                kana: "はかない",
+                romaji: "hakanai",
+                english: "Fleeting / Ephemeral",
+                pos: "Adjective",
+                explanation: "Fragile, short-lived beauty like dreams or flowers.",
+                lyric: "儚い夢のあとさき",
+                lyricFull: "儚い (はかない) 夢のあとさき",
+                options: ["Fleeting / Ephemeral", "Unbreakable / Solid", "Eternal", "Heavy / Dense"]
+            },
+            {
+                id: 24,
+                kanji: "溢れる",
+                kana: "あふれる",
+                romaji: "afureru",
+                english: "To overflow / Brim over",
+                pos: "Verb",
+                explanation: "Tears or emotions pouring out uncontrollably.",
+                lyric: "胸にあふれる想い",
+                lyricFull: "胸にあふれる (あふれる) 想い",
+                options: ["To overflow / Brim over", "To dry out", "To shrink", "To hide away"]
+            },
+            {
+                id: 25,
+                kanji: "吐露する",
+                kana: "とろする",
+                romaji: "torosuru",
+                english: "To confess / Speak one's mind",
+                pos: "Verb",
+                explanation: "Expressing hidden innermost feelings candidly.",
+                lyric: "秘めた本音を吐露する",
+                lyricFull: "秘めた本音を吐露する (とろする)",
+                options: ["To confess / Speak out", "To keep secret", "To lie", "To ignore"]
+            },
+            {
+                id: 26,
+                kanji: "旋律",
+                kana: "せんりつ",
+                romaji: "senritsu",
+                english: "Melody / Tune",
+                pos: "Noun",
+                explanation: "Musical sequence of notes carrying the song's romance.",
+                lyric: "愛の旋律が響く",
+                lyricFull: "愛の旋律 (せんりつ) が響く",
+                options: ["Melody / Tune", "Rhythm beat", "Lyrics", "Applause"]
+            },
+            {
+                id: 27,
+                kanji: "佇む",
+                kana: "たたずむ",
+                romaji: "tatazumu",
+                english: "To stand still / Loiter quietly",
+                pos: "Verb",
+                explanation: "Standing motionless in thought or contemplation.",
+                lyric: "月明かりの下で佇む",
+                lyricFull: "月明かりの下で佇む (たたずむ)",
+                options: ["To stand still", "To run away", "To leap high", "To sit down"]
+            },
+            {
+                id: 28,
+                kanji: "愛おしい",
+                kana: "いとおしい",
+                romaji: "itooshii",
+                english: "Precious / Beloved / Dear",
+                pos: "Adjective",
+                explanation: "Deeply cherished with tender affection.",
+                lyric: "愛おしい面影",
+                lyricFull: "愛おしい (いとおしい) 面影",
+                options: ["Precious / Beloved", "Hateful / Annoying", "Strange / Weird", "Frightening"]
+            },
+            {
+                id: 29,
+                kanji: "温もり",
+                kana: "ぬくもり",
+                romaji: "nukumori",
+                english: "Warmth (physical/emotional)",
+                pos: "Noun",
+                explanation: "The comforting gentle heat of a hand or loved one.",
+                lyric: "あなたの手の温もり",
+                lyricFull: "あなたの手の温もり (ぬくもり)",
+                options: ["Warmth", "Freezing cold", "Softness", "Brightness"]
+            },
+            {
+                id: 30,
+                kanji: "彷徨う",
+                kana: "さまよう",
+                romaji: "samayou",
+                english: "To wander aimlessly",
+                pos: "Verb",
+                explanation: "Wandering around without direction in sadness.",
+                lyric: "夜の暗闇を彷徨う",
+                lyricFull: "夜の暗闇を彷徨う (さまよう)",
+                options: ["To wander aimlessly", "To walk straight", "To drive fast", "To sleep soundly"]
+            },
+            {
+                id: 31,
+                kanji: "夜風",
+                kana: "よかぜ",
+                romaji: "yokaze",
+                english: "Night breeze",
+                pos: "Noun",
+                explanation: "Cool, poetic breeze blowing under the night sky.",
+                lyric: "冷たい夜風に吹かれて",
+                lyricFull: "冷たい夜風 (よかぜ) に吹かれて",
+                options: ["Night breeze", "Morning sun", "Thunderstorm", "Spring shower"]
+            },
+            {
+                id: 32,
+                kanji: "重ねる",
+                kana: "かさねる",
+                romaji: "kasaneru",
+                english: "To stack / Overlap / Repeat",
+                pos: "Verb",
+                explanation: "Overlapping hands, feelings, or accumulating days together.",
+                lyric: "唇を重ねるように",
+                lyricFull: "唇を重ねる (かさねる) ように",
+                options: ["To overlap / Layer", "To separate", "To erase", "To throw away"]
+            },
+            {
+                id: 33,
+                kanji: "影",
+                kana: "かげ",
+                romaji: "kage",
+                english: "Shadow / Silhouette",
+                pos: "Noun",
+                explanation: "Shadow cast by the half moon or silhouette of loved ones.",
+                lyric: "月光に伸びる影",
+                lyricFull: "月光に伸びる影 (かげ)",
+                options: ["Shadow / Silhouette", "Bright beam", "Mirror", "Reflection"]
+            },
+            {
+                id: 34,
+                kanji: "囁き",
+                kana: "ささやき",
+                romaji: "sasayaki",
+                english: "Whisper / Soft murmur",
+                pos: "Noun",
+                explanation: "Quiet, romantic whispering in the silence of night.",
+                lyric: "風の囁きに耳をすませば",
+                lyricFull: "風の囁き (ささやき) に耳をすませば",
+                options: ["Whisper / Soft murmur", "Shout", "Thunder", "Screaming"]
+            },
+            {
+                id: 35,
+                kanji: "誓い",
+                kana: "ちかい",
+                romaji: "chikai",
+                english: "Vow / Oath / Promise",
+                pos: "Noun",
+                explanation: "A sacred promise made between lovers.",
+                lyric: "永遠の誓いを胸に",
+                lyricFull: "永遠の誓い (ちかい) を胸に",
+                options: ["Vow / Oath / Promise", "Lie / Deception", "Doubt", "Question"]
+            }
+        ];
+
+        // --- APP STATE ---
+        let currentFilterCategory = 'all';
+        let ttsAudioEnabled = true;
+        let quizQuestions = [];
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let userAnswers = [];
+
+        // --- SPEECH SYNTHESIS ENGINE ---
+        function speakJapaneseText(text) {
+            if (!ttsAudioEnabled || !('speechSynthesis' in window)) return;
+            
+            // Cancel pending utterances
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.88; // Slightly slower for language learners
+
+            // Select Japanese voice if available
+            const voices = window.speechSynthesis.getVoices();
+            const jaVoice = voices.find(v => v.lang.includes('ja') || v.lang.includes('JP'));
+            if (jaVoice) {
+                utterance.voice = jaVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Handle Audio Toggle
+        document.getElementById('ttsToggleBtn').addEventListener('click', () => {
+            ttsAudioEnabled = !ttsAudioEnabled;
+            const statusText = document.getElementById('ttsStatus');
+            const icon = document.getElementById('ttsIcon');
+
+            if (ttsAudioEnabled) {
+                statusText.innerText = "Audio: On";
+                icon.setAttribute('data-lucide', 'volume-2');
+                icon.className = "w-4 h-4 text-sky-400";
+            } else {
+                statusText.innerText = "Audio: Off";
+                icon.setAttribute('data-lucide', 'volume-x');
+                icon.className = "w-4 h-4 text-slate-500";
+                window.speechSynthesis.cancel();
+            }
+            lucide.createIcons();
+        });
+
+        // --- TAB SWITCHING ---
+        function switchTab(tabName) {
+            const vocabTab = document.getElementById('tabVocab');
+            const quizTab = document.getElementById('tabQuiz');
+            const vocabBtn = document.getElementById('tabVocabBtn');
+            const quizBtn = document.getElementById('tabQuizBtn');
+
+            if (tabName === 'vocab') {
+                vocabTab.classList.remove('hidden');
+                quizTab.classList.add('hidden');
+                
+                vocabBtn.className = "flex items-center space-x-2 py-3 px-4 border-b-2 font-medium text-sm transition border-rose-500 text-rose-400";
+                quizBtn.className = "flex items-center space-x-2 py-3 px-4 border-b-2 font-medium text-sm transition border-transparent text-slate-400 hover:text-slate-200";
+            } else {
+                vocabTab.classList.add('hidden');
+                quizTab.classList.remove('hidden');
+
+                quizBtn.className = "flex items-center space-x-2 py-3 px-4 border-b-2 font-medium text-sm transition border-sky-500 text-sky-400";
+                vocabBtn.className = "flex items-center space-x-2 py-3 px-4 border-b-2 font-medium text-sm transition border-transparent text-slate-400 hover:text-slate-200";
+            }
+        }
+
+        // --- VOCABULARY RENDER & FILTER ---
+        function renderVocabularyCards(data) {
+            const grid = document.getElementById('vocabGrid');
+            grid.innerHTML = '';
+
+            if (data.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-500 glass-panel rounded-xl">
+                        <i data-lucide="search-x" class="w-8 h-8 mx-auto mb-2 text-slate-600"></i>
+                        <p class="text-sm">No vocabulary items match your search criteria.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "glass-card p-5 rounded-xl border border-slate-800 hover:border-slate-700 transition space-y-3 flex flex-col justify-between group";
+
+                // POS Badge color map
+                let posColor = "bg-sky-950 text-sky-300 border-sky-800/50";
+                if (item.pos === "Verb") posColor = "bg-rose-950 text-rose-300 border-rose-800/50";
+                if (item.pos === "Adjective") posColor = "bg-amber-950 text-amber-300 border-amber-800/50";
+                if (item.pos === "Expression") posColor = "bg-purple-950 text-purple-300 border-purple-800/50";
+
+                card.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs px-2 py-0.5 rounded border font-mono ${posColor}">${item.pos}</span>
+                            <button onclick="speakJapaneseText('${item.kanji}')" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 group-hover:text-rose-400 transition" title="Pronounce">
+                                <i data-lucide="volume-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        
+                        <div>
+                            <div class="flex items-baseline space-x-2">
+                                <h3 class="text-2xl font-bold font-jp text-slate-100">${item.kanji}</h3>
+                                <span class="text-sm font-jp text-sky-300 font-medium">${item.kana}</span>
+                            </div>
+                            <p class="text-xs text-slate-400 italic font-mono">${item.romaji}</p>
+                        </div>
+
+                        <div class="pt-1">
+                            <p class="text-sm font-semibold text-rose-300">${item.english}</p>
+                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">${item.explanation}</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800/80 text-xs font-jp space-y-1">
+                        <span class="text-slate-500 text-[10px] uppercase tracking-wider block font-sans">Lyric Context</span>
+                        <p class="text-slate-200">"${item.lyricFull}"</p>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        function filterVocab() {
+            const searchTerm = document.getElementById('vocabSearch').value.toLowerCase().trim();
+            
+            const filtered = VOCABULARY_DATA.filter(item => {
+                const matchesCategory = (currentFilterCategory === 'all' || item.pos === currentFilterCategory);
+                const matchesSearch = 
+                    item.kanji.toLowerCase().includes(searchTerm) ||
+                    item.kana.toLowerCase().includes(searchTerm) ||
+                    item.romaji.toLowerCase().includes(searchTerm) ||
+                    item.english.toLowerCase().includes(searchTerm);
+
+                return matchesCategory && matchesSearch;
+            });
+
+            renderVocabularyCards(filtered);
+        }
+
+        function setCategoryFilter(category) {
+            currentFilterCategory = category;
+            
+            // Update button styles
+            const buttons = document.querySelectorAll('.cat-filter-btn');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('data-cat') === category) {
+                    btn.className = "cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border bg-rose-600/20 text-rose-300 border-rose-500/40";
+                } else {
+                    btn.className = "cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800";
+                }
+            });
+
+            filterVocab();
+        }
+
+        // --- QUIZ ENGINE LOGIC ---
+        function initQuiz() {
+            quizQuestions = [...VOCABULARY_DATA];
+            // Shuffle array for fresh experience
+            quizQuestions.sort(() => Math.random() - 0.5);
+            currentQuizIndex = 0;
+            quizScore = 0;
+            userAnswers = [];
+
+            document.getElementById('quizActiveCard').classList.remove('hidden');
+            document.getElementById('quizEndCard').classList.add('hidden');
+
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            const q = quizQuestions[currentQuizIndex];
+            
+            // UI elements
+            document.getElementById('quizCurrentIndex').innerText = currentQuizIndex + 1;
+            document.getElementById('quizScore').innerText = quizScore;
+            document.getElementById('quizPosTag').innerText = q.pos;
+            
+            // Progress Bar
+            const progressPercent = ((currentQuizIndex + 1) / quizQuestions.length) * 100;
+            document.getElementById('quizProgressBar').style.width = `${progressPercent}%`;
+
+            // Context snippet with highlighted keyword
+            const highlightedLyric = q.lyricFull.replace(
+                q.kanji, 
+                `<span class="text-rose-400 border-b-2 border-rose-500 font-bold px-1">${q.kanji}</span>`
+            );
+            document.getElementById('quizLyricSnippet').innerHTML = `"${highlightedLyric}"`;
+            document.getElementById('quizTargetKana').innerText = q.kana;
+            document.getElementById('quizTargetRomaji').innerText = q.romaji;
+
+            // Reset feedback banner & next button
+            const feedback = document.getElementById('quizFeedback');
+            feedback.className = "hidden p-4 rounded-xl text-xs sm:text-sm font-medium transition flex items-start space-x-3";
+            
+            const nextBtn = document.getElementById('quizNextBtn');
+            nextBtn.disabled = true;
+            nextBtn.className = "px-6 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-slate-800 text-slate-500 cursor-not-allowed transition flex items-center space-x-2";
+
+            // Setup Options
+            const optionsGrid = document.getElementById('quizOptionsGrid');
+            optionsGrid.innerHTML = '';
+
+            // Shuffle options
+            const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+
+            shuffledOptions.forEach((optionText, idx) => {
+                const labelLetter = String.fromCharCode(65 + idx); // A, B, C, D
+                const optBtn = document.createElement('button');
+                optBtn.className = "quiz-opt-btn text-left p-4 rounded-xl bg-slate-900/90 hover:bg-slate-800/80 border border-slate-800 text-slate-200 text-xs sm:text-sm transition flex items-center space-x-3 group";
+                optBtn.onclick = () => selectAnswer(optionText, q.english, optBtn);
+
+                optBtn.innerHTML = `
+                    <span class="w-6 h-6 rounded-lg bg-slate-800 text-slate-400 font-mono text-xs flex items-center justify-center font-bold group-hover:bg-rose-500/20 group-hover:text-rose-300 transition flex-shrink-0">${labelLetter}</span>
+                    <span class="font-medium">${optionText}</span>
+                `;
+                optionsGrid.appendChild(optBtn);
+            });
+
+            // Automatically speak target word on load
+            speakJapaneseText(q.kanji);
+        }
+
+        function playCurrentQuizAudio() {
+            const q = quizQuestions[currentQuizIndex];
+            speakJapaneseText(q.kanji);
+        }
+
+        function selectAnswer(selected, correct, clickedBtn) {
+            // Disable all option buttons
+            const allOptBtns = document.querySelectorAll('.quiz-opt-btn');
+            allOptBtns.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('cursor-not-allowed');
+            });
+
+            const isCorrect = (selected === correct);
+            if (isCorrect) quizScore++;
+
+            userAnswers.push({
+                question: quizQuestions[currentQuizIndex],
+                selected: selected,
+                correct: correct,
+                isCorrect: isCorrect
+            });
+
+            // Visual option feedback
+            allOptBtns.forEach(btn => {
+                const textSpan = btn.querySelector('span:last-child').innerText;
+                if (textSpan === correct) {
+                    btn.classList.remove('bg-slate-900/90', 'border-slate-800');
+                    btn.classList.add('bg-emerald-950/80', 'border-emerald-500', 'text-emerald-200');
+                } else if (textSpan === selected && !isCorrect) {
+                    btn.classList.remove('bg-slate-900/90', 'border-slate-800');
+                    btn.classList.add('bg-rose-950/80', 'border-rose-500', 'text-rose-200');
+                }
+            });
+
+            // Feedback Banner
+            const feedback = document.getElementById('quizFeedback');
+            const feedbackText = document.getElementById('quizFeedbackText');
+            const feedbackIcon = document.getElementById('quizFeedbackIcon');
+
+            feedback.classList.remove('hidden');
+            if (isCorrect) {
+                feedback.classList.add('bg-emerald-950/90', 'border', 'border-emerald-500/40', 'text-emerald-200');
+                feedbackIcon.setAttribute('data-lucide', 'check-circle-2');
+                feedbackText.innerHTML = `
+                    <div class="font-bold">Correct! 正解</div>
+                    <div class="text-xs text-emerald-300/80">"${quizQuestions[currentQuizIndex].kanji}" means "${correct}".</div>
+                `;
+            } else {
+                feedback.classList.add('bg-rose-950/90', 'border', 'border-rose-500/40', 'text-rose-200');
+                feedbackIcon.setAttribute('data-lucide', 'x-circle');
+                feedbackText.innerHTML = `
+                    <div class="font-bold">Incorrect 不正解</div>
+                    <div class="text-xs text-rose-300/80">The correct answer is <strong>"${correct}"</strong>.</div>
+                `;
+            }
+
+            // Enable Next Button
+            const nextBtn = document.getElementById('quizNextBtn');
+            nextBtn.disabled = false;
+            nextBtn.className = "px-6 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white shadow-lg shadow-rose-950/50 cursor-pointer transition flex items-center space-x-2";
+
+            lucide.createIcons();
+        }
+
+        function nextQuestion() {
+            currentQuizIndex++;
+            if (currentQuizIndex < quizQuestions.length) {
+                renderQuizQuestion();
+            } else {
+                showQuizResults();
+            }
+        }
+
+        function showQuizResults() {
+            document.getElementById('quizActiveCard').classList.add('hidden');
+            document.getElementById('quizEndCard').classList.remove('hidden');
+
+            const total = quizQuestions.length;
+            const percentage = Math.round((quizScore / total) * 100);
+
+            document.getElementById('finalScoreVal').innerText = `${quizScore}/${total}`;
+            document.getElementById('finalAccuracyVal').innerText = `${percentage}%`;
+
+            // Calculate Grade & Commentary
+            let grade = "S";
+            let commentary = "";
+
+            if (percentage >= 90) {
+                grade = "S";
+                commentary = "<strong>Outstanding Mastery! 素晴らしい！</strong> You have completely mastered the poetic vocabulary of 'Half Moon Serenade'. You are ready to appreciate classic Japanese ballads in deep nuance!";
+            } else if (percentage >= 75) {
+                grade = "A";
+                commentary = "<strong>Great Performance!</strong> You showed strong comprehension of key terms like 水面 (minamo) and 奏でる (kanaderu). Review the missed items in the Vocabulary Guide to reach 100%!";
+            } else if (percentage >= 50) {
+                grade = "B";
+                commentary = "<strong>Good Effort!</strong> You recognized many lyrics, but romantic and poetic Japanese can be tricky. Spend a few minutes reviewing the cards and try again.";
+            } else {
+                grade = "C";
+                commentary = "<strong>Keep Practicing!</strong> Don't worry—literary J-pop lyrics contain advanced vocabulary. Read through the 35 cards carefully using the TTS audio button to build your memory!";
+            }
+
+            document.getElementById('finalGradeVal').innerText = grade;
+            document.getElementById('finalCommentary').innerHTML = commentary;
+        }
+
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // --- INITIALIZATION ON WINDOW LOAD ---
+        window.onload = function() {
+            // Render all initial vocabulary cards
+            renderVocabularyCards(VOCABULARY_DATA);
+            
+            // Pre-initialize quiz state
+            initQuiz();
+
+            // Load icons
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>
